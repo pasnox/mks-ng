@@ -15,6 +15,7 @@
 ###########################################################################################
 
 XUP.QT_VERSION = 5.0.0-alpha
+XUP.OTHERS_PLATFORM_TARGET_DEFAULT = bin/Linux/editor
 
 include( modules/config.pri )
 
