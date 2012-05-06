@@ -2,9 +2,9 @@
 ##      Created using Monkey Studio IDE v1.9.0.1 (1.9.0.1)
 ##
 ##  Author    : The Monkey Studio Team
-##  Project   : modules
-##  FileName  : modules.pro
-##  Date      : 2012-05-06T12:19:35
+##  Project   : editor
+##  FileName  : editor.pro
+##  Date      : 2012-05-06T12:30:18
 ##  License   : GPL
 ##  Comment   : Creating using Monkey Studio RAD
 ##  Home Page : http://monkeystudio.org
@@ -14,11 +14,19 @@
 ##
 ###########################################################################################
 
-include( config.pri )
+include( ../config.pri )
 
-TEMPLATE = subdirs
-SUBDIRS *= \
-    source-highlite.pro \
-    source-highlite-qt.pro \
-    fresh.pro \
-    editor/editor.pro
+TARGET_NAME = editor
+initializeProject( app, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, "" )
+
+QT *= widgets
+
+INCLUDEPATH = 
+
+DEPENDPATH = $${INCLUDEPATH}
+
+FORMS *=  
+
+HEADERS *=  
+
+SOURCES *=  main.cpp
