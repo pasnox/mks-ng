@@ -15,7 +15,6 @@
 ###########################################################################################
 
 include( config.pri )
-include( auto_file_h.pri )
 include( ../3rdparty/src_highlite.git/defines.pri )
 
 TARGET_NAME = source-highlite
@@ -35,13 +34,15 @@ initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGE
 #autoGenerateFile( source-highlite-config.h.in, ../3rdparty/src_highlite.git/lib/srchilite/config.h )
 
 #DEFINES *= HAVE_CONFIG_H
-
 #CONFIG += create_prl
 
-INCLUDEPATH = ../3rdparty/src_highlite.git/lib/srchilite
+INCLUDEPATH = \
+    ../3rdparty/src_highlite.git/lib/srchilite
+
 DEPENDPATH = $${INCLUDEPATH}
 
-HEADERS *= ../3rdparty/src_highlite.git/lib/srchilite/formattermanager.h \
+HEADERS *= \
+    ../3rdparty/src_highlite.git/lib/srchilite/formattermanager.h \
     ../3rdparty/src_highlite.git/lib/srchilite/langelemsprinter.h \
     ../3rdparty/src_highlite.git/lib/srchilite/tostringcollection.h \
     ../3rdparty/src_highlite.git/lib/srchilite/stringlistlangelem.h \
@@ -131,7 +132,8 @@ HEADERS *= ../3rdparty/src_highlite.git/lib/srchilite/formattermanager.h \
     ../3rdparty/src_highlite.git/lib/srchilite/langdefmanager.h \
     ../3rdparty/src_highlite.git/lib/srchilite/utils.h
 
-SOURCES *= ../3rdparty/src_highlite.git/lib/srchilite/utils.cpp \
+SOURCES *= \
+    ../3rdparty/src_highlite.git/lib/srchilite/utils.cpp \
     ../3rdparty/src_highlite.git/lib/srchilite/wordtokenizer.cpp \
     ../3rdparty/src_highlite.git/lib/srchilite/highlightrule.cpp \
     ../3rdparty/src_highlite.git/lib/srchilite/ctagsmanager.cpp \
@@ -205,12 +207,14 @@ SOURCES *= ../3rdparty/src_highlite.git/lib/srchilite/utils.cpp \
     ../3rdparty/src_highlite.git/lib/srchilite/highlightstate.cpp \
     ../3rdparty/src_highlite.git/lib/srchilite/delimitedlangelem.cpp
 
-#YACCSOURCES *= ../3rdparty/src_highlite.git/lib/srchilite/langdefparser.yy \
+#YACCSOURCES *= \
+#    ../3rdparty/src_highlite.git/lib/srchilite/langdefparser.yy \
 #    ../3rdparty/src_highlite.git/lib/srchilite/outlangdefparser.yy \
 #    ../3rdparty/src_highlite.git/lib/srchilite/stylecssparser.yy \
 #    ../3rdparty/src_highlite.git/lib/srchilite/styleparser.yy
 
-#LEXSOURCES *= ../3rdparty/src_highlite.git/lib/srchilite/langdefscanner.ll \
+#LEXSOURCES *= \
+#    ../3rdparty/src_highlite.git/lib/srchilite/langdefscanner.ll \
 #    ../3rdparty/src_highlite.git/lib/srchilite/stylescanner.ll \
 #    ../3rdparty/src_highlite.git/lib/srchilite/outlangdefscanner.ll \
 #    ../3rdparty/src_highlite.git/lib/srchilite/stylecssscanner.ll

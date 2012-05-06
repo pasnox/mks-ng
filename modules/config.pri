@@ -58,3 +58,4 @@ defineTest( initializeProject ) {
 }
 
 macx:include( $$PWD/macx.pri )
+include( $$PWD/auto_file_h.pri )
