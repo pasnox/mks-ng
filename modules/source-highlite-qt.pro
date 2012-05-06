@@ -15,6 +15,7 @@
 ###########################################################################################
 
 include( config.pri )
+include( ../3rdparty/src_highlite_qt.git/defines.pri )
 
 TARGET_NAME = source-highlite-qt
 initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, shared )
