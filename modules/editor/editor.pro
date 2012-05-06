@@ -14,19 +14,25 @@
 ##
 ###########################################################################################
 
-include( ../config.pri )
+include( ../modules.pri )
 
 TARGET_NAME = editor
 initializeProject( app, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, "" )
 
-QT *= widgets
-
-INCLUDEPATH = 
+INCLUDEPATH *= 
 
 DEPENDPATH = $${INCLUDEPATH}
 
-FORMS *=  
+FORMS *=  \
+    UIMain.ui
 
-HEADERS *=  
+HEADERS *=  \
+    UIMain.h \
+    StackedDocument.h \
+    Document.h
 
-SOURCES *=  main.cpp
+SOURCES *=  \
+    UIMain.cpp \
+    main.cpp \
+    StackedDocument.cpp \
+    Document.cpp
