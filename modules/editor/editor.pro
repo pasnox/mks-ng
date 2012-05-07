@@ -19,7 +19,7 @@ include( ../modules.pri )
 TARGET_NAME = editor
 initializeProject( app, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, "" )
 
-INCLUDEPATH *= 
+INCLUDEPATH *= $$getFolders( . )
 
 DEPENDPATH = $${INCLUDEPATH}
 
@@ -29,10 +29,16 @@ FORMS *=  \
 HEADERS *=  \
     UIMain.h \
     StackedDocument.h \
-    Document.h
+    Document.h \
+    StackedDocumentModel.h \
+    abstractions/documents/SourceHighlightQtDocument.h \
+    StackedDocumentTreeView.h
 
 SOURCES *=  \
     UIMain.cpp \
     main.cpp \
     StackedDocument.cpp \
-    Document.cpp
+    Document.cpp \
+    StackedDocumentModel.cpp \
+    abstractions/documents/SourceHighlightQtDocument.cpp \
+    StackedDocumentTreeView.cpp

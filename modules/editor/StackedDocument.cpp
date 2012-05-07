@@ -1,20 +1,30 @@
 #include "StackedDocument.h"
+#include "StackedDocumentModel.h"
 #include "Document.h"
 
 #include <QEvent>
 
 StackedDocument::StackedDocument( QWidget* parent )
-    : QStackedWidget( parent )
+    : QStackedWidget( parent ), mModel( new StackedDocumentModel( this ) )
 {
     connect( this, &QStackedWidget::currentChanged, this, &StackedDocument::_q_currentChanged );
     connect( this, &QStackedWidget::widgetRemoved, this, &StackedDocument::_q_widgetRemoved );
     
-    addDocument( new Document( this ) );
-    insertDocument( 0, new Document( this ) );
+    const QString key = Document::documentAbstractionKeys().first();
+    addDocument( Document::createDocument( key ) );
+    addDocument( Document::createDocument( key ) );
+    addDocument( Document::createDocument( key ) );
+    addDocument( Document::createDocument( key ) );
+    addDocument( Document::createDocument( key ) );
 }
 
 StackedDocument::~StackedDocument()
 {
+}
+
+StackedDocumentModel* StackedDocument::model() const
+{
+    return mModel;
 }
 
 int	StackedDocument::addDocument( Document* document )
@@ -58,7 +68,7 @@ void StackedDocument::removeDocument( Document* document )
     const int index = QStackedWidget::indexOf( document );
     
     if ( index != -1 ) {
-        emit documentAboutToBeRemoved( index );
+        emit documentIndexAboutToBeRemoved( index );
         emit documentAboutToBeRemoved( document );
     }
     
@@ -92,19 +102,19 @@ void StackedDocument::changeEvent( QEvent* event )
 void StackedDocument::_q_documentInserted( int index, Document* document )
 {
     if ( index != -1 && document ) {
-        emit documentInserted( index );
+        emit documentIndexInserted( index );
         emit documentInserted( document );
     }
 }
 
 void StackedDocument::_q_currentChanged( int index )
 {
-    emit currentDocumentChanged( index );
+    emit currentDocumentIndexChanged( index );
     emit currentDocumentChanged( document( index ) );
 }
 
 void StackedDocument::_q_widgetRemoved( int index )
 {
-    emit documentRemoved( index );
+    emit documentIndexRemoved( index );
     emit documentRemoved( document( index ) );
 }

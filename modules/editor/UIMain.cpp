@@ -1,5 +1,6 @@
 #include "UIMain.h"
 #include "ui_UIMain.h"
+#include "StackedDocumentModel.h"
 
 #include <QEvent>
 
@@ -7,6 +8,7 @@ UIMain::UIMain( QWidget* parent )
     : QMainWindow( parent ), ui( new Ui_UIMain )
 {
     ui->setupUi( this );
+    ui->sdtvDocuments->setStackedDocument( ui->sdDocuments );
 }
 
 UIMain::~UIMain()
