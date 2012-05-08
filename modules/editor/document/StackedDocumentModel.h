@@ -25,7 +25,7 @@ protected:
 
 protected slots:
     void _q_documentIndexInserted( int index );
-    void _q_documentIndexChanged( int index );
+    void _q_documentIndexPropertiesChanged( int index );
     void _q_currentDocumentIndexChanged( int index );
     void _q_documentIndexRemoved( int index );
 };

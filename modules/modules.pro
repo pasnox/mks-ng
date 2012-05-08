@@ -17,6 +17,7 @@
 include( config.pri )
 
 TEMPLATE = subdirs
+CONFIG *= ordered
 SUBDIRS *= \
     source-highlite.pro \
     source-highlite-qt.pro \

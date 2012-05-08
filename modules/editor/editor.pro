@@ -28,17 +28,17 @@ FORMS *=  \
 
 HEADERS *=  \
     UIMain.h \
-    StackedDocument.h \
-    Document.h \
-    StackedDocumentModel.h \
-    abstractions/documents/SourceHighlightQtDocument.h \
-    StackedDocumentTreeView.h
+    document/Document.h \
+    document/StackedDocument.h \
+    document/StackedDocumentModel.h \
+    document/StackedDocumentTreeView.h \
+    document/abstractions/documents/SourceHighlightQtDocument.h
 
 SOURCES *=  \
-    UIMain.cpp \
     main.cpp \
-    StackedDocument.cpp \
-    Document.cpp \
-    StackedDocumentModel.cpp \
-    abstractions/documents/SourceHighlightQtDocument.cpp \
-    StackedDocumentTreeView.cpp
+    UIMain.cpp \
+    document/Document.cpp \
+    document/StackedDocument.cpp \
+    document/StackedDocumentModel.cpp \
+    document/StackedDocumentTreeView.cpp \
+    document/abstractions/documents/SourceHighlightQtDocument.cpp

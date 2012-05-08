@@ -3,6 +3,7 @@
 #include "StackedDocumentModel.h"
 
 #include <QEvent>
+#include <QDebug>
 
 StackedDocumentTreeView::StackedDocumentTreeView( QWidget* parent )
     : QTreeView( parent )
@@ -74,6 +75,6 @@ void StackedDocumentTreeView::_q_selectionChanged()
 
 void StackedDocumentTreeView::_q_currentDocumentIndexChanged( int index )
 {
-    const QModelIndex idx = model()->index( index, 0 );
+    const QModelIndex idx = index >= 0 ? model()->index( index, 0 ) : QModelIndex();
     updateCurrentIndex( idx );
 }
