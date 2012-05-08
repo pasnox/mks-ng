@@ -218,3 +218,11 @@ SOURCES *= \
 #    ../3rdparty/src_highlite.git/lib/srchilite/stylescanner.ll \
 #    ../3rdparty/src_highlite.git/lib/srchilite/outlangdefscanner.ll \
 #    ../3rdparty/src_highlite.git/lib/srchilite/stylecssscanner.ll
+
+sourcehighlightdata.files = \
+    ../3rdparty/src_highlite.git/src/*.lang \
+    ../3rdparty/src_highlite.git/src/*.outlang \
+    ../3rdparty/src_highlite.git/src/*.style \
+    ../3rdparty/src_highlite.git/src/*.css \
+    ../3rdparty/src_highlite.git/src/*.map \
+    ../3rdparty/src_highlite.git/src/*.defaults
