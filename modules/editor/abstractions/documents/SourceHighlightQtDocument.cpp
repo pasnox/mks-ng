@@ -32,7 +32,7 @@ SourceHighlightQtDocument::~SourceHighlightQtDocument()
 {
 }
 
-QVariant SourceHighlightQtDocument::property( Document::Property property ) const
+QVariant SourceHighlightQtDocument::property( int property ) const
 {
     switch ( property ) {
         default: {
@@ -42,7 +42,7 @@ QVariant SourceHighlightQtDocument::property( Document::Property property ) cons
     }
 }
 
-void SourceHighlightQtDocument::setProperty( Document::Property property, const QVariant& value )
+void SourceHighlightQtDocument::setProperty( int property, const QVariant& value )
 {
     switch ( property ) {
         default: {
@@ -56,4 +56,7 @@ void SourceHighlightQtDocument::setProperty( Document::Property property, const 
             break;
         }
     }
+    
+    emit propertyChanged( property );
+    emit propertiesChanged();
 }

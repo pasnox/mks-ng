@@ -13,13 +13,13 @@ public:
     Q_INVOKABLE SourceHighlightQtDocument( QWidget* parent = 0 );
     virtual ~SourceHighlightQtDocument();
     
-    virtual QVariant property( Document::Property property ) const;
+    virtual QVariant property( int property ) const;
 
 public slots:
-    virtual void setProperty( Document::Property property, const QVariant& value );
+    virtual void setProperty( int property, const QVariant& value );
     
 protected:
-    QHash<Document::Property, QVariant> mProperties;
+    QHash<int, QVariant> mProperties;
 };
 
 #endif // SOURCEHIGHLIGHTQTDOCUMENT_H

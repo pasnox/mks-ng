@@ -65,13 +65,19 @@ public:
         SelectionLength = 13, // int
         SelectedText = 14, // QString
         Text = 15, // QString
-        Ruler = 16 // RulerHint
+        Ruler = 16, // RulerHint
+        Lexer = 17, // QString
+        LexerTheme = 18, // QString
+        SupportedLexers = 19, // QStringList
+        SupportedThemes = 20, // QStringList
+        //
+        UserProperty = 1000 // first user usable extension
     };
     
     Document( QWidget* parent = 0 );
     virtual ~Document();
     
-    virtual QVariant property( Document::Property property ) const = 0;
+    virtual QVariant property( int property ) const = 0;
     
     static void registerDocumentAbstraction( const QMetaObject* meta );
     static void unregisterDocumentAbstraction( const QMetaObject* meta );
@@ -80,7 +86,7 @@ public:
 
 public slots:
     virtual void retranslateUi();
-    virtual void setProperty( Document::Property property, const QVariant& value ) = 0;
+    virtual void setProperty( int property, const QVariant& value ) = 0;
     
 public:
     static QHash<QString, const QMetaObject*> mAbstractors;
@@ -88,7 +94,7 @@ public:
     virtual void changeEvent( QEvent* event );
 
 signals:
-    void propertyChanged( Document::Property property );
+    void propertyChanged( int property );
     void propertiesChanged();
 };
 
