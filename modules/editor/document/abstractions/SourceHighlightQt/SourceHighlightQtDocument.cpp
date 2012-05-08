@@ -13,6 +13,11 @@ SourceHighlightQtDocument::SourceHighlightQtDocument( QWidget* parent )
 {
     Document::initialize();
     
+    mHighlighter->init(
+        "/home/pasnox/Developpement/C++/Qt5/mks-ng/3rdparty/src_highlite.git/src/c.lang",
+        "/home/pasnox/Developpement/C++/Qt5/mks-ng/3rdparty/src_highlite.git/src/default.style"
+    );
+    
     QBoxLayout* bLayout = new QBoxLayout( QBoxLayout::LeftToRight );
     bLayout->setMargin( 0 );
     bLayout->setSpacing( 9 );
