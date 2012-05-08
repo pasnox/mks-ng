@@ -149,6 +149,7 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
             break;
         case Document::ReadOnly:
             mEditor->setReadOnly( value.toBool() );
+            mHighlighter->setReadOnly( value.toBool() );
             break;
         case Document::State: {
             const Document::StateHints state = Document::StateHints( value.toInt() );
