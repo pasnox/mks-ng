@@ -6,6 +6,10 @@
 class QEvent;
 class QPlainTextEdit;
 
+namespace srchiliteqt {
+    class Qt4SyntaxHighlighter;
+}
+
 class SourceHighlightQtDocument : public Document
 {
     Q_OBJECT
@@ -22,6 +26,7 @@ public slots:
     
 protected:
     QPlainTextEdit* mEditor;
+    srchiliteqt::Qt4SyntaxHighlighter* mHighlighter;
     QHash<int, QVariant> mProperties;
     //static QHash<QString>
     

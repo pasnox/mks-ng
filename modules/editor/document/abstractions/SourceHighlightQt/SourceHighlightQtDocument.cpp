@@ -1,5 +1,7 @@
 #include "SourceHighlightQtDocument.h"
 
+#include "Qt4SyntaxHighlighter.h"
+
 #include <QEvent>
 #include <QBoxLayout>
 #include <QPlainTextEdit>
@@ -7,7 +9,7 @@
 #include <QDebug>
 
 SourceHighlightQtDocument::SourceHighlightQtDocument( QWidget* parent )
-    : Document( parent ), mEditor( new QPlainTextEdit( this ) )
+    : Document( parent ), mEditor( new QPlainTextEdit( this ) ), mHighlighter( new srchiliteqt::Qt4SyntaxHighlighter( mEditor->document() ) )
 {
     Document::initialize();
     
@@ -70,14 +72,14 @@ QVariant SourceHighlightQtDocument::property( int property ) const
             return mEditor->isReadOnly();
         case Document::State: {
             Document::StateHints state = Document::Unmodified;
-            
             if ( document->isModified() ) {
                 state |= Document::Modified;
             }
-            
             return int( state );
         }
-        case Document::SupportedLexers:
+        case Document::SupportedLexers: {
+            
+        }
         case Document::SupportedThemes:
         
         case Document::Decoration:
