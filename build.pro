@@ -20,4 +20,6 @@ XUP.OTHERS_PLATFORM_TARGET_DEFAULT = bin/Linux/editor
 include( modules/config.pri )
 
 TEMPLATE = subdirs
-SUBDIRS *= modules/modules.pro
+CONFIG *= ordered
+SUBDIRS *= \
+    modules/modules.pro
