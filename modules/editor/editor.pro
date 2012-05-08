@@ -32,7 +32,7 @@ HEADERS *=  \
     document/StackedDocument.h \
     document/StackedDocumentModel.h \
     document/StackedDocumentTreeView.h \
-    document/abstractions/documents/SourceHighlightQtDocument.h
+    document/abstractions/SourceHighlightQt/SourceHighlightQtDocument.h
 
 SOURCES *=  \
     main.cpp \
@@ -41,4 +41,4 @@ SOURCES *=  \
     document/StackedDocument.cpp \
     document/StackedDocumentModel.cpp \
     document/StackedDocumentTreeView.cpp \
-    document/abstractions/documents/SourceHighlightQtDocument.cpp
+    document/abstractions/SourceHighlightQt/SourceHighlightQtDocument.cpp
