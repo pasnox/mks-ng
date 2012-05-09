@@ -156,15 +156,20 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
             document->setModified( state & Document::Modified );
             break;
         }
+        case Document::LineWrap:
+            mEditor->setLineWrapMode( value.toInt() == Document::NoWrap ? QPlainTextEdit::NoWrap : QPlainTextEdit::WidgetWidth );
+            break;
+        
+        case Document::TabWidth:
+            mEditor->setTabStopWidth( value.toInt() *QFontMetrics( mEditor->font() ).averageCharWidth() );
+        case Document::Indent:
+        case Document::IndentWidth:
+        case Document::Eol:
+        case Document::Ruler:
         
         case Document::Decoration:
         case Document::Title:
         case Document::FilePath:
-        case Document::Eol:
-        case Document::Indent:
-        case Document::TabWidth:
-        case Document::IndentWidth:
-        case Document::Ruler:
         case Document::Lexer:
         case Document::LexerTheme:
         case Document::NewFile:
