@@ -114,6 +114,8 @@ QVariant Document::property( int property ) const
             return Document::NoRuler;
         case Document::TextEncoding:
             return "UTF-8";
+        case Document::LineWrap:
+            return Document::NoWrap;
         default:
             return QVariant();
     }
@@ -134,6 +136,19 @@ void Document::setProperty( int property, const QVariant& value )
     }
     
     Q_UNUSED( value );
+}
+
+void Document::updateSharedProperties()
+{
+    const bool locked = blockSignals( true );
+    setProperty( Document::Eol, Document::property( Document::Eol ) );
+    setProperty( Document::Indent, Document::property( Document::Indent ) );
+    setProperty( Document::TabWidth, Document::property( Document::TabWidth ) );
+    setProperty( Document::IndentWidth, Document::property( Document::IndentWidth ) );
+    setProperty( Document::Ruler, Document::property( Document::Ruler ) );
+    setProperty( Document::LineWrap, Document::property( Document::LineWrap ) );
+    //setProperty( Document::TextEncoding, Document::property( Document::TextEncoding ) );
+    blockSignals( locked );
 }
 
 bool Document::open( const QString& filePath, const QString& encoding )
@@ -240,6 +255,8 @@ void Document::close()
 
 void Document::initialize()
 {
+    updateSharedProperties();
+    
     setProperty( Document::NewFile, true );
     setProperty( Document::Title, tr( "New file #%1" ).arg( ++Document::mDocumentCount ) );
     setProperty( Document::State, Document::Unmodified );

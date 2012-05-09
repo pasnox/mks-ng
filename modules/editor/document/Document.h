@@ -51,6 +51,11 @@ public:
         Background = 2
     };
     
+    enum WrapHint {
+        NoWrap = 0,
+        WidthWrap = 1
+    };
+    
     enum Property {
         Decoration = 0, // QIcon
         Title = 1, // QString
@@ -81,6 +86,7 @@ public:
         PasteAvailable = 26, // bool
         ReadOnly = 27, // bool
         InitialText = 28, // QString
+        LineWrap = 29, // WrapHint
         //
         UserProperty = 1000 // first user usable extension
     };
@@ -89,6 +95,7 @@ public:
     virtual ~Document();
     
     virtual QVariant property( int property ) const;
+    virtual void updateSharedProperties();
     
     // the api don't care about unsaved content or already opened content
     // it's the caller responsability to check that before
