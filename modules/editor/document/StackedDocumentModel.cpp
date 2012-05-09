@@ -65,9 +65,43 @@ QVariant StackedDocumentModel::data( const QModelIndex& index, int role ) const
             return document->property( Document::Title ).toString().replace( "[*]", QString::null );
         case Qt::ToolTipRole:
             return document->property( Document::FilePath );
+        case Qt::CheckStateRole:
+            return document->property( Document::ReadOnly ).toBool() ? Qt::Checked : Qt::Unchecked;
     }
     
     return QVariant();
+}
+
+Qt::ItemFlags StackedDocumentModel::flags( const QModelIndex& index ) const
+{
+    Qt::ItemFlags flags = QAbstractListModel::flags( index );
+    
+    if ( index.isValid() ) {
+        flags |= Qt::ItemIsUserCheckable;
+    }
+    
+    return flags;
+}
+
+bool StackedDocumentModel::setData( const QModelIndex& index, const QVariant& value, int role )
+{
+    if ( index == QModelIndex() || index.row() < 0 || index.row() >= rowCount( index.parent() ) || index.column() != 0 ) {
+        return QAbstractListModel::setData( index, value, role );
+    }
+    
+    Document* document = mStacker->document( index.row() );
+    
+    switch ( role ) {
+        case Qt::CheckStateRole:
+            document->setProperty( Document::ReadOnly, value.toInt() == Qt::Checked );
+            break;
+        default:
+            return QAbstractListModel::setData( index, value, role );
+    }
+    
+    emit dataChanged( index, index );
+    
+    return true;
 }
 
 void StackedDocumentModel::_q_documentIndexInserted( int index )
