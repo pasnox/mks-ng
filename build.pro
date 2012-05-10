@@ -15,11 +15,11 @@
 ###########################################################################################
 
 XUP.QT_VERSION = 5.0.0-alpha
-XUP.OTHERS_PLATFORM_TARGET_DEFAULT = bin/Linux/editor
+XUP.OTHERS_PLATFORM_TARGET_DEFAULT = bin/Linux/editor_debug
 
 include( modules/config.pri )
 
 TEMPLATE = subdirs
 CONFIG *= ordered
-SUBDIRS *= \
+SUBDIRS *=  \
     modules/modules.pro
