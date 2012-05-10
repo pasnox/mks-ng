@@ -1,13 +1,15 @@
 #include <QApplication>
 
 #include "UIMain.h"
-#include "SourceHighlightQtDocument.h"
+
+#include "Abstractors.h"
+#include "SourceHighlightQtCodeEditor.h"
 
 int main( int argc, char** argv )
 {
     QApplication app( argc, argv );
     
-    Document::registerDocumentAbstraction( &SourceHighlightQtDocument::staticMetaObject );
+    Abstractors::add( Abstractors::CodeEditor, &SourceHighlightQtCodeEditor::staticMetaObject );
     
     UIMain w;
     w.show();

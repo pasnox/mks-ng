@@ -1,4 +1,6 @@
 #include "Document.h"
+#include "Abstractors.h"
+#include "CodeEditorAbstractor.h"
 
 #include <QEvent>
 #include <QMetaObject>
@@ -8,14 +10,14 @@
 #include <QIcon>
 #include <QDir>
 #include <QDateTime>
+#include <QMimeDatabase>
 #include <QDebug>
 
-QHash<QString, const QMetaObject*> Document::mAbstractors;
-QMimeDatabase Document::mMimeDb;
 int Document::mDocumentCount = 0;
 
-Document::Document( QWidget* parent )
-    : BaseWidget( parent )
+Document::Document( CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent )
+    : BaseWidget( parent ),
+        mCodeEditorAbstractor( codeEditorAbstractor )
 {
 #if USE_MDI_AREA == 1
     setWindowFlags( Qt::FramelessWindowHint );
@@ -25,30 +27,6 @@ Document::Document( QWidget* parent )
 
 Document::~Document()
 {
-}
-
-void Document::registerDocumentAbstraction( const QMetaObject* meta )
-{
-    Q_ASSERT( meta );
-    mAbstractors[ QString::fromLocal8Bit( meta->className() ) ] = meta;
-}
-
-void Document::unregisterDocumentAbstraction( const QMetaObject* meta )
-{
-    Q_ASSERT( meta );
-    mAbstractors.remove( QString::fromLocal8Bit( meta->className() ) );
-}
-
-QStringList Document::documentAbstractionKeys()
-{
-    return mAbstractors.keys();
-}
-
-Document* Document::createDocument( const QString& key, QWidget* parent )
-{
-    const QMetaObject* meta = mAbstractors.value( key );
-    Q_ASSERT( meta );
-    return qobject_cast<Document*>( meta->newInstance( Q_ARG( QWidget*, parent ) ) );
 }
 
 void Document::retranslateUi()
@@ -82,10 +60,10 @@ QVariant Document::property( int property ) const
                 return iconForFileName( filePath );
             }
             
-            const QString lexer = this->property( Document::Lexer ).toString();
+            const QString language = this->property( Document::Language ).toString();
             
-            if ( !lexer.isEmpty() ) {
-                return iconForLexer( lexer );
+            if ( !language.isEmpty() ) {
+                return iconForLanguage( language );
             }
             
             const QString text = this->property( Document::Text ).toString();
@@ -116,6 +94,14 @@ QVariant Document::property( int property ) const
             return "UTF-8";
         case Document::LineWrap:
             return Document::NoWrap;
+        case Document::LineNumberMargin:
+            return true;
+        case Document::FoldMargin:
+            return true;
+        case Document::SymbolMargin:
+            return true;
+        case Document::ChangeMargin:
+            return true;
         default:
             return QVariant();
     }
@@ -130,8 +116,8 @@ void Document::setProperty( int property, const QVariant& value )
     if ( property == Document::FilePath ) {
         setProperty( Document::Title, QVariant() );
         
-        if ( this->property( Document::Lexer ).isNull() && !value.toString().isEmpty() ) {
-            emit propertyChanged( Document::Lexer );
+        if ( this->property( Document::Language ).isNull() && !value.toString().isEmpty() ) {
+            emit propertyChanged( Document::Language );
         }
     }
     
@@ -148,6 +134,10 @@ void Document::updateSharedProperties()
     setProperty( Document::Ruler, Document::property( Document::Ruler ) );
     setProperty( Document::LineWrap, Document::property( Document::LineWrap ) );
     //setProperty( Document::TextEncoding, Document::property( Document::TextEncoding ) );
+    setProperty( Document::LineNumberMargin, Document::property( Document::LineNumberMargin ) );
+    setProperty( Document::FoldMargin, Document::property( Document::FoldMargin ) );
+    setProperty( Document::SymbolMargin, Document::property( Document::SymbolMargin ) );
+    setProperty( Document::ChangeMargin, Document::property( Document::ChangeMargin ) );
     blockSignals( locked );
 }
 
@@ -275,42 +265,31 @@ QTextCodec* Document::textCodec( const QString& encoding ) const
 
 QIcon Document::iconForState( Document::StateHints state ) const
 {
-    if ( state & Document::ExternallyDeleted ) {
-        return QIcon::fromTheme( "archive-remove" );
-    }
-    else if ( state & Document::ExternallyModified ) {
-        return QIcon::fromTheme( "document-properties" );
-    }
-    else if ( state & Document::Modified ) {
-        return QIcon::fromTheme( "document-save" );
-    }
-    
-    return QIcon();
+    return mCodeEditorAbstractor ? mCodeEditorAbstractor->iconForState( state ) : QIcon();
 }
 
 QIcon Document::iconForFileName( const QString& fileName ) const
 {
-    const QList<QMimeType> types = Document::mMimeDb.mimeTypesForFileName( fileName );
-    
-    foreach ( const QMimeType& type, types ) {
-        const QIcon icon = QIcon::fromTheme( type.iconName() );
-        
-        if ( !icon.isNull() ) {
-            return icon;
-        }
-    }
-    
-    return QIcon();
+    return mCodeEditorAbstractor ? mCodeEditorAbstractor->iconForFileName( fileName ) : QIcon();
 }
 
-QIcon Document::iconForLexer( const QString& lexer ) const
+QIcon Document::iconForLanguage( const QString& language ) const
 {
-    const QMimeType type = mimeTypeForLexer( lexer );
-    return QIcon::fromTheme( type.iconName() );
+    return mCodeEditorAbstractor ? mCodeEditorAbstractor->iconForLanguage( language ) : QIcon();
 }
 
 QIcon Document::iconForContent( const QString& content ) const
 {
-    const QMimeType type = Document::mMimeDb.mimeTypeForData( content.toUtf8() );
-    return QIcon::fromTheme( type.iconName() );
+    return mCodeEditorAbstractor ? mCodeEditorAbstractor->iconForContent( content ) : QIcon();
 }
+
+QMimeType Document::mimeTypeForLanguage( const QString& language ) const
+{
+    return mCodeEditorAbstractor ? mCodeEditorAbstractor->mimeTypeForLanguage( language ) : QMimeType();
+}
+
+QString Document::languageForMimeType( const QMimeType& type ) const
+{
+    return mCodeEditorAbstractor ? mCodeEditorAbstractor->languageForMimeType( type ) : QString();
+}
+

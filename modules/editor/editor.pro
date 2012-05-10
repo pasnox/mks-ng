@@ -32,13 +32,22 @@ HEADERS *=  \
     document/StackedDocument.h \
     document/StackedDocumentModel.h \
     document/StackedDocumentTreeView.h \
-    document/abstractions/SourceHighlightQt/SourceHighlightQtDocument.h
+    abstractors/Abstractors.h \
+    abstractors/BaseAbstractor.h \
+    abstractors/CodeEditorAbstractor.h \
+    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.h \
+    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.h \
+    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.h \
+    document/DocumentLanguageModel.h
 
-SOURCES *=  \
-    main.cpp \
+SOURCES *=  main.cpp \
     UIMain.cpp \
     document/Document.cpp \
     document/StackedDocument.cpp \
     document/StackedDocumentModel.cpp \
     document/StackedDocumentTreeView.cpp \
-    document/abstractions/SourceHighlightQt/SourceHighlightQtDocument.cpp
+    abstractors/Abstractors.cpp \
+    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.cpp \
+    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.cpp \
+    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.cpp \
+    document/DocumentLanguageModel.cpp

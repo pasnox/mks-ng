@@ -12,12 +12,15 @@
 #endif
 
 #include <QHash>
-#include <QMimeDatabase>
 #include <QStringList>
+#include <QPointer>
 
 class QEvent;
 class QMetaObject;
 class QTextCodec;
+class QMimeType;
+
+class CodeEditorAbstractor;
 
 class Document : public BaseWidget
 {
@@ -74,10 +77,8 @@ public:
         SelectedText = 14, // QString
         Text = 15, // QString
         Ruler = 16, // RulerHint
-        Lexer = 17, // QString
-        LexerTheme = 18, // QString
-        SupportedLexers = 19, // QStringList
-        SupportedThemes = 20, // QStringList
+        Language = 17, // QString
+        Style = 18, // QString
         NewFile = 21, // bool
         LastError = 22, // QString
         TextEncoding = 23, // QString
@@ -87,11 +88,15 @@ public:
         ReadOnly = 27, // bool
         InitialText = 28, // QString
         LineWrap = 29, // WrapHint
+        LineNumberMargin = 30, // bool
+        FoldMargin = 31, // bool
+        SymbolMargin = 32, // bool
+        ChangeMargin = 33, // bool
         //
         UserProperty = 1000 // first user usable extension
     };
     
-    Document( QWidget* parent = 0 );
+    Document( CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent = 0 );
     virtual ~Document();
     
     virtual QVariant property( int property ) const;
@@ -102,11 +107,6 @@ public:
     bool open( const QString& filePath, const QString& encoding = QString::null );
     bool save( const QString& filePath = QString::null, const QString& encoding = QString::null );
     void close();
-    
-    static void registerDocumentAbstraction( const QMetaObject* meta );
-    static void unregisterDocumentAbstraction( const QMetaObject* meta );
-    static QStringList documentAbstractionKeys();
-    static Document* createDocument( const QString& key, QWidget* parent = 0 );
 
 public slots:
     virtual void retranslateUi();
@@ -114,8 +114,7 @@ public slots:
     virtual void clearProperties() = 0;
     
 protected:
-    static QHash<QString, const QMetaObject*> mAbstractors;
-    static QMimeDatabase mMimeDb;
+    QPointer<CodeEditorAbstractor> mCodeEditorAbstractor;
     static int mDocumentCount;
     
     virtual void changeEvent( QEvent* event );
@@ -124,10 +123,10 @@ protected:
     QTextCodec* textCodec( const QString& encoding ) const;
     QIcon iconForState( Document::StateHints state ) const;
     QIcon iconForFileName( const QString& fileName ) const;
-    QIcon iconForLexer( const QString& lexer ) const;
+    QIcon iconForLanguage( const QString& language ) const;
     QIcon iconForContent( const QString& content ) const;
-    virtual QMimeType mimeTypeForLexer( const QString& lexer ) const = 0;
-    virtual QString lexerForMimeType( const QMimeType& type ) const = 0;
+    QMimeType mimeTypeForLanguage( const QString& language ) const;
+    QString languageForMimeType( const QMimeType& type ) const;
 
 signals:
     void propertyChanged( int property );

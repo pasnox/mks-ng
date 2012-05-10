@@ -21,6 +21,10 @@ protected:
     Ui_UIMain* ui;
     
     virtual void changeEvent( QEvent* event );
+
+protected slots:
+    void on_cbLanguages_activated( const QString& language );
+    void on_cbStyles_activated( const QString& style );
 };
 
 #endif // UIMAIN_H

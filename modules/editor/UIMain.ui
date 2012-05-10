@@ -16,6 +16,12 @@
   <widget class="QWidget" name="wCentral">
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
+     <widget class="QComboBox" name="cbLanguages"/>
+    </item>
+    <item>
+     <widget class="QComboBox" name="cbStyles"/>
+    </item>
+    <item>
      <widget class="StackedDocument" name="sdDocuments"/>
     </item>
    </layout>

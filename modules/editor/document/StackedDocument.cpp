@@ -1,13 +1,19 @@
 #include "StackedDocument.h"
 #include "StackedDocumentModel.h"
 #include "Document.h"
+#include "Abstractors.h"
+#include "CodeEditorAbstractor.h"
 
 #include <QEvent>
 #include <QDebug>
 
 StackedDocument::StackedDocument( QWidget* parent )
-    : QStackedWidget( parent ), mModel( new StackedDocumentModel( this ) )
+    : QStackedWidget( parent ),
+        mCodeEditorAbstractor( Abstractors::castedCreate<CodeEditorAbstractor*>( Abstractors::CodeEditor, this ) ),
+        mModel( new StackedDocumentModel( this ) )
 {
+    Q_ASSERT( mCodeEditorAbstractor );
+    
     connect( this, &QStackedWidget::currentChanged, this, &StackedDocument::_q_currentChanged );
     connect( this, &QStackedWidget::widgetRemoved, this, &StackedDocument::_q_widgetRemoved );
 }
@@ -16,14 +22,9 @@ StackedDocument::~StackedDocument()
 {
 }
 
-QString StackedDocument::documentAbstractionKey() const
+CodeEditorAbstractor* StackedDocument::codeEditorAbstractor() const
 {
-    return mDocumentAbstractionKey;
-}
-
-void StackedDocument::setDocumentAbstractionKey( const QString& key )
-{
-    mDocumentAbstractionKey = key;
+    return mCodeEditorAbstractor;
 }
 
 StackedDocumentModel* StackedDocument::model() const
@@ -33,7 +34,7 @@ StackedDocumentModel* StackedDocument::model() const
 
 Document* StackedDocument::createDocument() const
 {
-    return Document::createDocument( mDocumentAbstractionKey );
+    return mCodeEditorAbstractor ? mCodeEditorAbstractor->createDocument() : 0;
 }
 
 int	StackedDocument::addDocument( Document* document )

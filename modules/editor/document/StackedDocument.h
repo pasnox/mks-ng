@@ -2,10 +2,10 @@
 #define STACKEDDOCUMENT_H
 
 #include <QStackedWidget>
-#include <QPointer>
 
 class QEvent;
 
+class CodeEditorAbstractor;
 class StackedDocumentModel;
 class Document;
 
@@ -17,9 +17,7 @@ public:
     StackedDocument( QWidget* parent = 0 );
     virtual ~StackedDocument();
     
-    QString documentAbstractionKey() const;
-    void setDocumentAbstractionKey( const QString& key );
-    
+    CodeEditorAbstractor* codeEditorAbstractor() const;
     StackedDocumentModel* model() const;
     
     Document* createDocument() const;
@@ -35,8 +33,8 @@ public slots:
     void setCurrentDocument( Document* document );
     
 protected:
-    QString mDocumentAbstractionKey;
-    QPointer<StackedDocumentModel> mModel;
+    CodeEditorAbstractor* mCodeEditorAbstractor;
+    StackedDocumentModel* mModel;
     
     virtual void changeEvent( QEvent* event );
     void handleDocument( Document* document );
