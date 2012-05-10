@@ -20,17 +20,15 @@ QT *= widgets network xml
 
 INCLUDEPATH = \
     $$PWD/../3rdparty/src_highlite.git/lib \
-    $$PWD/../3rdparty/src_highlite.git/lib/srchilite \
     $$PWD/../3rdparty/src_highlite_qt.git/lib \
-    $$PWD/../3rdparty/src_highlite_qt.git/lib/srchiliteqt \
     $$getFolders( $$PWD/../3rdparty/fresh.git/src )
 
 DEPENDPATH = $${INCLUDEPATH}
 
 LIBS *= -L$${BUILD_TARGET_PATH}
 LIBS *= \
-    -lfresh \
-    -lsource-highlite-qt \
-    -lsource-highlite \
+    -l$$targetForMode( fresh ) \
+    -l$$targetForMode( source-highlite-qt ) \
+    -l$$targetForMode( source-highlite ) \
     -lboost_regex-mt
     

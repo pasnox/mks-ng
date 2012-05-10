@@ -8,7 +8,7 @@ exists( $${BUILD_RAMDISK} ):BUILD_PATH = $${BUILD_RAMDISK}/build
 else:BUILD_PATH = $$PWD/../build
 BUILD_PATH = $${BUILD_PATH}/$${BUILD_TARGET}
 BUILD_TARGET_PATH = $$PWD/../bin/$${Q_TARGET}
-BUILD_MODE = release
+BUILD_MODE = debug
 BUILD_TYPE = shared
 
 # Initialize a project
