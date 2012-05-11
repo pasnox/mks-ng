@@ -38,7 +38,7 @@ template <class T> T Abstractors::castedCreate( Abstractors::Type type, QObject*
     T casted = qobject_cast<T>( object );
     
     if ( !casted ) {
-        object->deleteLater();
+        delete object;
     }
     
     return casted;
