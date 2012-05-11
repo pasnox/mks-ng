@@ -16,12 +16,6 @@
   <widget class="QWidget" name="wCentral">
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>
-     <widget class="QComboBox" name="cbLanguages"/>
-    </item>
-    <item>
-     <widget class="QComboBox" name="cbStyles"/>
-    </item>
-    <item>
      <widget class="StackedDocument" name="sdDocuments"/>
     </item>
    </layout>
@@ -92,7 +86,7 @@
           <x>0</x>
           <y>0</y>
           <width>256</width>
-          <height>377</height>
+          <height>367</height>
          </rect>
         </property>
         <attribute name="label">
@@ -115,6 +109,17 @@
     </layout>
    </widget>
   </widget>
+  <widget class="StackedDocumentToolBar" name="sdtbDocument">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
  </widget>
  <customwidgets>
   <customwidget>
@@ -127,6 +132,11 @@
    <class>StackedDocumentTreeView</class>
    <extends>QTreeView</extends>
    <header>StackedDocumentTreeView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>StackedDocumentToolBar</class>
+   <extends>QToolBar</extends>
+   <header>StackedDocumentToolBar.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
