@@ -12,7 +12,7 @@ int main( int argc, char** argv )
     Abstractors::add( Abstractors::CodeEditor, &SourceHighlightQtCodeEditor::staticMetaObject );
     
     UIMain w;
-    w.show();
+    w.showMaximized();
     
     return app.exec();
 }
