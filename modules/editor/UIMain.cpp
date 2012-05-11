@@ -7,9 +7,6 @@
 #include <QEvent>
 #include <QDebug>
 
-#include "SourceHighlightQtDocument.h"
-#include "SourceHighlightQtDataWatcher.h"
-
 UIMain::UIMain( QWidget* parent )
     : QMainWindow( parent ), ui( new Ui_UIMain )
 {
