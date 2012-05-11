@@ -23,8 +23,11 @@ INCLUDEPATH *= $$getFolders( . )
 
 DEPENDPATH = $${INCLUDEPATH}
 
+RESOURCES *= resources/resources.qrc
+
 FORMS *=  \
-    UIMain.ui
+    UIMain.ui \
+    document/DocumentIndentationPopup.ui
 
 HEADERS *=  \
     UIMain.h \
@@ -32,22 +35,30 @@ HEADERS *=  \
     document/StackedDocument.h \
     document/StackedDocumentModel.h \
     document/StackedDocumentTreeView.h \
+    document/StackedDocumentToolBar.h \
+    document/DocumentEol.h \
+    document/DocumentIndentation.h \
+    document/DocumentIndentationPopup.h \
+    document/DocumentPosition.h \
     abstractors/Abstractors.h \
     abstractors/BaseAbstractor.h \
     abstractors/CodeEditorAbstractor.h \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.h \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.h \
-    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.h \
-    document/DocumentLanguageModel.h
+    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.h
 
-SOURCES *=  main.cpp \
+SOURCES *= main.cpp \
     UIMain.cpp \
     document/Document.cpp \
     document/StackedDocument.cpp \
     document/StackedDocumentModel.cpp \
     document/StackedDocumentTreeView.cpp \
+    document/StackedDocumentToolBar.cpp \
+    document/DocumentEol.cpp \
+    document/DocumentIndentation.cpp \
+    document/DocumentIndentationPopup.cpp \
+    document/DocumentPosition.cpp \
     abstractors/Abstractors.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.cpp \
-    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.cpp \
-    document/DocumentLanguageModel.cpp
+    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.cpp
