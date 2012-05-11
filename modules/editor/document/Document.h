@@ -40,7 +40,7 @@ public:
     enum EolHint {
         Unix = 0,
         Windows = 1,
-        Mac = 2
+        MacOS = 2
     };
     
     enum IndentHint {

@@ -213,7 +213,7 @@ bool Document::save( const QString& filePath, const QString& encoding )
         case Document::Windows:
             text.replace( "\n", "\r\n" );
             break;
-        case Document::Mac:
+        case Document::MacOS:
             text.replace( "\n", "\r" );
             break;
     }
