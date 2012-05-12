@@ -33,15 +33,16 @@ FORMS *=  \
 HEADERS *=  \
     UIMain.h \
     document/Document.h \
-    document/StackedDocument.h \
-    document/StackedDocumentModel.h \
-    document/StackedDocumentTreeView.h \
-    document/StackedDocumentToolBar.h \
+    document/DocumentLanguageModel.h \
     document/DocumentEol.h \
     document/DocumentIndentation.h \
     document/DocumentIndentationPopup.h \
     document/DocumentPosition.h \
     document/DocumentPositionPopup.h \
+    document/StackedDocument.h \
+    document/StackedDocumentModel.h \
+    document/StackedDocumentTreeView.h \
+    document/StackedDocumentToolBar.h \
     abstractors/Abstractors.h \
     abstractors/BaseAbstractor.h \
     abstractors/CodeEditorAbstractor.h \
@@ -52,15 +53,16 @@ HEADERS *=  \
 SOURCES *= main.cpp \
     UIMain.cpp \
     document/Document.cpp \
-    document/StackedDocument.cpp \
-    document/StackedDocumentModel.cpp \
-    document/StackedDocumentTreeView.cpp \
-    document/StackedDocumentToolBar.cpp \
+    document/DocumentLanguageModel.cpp \
     document/DocumentEol.cpp \
     document/DocumentIndentation.cpp \
     document/DocumentIndentationPopup.cpp \
     document/DocumentPosition.cpp \
     document/DocumentPositionPopup.cpp \
+    document/StackedDocument.cpp \
+    document/StackedDocumentModel.cpp \
+    document/StackedDocumentTreeView.cpp \
+    document/StackedDocumentToolBar.cpp \
     abstractors/Abstractors.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.cpp \
