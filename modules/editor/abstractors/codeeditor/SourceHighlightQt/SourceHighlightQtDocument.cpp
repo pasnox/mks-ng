@@ -76,6 +76,8 @@ QVariant SourceHighlightQtDocument::property( int property ) const
             return mEditor->toPlainText();
         case Document::ReadOnly:
             return mEditor->isReadOnly();
+        case Document::LineCount:
+            return mEditor->blockCount();
         case Document::State: {
             Document::StateHints state = Document::Unmodified;
             if ( document->isModified() ) {
@@ -116,15 +118,25 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
     QTextDocument* document = mEditor->document();
     
     switch ( property ) {
+        case Document::LineCount:
         case Document::CopyAvailable:
         case Document::CutAvailable:
         case Document::PasteAvailable:
         case Document::UndoAvailable:
         case Document::RedoAvailable:
             return;
-        case Document::CursorPosition:
-            // todo
+        case Document::CursorPosition: {
+            const QPoint pos = value.toPoint();
+            QTextBlock block = document->findBlockByLineNumber( pos.y() );
+            int position = block.position();
+            
+            if ( pos.x() < block.length() ) {
+                position += pos.x();
+            }
+            
+            cursor.setPosition( position, QTextCursor::MoveAnchor );
             break;
+        }
         case Document::SelectionStart:
             // todo
             break;
@@ -143,7 +155,6 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
             cursor.insertText( value.toString() );
             cursor.movePosition( QTextCursor::Start, QTextCursor::MoveAnchor );
             cursor.endEditBlock();
-            mEditor->setTextCursor( cursor );
             break;
         case Document::InitialText:
             mEditor->setPlainText( value.toString() );
@@ -211,6 +222,10 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
         }
     }
     
+    if ( cursor != mEditor->textCursor() && property != Document::InitialText ) {
+        mEditor->setTextCursor( cursor );
+    }
+    
     Document::setProperty( property, value );
     
     emit propertyChanged( property );
@@ -227,7 +242,7 @@ void SourceHighlightQtDocument::clearProperties()
 void SourceHighlightQtDocument::editor_blockCountChanged( int newBlockCount )
 {
     Q_UNUSED( newBlockCount );
-    emit propertyChanged( Document::State );
+    emit propertyChanged( Document::LineCount );
     emit propertiesChanged();
 }
 
