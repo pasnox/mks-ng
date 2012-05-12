@@ -62,6 +62,9 @@ void DocumentIndentation::changeEvent( QEvent* event )
 
 void DocumentIndentation::propertiesChanged()
 {
+    const QString fakeText = tr( "%1 Tabs (%2)" ).arg( 16 ).arg( 16 );
+    setMinimumWidth( QFontMetrics( font() ).width( fakeText ) +( 9 *2 ) );
+    
     switch ( mMode ) {
         case Document::Spaces:
             setText( tr( "%1 Spaces" ).arg( mIndentWidth ) );
