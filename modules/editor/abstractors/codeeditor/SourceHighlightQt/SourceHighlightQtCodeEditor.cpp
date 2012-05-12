@@ -25,11 +25,6 @@ QStringList SourceHighlightQtCodeEditor::supportedStyles() const
     return mDataWatcher->files( SourceHighlightQtDataWatcher::Styles );
 }
 
-QString SourceHighlightQtCodeEditor::languageForFileName( const QString& fileName ) const
-{
-    return QString::null;
-}
-
 Document* SourceHighlightQtCodeEditor::createDocument( QWidget* parent ) const
 {
     return new SourceHighlightQtDocument( this, parent );
@@ -79,7 +74,26 @@ QMimeType SourceHighlightQtCodeEditor::mimeTypeForLanguage( const QString& langu
 
 QString SourceHighlightQtCodeEditor::languageForMimeType( const QMimeType& type ) const
 {
-    return QString::null;
+    const QStringList languages = supportedLanguages();
+    
+    foreach ( const QString& language, languages ) {
+        const QString name = language.section( '.', 0, 0 );
+        
+        if ( type.suffixes().contains( name ) ) {
+            return language;
+        }
+        
+        if ( type.name().contains( "hdr" ) ) {
+            const QString srcName = type.name().replace( "hdr", "src" );
+            const QMimeType srcType = Abstractors::mimeDatabase().mimeTypeForName( srcName );
+            
+            if ( srcType.suffixes().contains( name ) ) {
+                return language;
+            }
+        }
+    }
+    
+    return "default.lang";
 }
 
 void SourceHighlightQtCodeEditor::dataWatcher_filesChanged( SourceHighlightQtDataWatcher::Type type )

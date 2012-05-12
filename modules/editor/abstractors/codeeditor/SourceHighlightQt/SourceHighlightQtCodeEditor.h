@@ -14,7 +14,6 @@ public:
     
     virtual QStringList supportedLanguages() const;
     virtual QStringList supportedStyles() const;
-    virtual QString languageForFileName( const QString& fileName ) const;
     virtual Document* createDocument( QWidget* parent = 0 ) const;
 
 protected:
