@@ -31,6 +31,7 @@ FORMS *=  \
     document/DocumentPositionPopup.ui
 
 HEADERS *=  \
+    Menu.h \
     UIMain.h \
     document/Document.h \
     document/DocumentLanguageModel.h \
