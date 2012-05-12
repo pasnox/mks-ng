@@ -134,15 +134,29 @@ void StackedDocument::_q_documentInserted( int index, Document* document )
 void StackedDocument::_q_documentPropertyChanged( int property )
 {
     Document* document = qobject_cast<Document*>( sender() );
-    emit documentIndexPropertyChanged( property, indexOf( document ) );
-    emit documentPropertyChanged( property, document );
+    const int index = indexOf( document );
+    
+    emit documentIndexPropertyChanged( index, property );
+    emit documentPropertyChanged( document, property );
+    
+    if ( currentDocument() == document ) {
+        emit currentDocumentIndexPropertyChanged( index, property );
+        emit currentDocumentPropertyChanged( document, property );
+    }
 }
 
 void StackedDocument::_q_documentPropertiesChanged()
 {
     Document* document = qobject_cast<Document*>( sender() );
-    emit documentIndexPropertiesChanged( indexOf( document ) );
+    const int index = indexOf( document );
+    
+    emit documentIndexPropertiesChanged( index );
     emit documentPropertiesChanged( document );
+    
+    if ( currentDocument() == document ) {
+        emit currentDocumentIndexPropertiesChanged( index );
+        emit currentDocumentPropertiesChanged( document );
+    }
 }
 
 void StackedDocument::_q_currentChanged( int index )

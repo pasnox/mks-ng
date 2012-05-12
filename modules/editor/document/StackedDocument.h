@@ -50,12 +50,16 @@ protected slots:
 signals:
     void documentIndexInserted( int index );
     void documentInserted( Document* document  );
-    void documentIndexPropertyChanged( int property, int index );
-    void documentPropertyChanged( int property, Document* document );
+    void documentIndexPropertyChanged( int index, int property );
+    void documentPropertyChanged( Document* document, int property );
     void documentIndexPropertiesChanged( int index );
     void documentPropertiesChanged( Document* document );
     void currentDocumentIndexChanged( int index );
     void currentDocumentChanged( Document* document );
+    void currentDocumentIndexPropertyChanged( int index, int property );
+    void currentDocumentPropertyChanged( Document* document, int property );
+    void currentDocumentIndexPropertiesChanged( int index );
+    void currentDocumentPropertiesChanged( Document* document );
     void documentIndexAboutToBeRemoved( int index );
     void documentAboutToBeRemoved( Document* document );
     void documentIndexRemoved( int index );
