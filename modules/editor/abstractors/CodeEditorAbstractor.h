@@ -58,9 +58,13 @@ public:
         return iconFromTheme( mimeTypeIconName( type ) );
     }
     
+    virtual QString languageForFileName( const QString& fileName ) const {
+        const QMimeType type = Abstractors::mimeDatabase().mimeTypesForFileName( fileName ).value( 0 );
+        return languageForMimeType( type );
+    }
+    
     virtual QStringList supportedLanguages() const = 0;
     virtual QStringList supportedStyles() const = 0;
-    virtual QString languageForFileName( const QString& fileName ) const = 0;
     virtual Document* createDocument( QWidget* parent = 0 ) const = 0;
 
 protected:
