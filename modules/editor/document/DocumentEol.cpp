@@ -21,9 +21,10 @@ DocumentEol::DocumentEol( QWidget* parent )
     
     setPopupMode( QToolButton::InstantPopup );
     setIconSize( QSize( 16, 16 ) );
-    //setMaximumSize( QSize( 21, 21 ) );
     setToolTip( tr( "Line endings. Click to convert." ) );
     setMenu( menu );
+    
+    setMode( Document::Unix );
     
     connect( mGroup, &QActionGroup::triggered, this, &DocumentEol::group_triggered );
 }

@@ -6,9 +6,13 @@
 #include <QDesktopWidget>
 
 DocumentIndentation::DocumentIndentation( QWidget* parent )
-    : QToolButton( parent )
+    : QToolButton( parent ),
+        mMode( Document::Spaces ),
+        mIndentWidth( 4 ),
+        mTabWidth( 4 )
 {
     setToolTip( tr( "Indentation properties. Click to change." ) );
+    setMode( Document::Spaces );
     
     connect( this, &QToolButton::clicked, this, &DocumentIndentation::showPopup );
 }

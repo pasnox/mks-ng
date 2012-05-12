@@ -6,9 +6,12 @@
 #include <QDesktopWidget>
 
 DocumentPosition::DocumentPosition( QWidget* parent )
-    : QToolButton( parent )
+    : QToolButton( parent ),
+        mPos( QPoint( -1, -1 ) ),
+        mLineCount( -1 )
 {
     setToolTip( tr( "Cursor position. Click to change." ) );
+    setPosition( QPoint(), 1 );
     
     connect( this, &QToolButton::clicked, this, &DocumentPosition::showPopup );
 }
