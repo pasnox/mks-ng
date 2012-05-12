@@ -79,6 +79,7 @@ public:
         Ruler = 16, // RulerHint
         Language = 17, // QString
         Style = 18, // QString
+        LineCount = 19, // int
         NewFile = 21, // bool
         LastError = 22, // QString
         TextEncoding = 23, // QString
