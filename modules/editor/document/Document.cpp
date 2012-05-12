@@ -157,6 +157,10 @@ bool Document::open( const QString& filePath, const QString& encoding )
     
     QTextCodec* codec = textCodec( encoding );
     
+    if ( mCodeEditorAbstractor ) {
+        setProperty( Document::Language, mCodeEditorAbstractor->languageForFileName( filePath ) );
+    }
+    
     setProperty( Document::NewFile, false );
     setProperty( Document::FilePath, QDir::cleanPath( filePath ) );
     setProperty( Document::TextEncoding, codec->name() );
