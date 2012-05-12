@@ -81,12 +81,12 @@ void SourceHighlightQtCodeEditor::dataWatcher_filesChanged( SourceHighlightQtDat
 {
     switch ( type ) {
         case SourceHighlightQtDataWatcher::Languages:
-            emit supportedLanguagesChanged();
+            emit supportedLanguagesChanged( supportedLanguages() );
             break;
         case SourceHighlightQtDataWatcher::OutputLanguages:
             break;
         case SourceHighlightQtDataWatcher::Styles:
-            emit supportedStylesChanged();
+            emit supportedStylesChanged( supportedStyles() );
             break;
     }
 }

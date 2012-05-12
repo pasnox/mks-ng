@@ -39,6 +39,8 @@ protected:
     virtual void changeEvent( QEvent* event );
 
 protected slots:
+    void codeEditorAbstractor_supportedLanguagesChanged( const QStringList& languages );
+    void codeEditorAbstractor_supportedStylesChanged( const QStringList& styles );
     void stacker_currentDocumentChanged( Document* document );
     void stacker_currentDocumentPropertyChanged( Document* document, int property );
     void cbLanguages_activated( const QString& language );

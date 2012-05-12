@@ -68,7 +68,7 @@ void DocumentPosition::changeEvent( QEvent* event )
 
 void DocumentPosition::propertiesChanged()
 {
-    const QString fakeText = tr( "Line: %1 Column: %2" ).arg( 65536 ).arg( 32768 );
+    const QString fakeText = tr( "Line: %1 Column: %2" ).arg( 65536 ).arg( 65536 /4 );
     setMinimumWidth( QFontMetrics( font() ).width( fakeText ) +( 9 *2 ) );
     
     setText( tr( "Line: %1 Column: %2" ).arg( mPos.y() +1 ).arg( mPos.x() +1 ) );

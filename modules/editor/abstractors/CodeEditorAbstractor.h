@@ -93,8 +93,8 @@ protected:
     virtual QString languageForMimeType( const QMimeType& type ) const = 0;
 
 signals:
-    void supportedLanguagesChanged();
-    void supportedStylesChanged();
+    void supportedLanguagesChanged( const QStringList& languages );
+    void supportedStylesChanged( const QStringList& styles );
 };
 
 #endif // CODEEDITORABSTRACTOR_H

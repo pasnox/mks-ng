@@ -98,6 +98,21 @@ void StackedDocumentToolBar::changeEvent( QEvent* event )
     }
 }
 
+void StackedDocumentToolBar::codeEditorAbstractor_supportedLanguagesChanged( const QStringList& languages )
+{
+    const QString currentLanguage = cbLanguages->currentText();
+    dlmLanguages->setStringList( languages );
+    cbLanguages->setCurrentIndex( cbLanguages->findText( currentLanguage ) );
+}
+
+void StackedDocumentToolBar::codeEditorAbstractor_supportedStylesChanged( const QStringList& styles )
+{
+    const QString currentStyle = cbStyles->currentText();
+    cbStyles->clear();
+    cbStyles->addItems( styles );
+    cbStyles->setCurrentIndex( cbStyles->findText( currentStyle ) );
+}
+
 void StackedDocumentToolBar::stacker_currentDocumentChanged( Document* document )
 {
     if ( document ) {
