@@ -10,7 +10,7 @@
 #include <QApplication>
 #include <QDebug>
 
-SourceHighlightQtDocument::SourceHighlightQtDocument( CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent )
+SourceHighlightQtDocument::SourceHighlightQtDocument( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent )
     : Document( codeEditorAbstractor, parent ),
         mEditor( new QPlainTextEdit( this ) ),
         mHighlighter( new srchiliteqt::Qt4SyntaxHighlighter( mEditor->document() ) )

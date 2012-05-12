@@ -12,9 +12,10 @@ public:
     Q_INVOKABLE SourceHighlightQtCodeEditor( QObject* parent = 0 );
     virtual ~SourceHighlightQtCodeEditor();
     
-    virtual QStringList supportedLanguages();
-    virtual QStringList supportedStyles();
-    virtual Document* createDocument( QWidget* parent = 0 );
+    virtual QStringList supportedLanguages() const;
+    virtual QStringList supportedStyles() const;
+    virtual QString languageForFileName( const QString& fileName ) const;
+    virtual Document* createDocument( QWidget* parent = 0 ) const;
 
 protected:
     SourceHighlightQtDataWatcher* mDataWatcher;

@@ -15,17 +15,22 @@ SourceHighlightQtCodeEditor::~SourceHighlightQtCodeEditor()
 {
 }
 
-QStringList SourceHighlightQtCodeEditor::supportedLanguages()
+QStringList SourceHighlightQtCodeEditor::supportedLanguages() const
 {
     return mDataWatcher->files( SourceHighlightQtDataWatcher::Languages );
 }
 
-QStringList SourceHighlightQtCodeEditor::supportedStyles()
+QStringList SourceHighlightQtCodeEditor::supportedStyles() const
 {
     return mDataWatcher->files( SourceHighlightQtDataWatcher::Styles );
 }
 
-Document* SourceHighlightQtCodeEditor::createDocument( QWidget* parent )
+QString SourceHighlightQtCodeEditor::languageForFileName( const QString& fileName ) const
+{
+    return QString::null;
+}
+
+Document* SourceHighlightQtCodeEditor::createDocument( QWidget* parent ) const
 {
     return new SourceHighlightQtDocument( this, parent );
 }

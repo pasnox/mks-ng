@@ -15,7 +15,7 @@
 
 int Document::mDocumentCount = 0;
 
-Document::Document( CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent )
+Document::Document( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent )
     : BaseWidget( parent ),
         mCodeEditorAbstractor( codeEditorAbstractor )
 {

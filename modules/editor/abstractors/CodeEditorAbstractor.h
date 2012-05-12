@@ -58,9 +58,10 @@ public:
         return iconFromTheme( mimeTypeIconName( type ) );
     }
     
-    virtual QStringList supportedLanguages() = 0;
-    virtual QStringList supportedStyles() = 0;
-    virtual Document* createDocument( QWidget* parent = 0 ) = 0;
+    virtual QStringList supportedLanguages() const = 0;
+    virtual QStringList supportedStyles() const = 0;
+    virtual QString languageForFileName( const QString& fileName ) const = 0;
+    virtual Document* createDocument( QWidget* parent = 0 ) const = 0;
 
 protected:
     QString defaultMimeTypeIconName() const {

@@ -17,7 +17,7 @@ class SourceHighlightQtDocument : public Document
     Q_OBJECT
     
 public:
-    SourceHighlightQtDocument( CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent = 0 );
+    SourceHighlightQtDocument( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent = 0 );
     virtual ~SourceHighlightQtDocument();
     
     virtual QVariant property( int property ) const;

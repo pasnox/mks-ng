@@ -13,7 +13,6 @@
 
 #include <QHash>
 #include <QStringList>
-#include <QPointer>
 
 class QEvent;
 class QMetaObject;
@@ -97,7 +96,7 @@ public:
         UserProperty = 1000 // first user usable extension
     };
     
-    Document( CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent = 0 );
+    Document( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent = 0 );
     virtual ~Document();
     
     virtual QVariant property( int property ) const;
@@ -115,7 +114,7 @@ public slots:
     virtual void clearProperties() = 0;
     
 protected:
-    QPointer<CodeEditorAbstractor> mCodeEditorAbstractor;
+    const CodeEditorAbstractor* mCodeEditorAbstractor;
     static int mDocumentCount;
     
     virtual void changeEvent( QEvent* event );
