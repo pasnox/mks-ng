@@ -126,8 +126,6 @@ protected:
     QIcon iconForFileName( const QString& fileName ) const;
     QIcon iconForLanguage( const QString& language ) const;
     QIcon iconForContent( const QString& content ) const;
-    QMimeType mimeTypeForLanguage( const QString& language ) const;
-    QString languageForMimeType( const QMimeType& type ) const;
 
 signals:
     void propertyChanged( int property );

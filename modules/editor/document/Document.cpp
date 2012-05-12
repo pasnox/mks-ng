@@ -282,14 +282,3 @@ QIcon Document::iconForContent( const QString& content ) const
 {
     return mCodeEditorAbstractor ? mCodeEditorAbstractor->iconForContent( content ) : QIcon();
 }
-
-QMimeType Document::mimeTypeForLanguage( const QString& language ) const
-{
-    return mCodeEditorAbstractor ? mCodeEditorAbstractor->mimeTypeForLanguage( language ) : QMimeType();
-}
-
-QString Document::languageForMimeType( const QMimeType& type ) const
-{
-    return mCodeEditorAbstractor ? mCodeEditorAbstractor->languageForMimeType( type ) : QString();
-}
-
