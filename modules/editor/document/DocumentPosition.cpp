@@ -9,7 +9,6 @@ DocumentPosition::DocumentPosition( QWidget* parent )
     : QToolButton( parent )
 {
     setToolTip( tr( "Cursor position. Click to change." ) );
-    setMaximumHeight( 21 );
     
     connect( this, &QToolButton::clicked, this, &DocumentPosition::showPopup );
 }

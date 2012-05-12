@@ -9,7 +9,6 @@ DocumentIndentation::DocumentIndentation( QWidget* parent )
     : QToolButton( parent )
 {
     setToolTip( tr( "Indentation properties. Click to change." ) );
-    setMaximumHeight( 21 );
     
     connect( this, &QToolButton::clicked, this, &DocumentIndentation::showPopup );
 }

@@ -4,6 +4,7 @@
 #include "DocumentEol.h"
 #include "DocumentIndentation.h"
 #include "DocumentPosition.h"
+#include "DocumentLanguageModel.h"
 
 #include <QEvent>
 #include <QComboBox>
@@ -12,6 +13,7 @@
 StackedDocumentToolBar::StackedDocumentToolBar( QWidget* parent )
     : QToolBar( parent ),
         mStacker( 0 ),
+        dlmLanguages( new DocumentLanguageModel( this ) ),
         cbLanguages( 0 ),
         cbStyles( 0 ),
         deMode( 0 ),
@@ -45,9 +47,17 @@ void StackedDocumentToolBar::setStackedDocument( StackedDocument* stacker )
         diMode = new DocumentIndentation( this );
         dpCursor = new DocumentPosition( this );
         
+        dlmLanguages->setCodeEditorAbstractor( cea );
+        dlmLanguages->setStringList( cea->supportedLanguages() );
+        
         spacer->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
-        cbLanguages->addItems( cea->supportedLanguages() );
+        cbLanguages->setMaximumHeight( 21 );
+        cbLanguages->setModel( dlmLanguages );
+        cbStyles->setMaximumHeight( 21 );
         cbStyles->addItems( cea->supportedStyles() );
+        deMode->setMaximumHeight( 21 );
+        diMode->setMaximumHeight( 21 );
+        dpCursor->setMaximumHeight( 21 );
         
         addWidget( spacer );
         addWidget( cbLanguages );
