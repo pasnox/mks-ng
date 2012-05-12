@@ -20,6 +20,7 @@ StackedDocumentToolBar::StackedDocumentToolBar( QWidget* parent )
         diMode( 0 ),
         dpCursor( 0 )
 {
+    setMovable( false );
 }
 
 StackedDocumentToolBar::~StackedDocumentToolBar()
@@ -131,7 +132,11 @@ void StackedDocumentToolBar::stacker_currentDocumentChanged( Document* document 
         dpCursor->setPosition( QPoint(), 1 );
     }
     
-    setEnabled( document );
+    cbLanguages->setEnabled( document );
+    cbStyles->setEnabled( document );
+    deMode->setEnabled( document );
+    diMode->setEnabled( document );
+    dpCursor->setEnabled( document );
 }
 
 void StackedDocumentToolBar::stacker_currentDocumentPropertyChanged( Document* document, int property )
