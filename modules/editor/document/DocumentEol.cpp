@@ -34,7 +34,8 @@ DocumentEol::~DocumentEol()
 
 void DocumentEol::setMode( Document::EolHint mode )
 {
-    mActions[ mode ]->trigger();
+    mActions[ mode ]->setChecked( true );
+    propertiesChanged();
 }
 
 Document::EolHint DocumentEol::mode() const
@@ -56,8 +57,13 @@ void DocumentEol::changeEvent( QEvent* event )
     }
 }
 
+void DocumentEol::propertiesChanged()
+{
+    setIcon( mGroup->checkedAction()->icon() );
+}
+
 void DocumentEol::group_triggered( QAction* action )
 {
-    setIcon( action->icon() );
+    setMode( mActions.key( action ) );
     emit modeChanged( mode() );
 }

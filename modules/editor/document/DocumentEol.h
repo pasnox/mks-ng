@@ -27,6 +27,7 @@ protected:
     QHash<Document::EolHint, QAction*> mActions;
     
     virtual void changeEvent( QEvent* event );
+    void propertiesChanged();
 
 protected slots:
     void group_triggered( QAction* action );
