@@ -27,7 +27,8 @@ RESOURCES *= resources/resources.qrc
 
 FORMS *=  \
     UIMain.ui \
-    document/DocumentIndentationPopup.ui
+    document/DocumentIndentationPopup.ui \
+    document/DocumentPositionPopup.ui
 
 HEADERS *=  \
     UIMain.h \
@@ -40,6 +41,7 @@ HEADERS *=  \
     document/DocumentIndentation.h \
     document/DocumentIndentationPopup.h \
     document/DocumentPosition.h \
+    document/DocumentPositionPopup.h \
     abstractors/Abstractors.h \
     abstractors/BaseAbstractor.h \
     abstractors/CodeEditorAbstractor.h \
@@ -58,6 +60,7 @@ SOURCES *= main.cpp \
     document/DocumentIndentation.cpp \
     document/DocumentIndentationPopup.cpp \
     document/DocumentPosition.cpp \
+    document/DocumentPositionPopup.cpp \
     abstractors/Abstractors.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.cpp \
