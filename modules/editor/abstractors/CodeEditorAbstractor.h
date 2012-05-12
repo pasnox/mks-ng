@@ -7,6 +7,7 @@
 
 #include <QIcon>
 #include <QMimeDatabase>
+#include <QDebug>
 
 class QStringList;
 
@@ -18,16 +19,16 @@ public:
     CodeEditorAbstractor( QObject* parent = 0 )
         : BaseAbstractor( parent ) {
     }
-    
+
     QIcon iconForState( Document::StateHints state ) const {
         if ( state & Document::ExternallyDeleted ) {
-            return QIcon::fromTheme( "archive-remove" );
+            return iconFromTheme( "archive-remove" );
         }
         else if ( state & Document::ExternallyModified ) {
-            return QIcon::fromTheme( "document-properties" );
+            return iconFromTheme( "document-properties" );
         }
         else if ( state & Document::Modified ) {
-            return QIcon::fromTheme( "document-save" );
+            return iconFromTheme( "document-save" );
         }
         
         return QIcon();
@@ -37,29 +38,57 @@ public:
         const QList<QMimeType> types = Abstractors::mimeDatabase().mimeTypesForFileName( fileName );
         
         foreach ( const QMimeType& type, types ) {
-            const QIcon icon = QIcon::fromTheme( type.iconName() );
+            const QIcon icon = iconFromTheme( mimeTypeIconName( type ) );
             
             if ( !icon.isNull() ) {
                 return icon;
             }
         }
         
-        return QIcon();
+        return iconFromTheme( defaultMimeTypeIconName() );
     }
 
     QIcon iconForLanguage( const QString& language ) const {
         const QMimeType type = mimeTypeForLanguage( language );
-        return QIcon::fromTheme( type.iconName() );
+        return iconFromTheme( mimeTypeIconName( type ) );
     }
 
     QIcon iconForContent( const QString& content ) const {
-        const QMimeType type = Abstractors::mimeDatabase().mimeTypeForData( content.toUtf8() );
-        return QIcon::fromTheme( type.iconName() );
+        const QMimeType type = Abstractors::mimeDatabase().mimeTypeForData( content.toLocal8Bit() );
+        return iconFromTheme( mimeTypeIconName( type ) );
     }
     
     virtual QStringList supportedLanguages() = 0;
     virtual QStringList supportedStyles() = 0;
     virtual Document* createDocument( QWidget* parent = 0 ) = 0;
+
+protected:
+    QString defaultMimeTypeIconName() const {
+        return "text-x-generic";
+    }
+    
+    QString mimeTypeIconName( const QMimeType& type ) const {
+        QString name;
+        
+        if ( type.isValid() ) {
+            name = type.iconName();
+            
+            if ( name.isEmpty() ) {
+                name = type.genericIconName();
+            }
+        }
+        
+        if ( name.isEmpty() ) {
+            name = defaultMimeTypeIconName();
+        }
+        
+        return name;
+    }
+    
+    QIcon iconFromTheme( const QString& name ) const {
+        return QIcon::hasThemeIcon( name ) ? QIcon::fromTheme( name ) : QIcon::fromTheme( defaultMimeTypeIconName() );
+    }
+    
     virtual QMimeType mimeTypeForLanguage( const QString& language ) const = 0;
     virtual QString languageForMimeType( const QMimeType& type ) const = 0;
 
