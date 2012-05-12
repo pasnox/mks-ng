@@ -21,7 +21,8 @@ QT *= widgets network xml
 INCLUDEPATH = \
     $$PWD/../3rdparty/src_highlite.git/lib \
     $$PWD/../3rdparty/src_highlite_qt.git/lib \
-    $$getFolders( $$PWD/../3rdparty/fresh.git/src )
+    $$getFolders( $$PWD/../3rdparty/fresh.git/src ) \
+    $$PWD/../3rdparty/fresh.git/include
 
 DEPENDPATH = $${INCLUDEPATH}
 
