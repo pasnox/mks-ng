@@ -15,13 +15,14 @@ public:
     virtual QStringList supportedLanguages();
     virtual QStringList supportedStyles();
     virtual Document* createDocument( QWidget* parent = 0 );
-    virtual QMimeType mimeTypeForLanguage( const QString& language ) const;
-    virtual QString languageForMimeType( const QMimeType& type ) const;
 
 protected:
     SourceHighlightQtDataWatcher* mDataWatcher;
+    
+    virtual QMimeType mimeTypeForLanguage( const QString& language ) const;
+    virtual QString languageForMimeType( const QMimeType& type ) const;
 
-protected:
+protected slots:
     void dataWatcher_filesChanged( SourceHighlightQtDataWatcher::Type type );
 };
 
