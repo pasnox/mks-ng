@@ -184,8 +184,12 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
         case Document::ChangeMargin:
             break;
         case Document::Language: {
+            if ( mHighlighter && mHighlighter->getLangFile() == value.toString() ) {
+                return;
+            }
+            
             const QString style = this->property( Document::Style ).toString();
-            delete mHighlighter;
+            mHighlighter->deleteLater();
             mHighlighter = new srchiliteqt::Qt4SyntaxHighlighter( mEditor->document() );
             mHighlighter->init( value.toString(), style );
             break;
@@ -199,9 +203,10 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
         
         case Document::TabWidth:
             mEditor->setTabStopWidth( value.toInt() *QFontMetrics( mEditor->font() ).averageCharWidth() );
+        case Document::Eol:
+            //document->setModified( true );
         case Document::Indent:
         case Document::IndentWidth:
-        case Document::Eol:
         case Document::Ruler:
         
         case Document::Decoration:
