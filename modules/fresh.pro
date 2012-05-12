@@ -26,6 +26,8 @@ INCLUDEPATH = $$getFolders( ../3rdparty/fresh.git/src )
 
 DEPENDPATH = $${INCLUDEPATH}
 
+RESOURCES *= ../3rdparty/fresh.git/resources/fresh.qrc
+
 FORMS *=  \
     ../3rdparty/fresh.git/src/gui/pTranslationDialog.ui \
     ../3rdparty/fresh.git/src/gui/gc-updatechecker/pUpdateCheckerDialog.ui \
