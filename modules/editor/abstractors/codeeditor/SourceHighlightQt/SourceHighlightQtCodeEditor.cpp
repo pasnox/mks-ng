@@ -3,6 +3,7 @@
 
 #include <QStringList>
 #include <QMimeType>
+#include <QDebug>
 
 SourceHighlightQtCodeEditor::SourceHighlightQtCodeEditor( QObject* parent )
     : CodeEditorAbstractor( parent ), mDataWatcher( new SourceHighlightQtDataWatcher( this ) )
@@ -31,7 +32,44 @@ Document* SourceHighlightQtCodeEditor::createDocument( QWidget* parent )
 
 QMimeType SourceHighlightQtCodeEditor::mimeTypeForLanguage( const QString& language ) const
 {
-    return QMimeType();
+    const QString name = language.section( '.', 0, 0 );
+    static const QStringList masks = QStringList()
+        << "text/x-%1"
+        << "text/x-%1hdr"
+        << "text/x-%1src"
+        << "application/x-%1"
+        << "text/%1"
+        << "text/%1hdr"
+        << "text/%1src"
+        << "application/%1"
+    ;
+    const QMimeDatabase& mdb = Abstractors::mimeDatabase();
+    const QList<QMimeType> types = mdb.mimeTypesForFileName( QString( "fake.%1" ).arg( name ) );
+    QMimeType bestType;
+    
+    foreach ( const QMimeType& type, types ) {
+        if ( QIcon::hasThemeIcon( type.iconName() ) ) {
+            return type;
+        }
+        
+        if ( QIcon::hasThemeIcon( type.genericIconName() ) ) {
+            bestType = type;
+        }
+    }
+    
+    foreach ( QString mask, masks ) {
+        const QMimeType type = mdb.mimeTypeForName( mask.arg( name ) );
+        
+        if ( QIcon::hasThemeIcon( type.iconName() ) ) {
+            return type;
+        }
+        
+        if ( QIcon::hasThemeIcon( type.genericIconName() ) ) {
+            bestType = type;
+        }
+    }
+    
+    return bestType;
 }
 
 QString SourceHighlightQtCodeEditor::languageForMimeType( const QMimeType& type ) const
