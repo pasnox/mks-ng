@@ -3,6 +3,7 @@
 #include "CodeEditorAbstractor.h"
 #include "DocumentEol.h"
 #include "DocumentIndentation.h"
+#include "DocumentPosition.h"
 
 #include <QEvent>
 #include <QComboBox>
@@ -14,7 +15,8 @@ StackedDocumentToolBar::StackedDocumentToolBar( QWidget* parent )
         cbLanguages( 0 ),
         cbStyles( 0 ),
         deMode( 0 ),
-        diMode( 0 )
+        diMode( 0 ),
+        dpCursor( 0 )
 {
 }
 
@@ -29,6 +31,7 @@ void StackedDocumentToolBar::setStackedDocument( StackedDocument* stacker )
         cbLanguages = 0;
         cbStyles = 0;
         deMode = 0;
+        dpCursor = 0;
     }
     
     mStacker = stacker;
@@ -40,6 +43,7 @@ void StackedDocumentToolBar::setStackedDocument( StackedDocument* stacker )
         cbStyles = new QComboBox( this );
         deMode = new DocumentEol( this );
         diMode = new DocumentIndentation( this );
+        dpCursor = new DocumentPosition( this );
         
         spacer->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
         cbLanguages->addItems( cea->supportedLanguages() );
@@ -50,18 +54,21 @@ void StackedDocumentToolBar::setStackedDocument( StackedDocument* stacker )
         addWidget( cbStyles );
         addWidget( deMode );
         addWidget( diMode );
+        addWidget( dpCursor );
         
         // connections
         typedef void (QComboBox::*QComboBoxActivatedQString)(const QString&);
         QComboBoxActivatedQString ptr = &QComboBox::activated;
         
         connect( mStacker, &StackedDocument::currentDocumentChanged, this, &StackedDocumentToolBar::stacker_currentDocumentChanged );
+        connect( mStacker, &StackedDocument::currentDocumentPropertyChanged, this, &StackedDocumentToolBar::stacker_currentDocumentPropertyChanged );
         connect( cbLanguages, ptr, this, &StackedDocumentToolBar::cbLanguages_activated );
         connect( cbStyles, ptr, this, &StackedDocumentToolBar::cbStyles_activated );
         connect( deMode, &DocumentEol::modeChanged, this, &StackedDocumentToolBar::deMode_modeChanged );
         connect( diMode, &DocumentIndentation::modeChanged, this, &StackedDocumentToolBar::diMode_modeChanged );
         connect( diMode, &DocumentIndentation::indentWidthChanged, this, &StackedDocumentToolBar::diMode_indentWidthChanged );
         connect( diMode, &DocumentIndentation::tabWidthChanged, this, &StackedDocumentToolBar::diMode_tabWidthChanged );
+        connect( dpCursor, &DocumentPosition::positionChanged, this, &StackedDocumentToolBar::dpCursor_positionChanged );
     }
     
     stacker_currentDocumentChanged( mStacker ? mStacker->currentDocument() : 0 );
@@ -83,23 +90,67 @@ void StackedDocumentToolBar::changeEvent( QEvent* event )
 
 void StackedDocumentToolBar::stacker_currentDocumentChanged( Document* document )
 {
-    if ( mStacker && document ) {
-        const QString language = document->property( Document::Language ).toString();
-        const QString style = document->property( Document::Style ).toString();
-        
-        cbLanguages->setCurrentIndex( cbLanguages->findText( language ) );
-        cbStyles->setCurrentIndex( cbStyles->findText( style ) );
-        deMode->setMode( Document::EolHint( document->property( Document::Eol ).toInt() ) );
-        diMode->setMode( Document::IndentHint( document->property( Document::Indent ).toInt() ) );
-        diMode->setIndentWidth( document->property( Document::IndentWidth ).toInt() );
-        diMode->setTabWidth( document->property( Document::TabWidth ).toInt() );
+    if ( document ) {
+        stacker_currentDocumentPropertyChanged( document, Document::Language );
+        stacker_currentDocumentPropertyChanged( document, Document::Style );
+        stacker_currentDocumentPropertyChanged( document, Document::Eol );
+        stacker_currentDocumentPropertyChanged( document, Document::Indent );
+        stacker_currentDocumentPropertyChanged( document, Document::IndentWidth );
+        stacker_currentDocumentPropertyChanged( document, Document::TabWidth );
+        stacker_currentDocumentPropertyChanged( document, Document::CursorPosition );
+        stacker_currentDocumentPropertyChanged( document, Document::LineCount );
     }
     else {
         cbLanguages->setCurrentIndex( -1 );
         cbStyles->setCurrentIndex( -1 );
+        dpCursor->setPosition( QPoint(), 1 );
     }
     
-    setEnabled( mStacker && mStacker->count() > 0 );
+    setEnabled( document );
+}
+
+void StackedDocumentToolBar::stacker_currentDocumentPropertyChanged( Document* document, int property )
+{
+    if ( document ) {
+        switch ( property ) {
+            case Document::Language: {
+                const QString language = document->property( Document::Language ).toString();
+                cbLanguages->setCurrentIndex( cbLanguages->findText( language ) );
+                break;
+            }
+            case Document::Style: {
+                const QString style = document->property( Document::Style ).toString();
+                cbStyles->setCurrentIndex( cbStyles->findText( style ) );
+                break;
+            }
+            case Document::Eol: {
+                const Document::EolHint eol = Document::EolHint( document->property( Document::Eol ).toInt() );
+                deMode->setMode( eol );
+                break;
+            }
+            case Document::Indent: {
+                const Document::IndentHint indent = Document::IndentHint( document->property( Document::Indent ).toInt() );
+                diMode->setMode( indent );
+                break;
+            }
+            case Document::IndentWidth: {
+                const int indentWidth = document->property( Document::IndentWidth ).toInt();
+                diMode->setIndentWidth( indentWidth );
+                break;
+            }
+            case Document::TabWidth: {
+                const int tabWidth = document->property( Document::TabWidth ).toInt();
+                diMode->setTabWidth( tabWidth );
+                break;
+            }
+            case Document::CursorPosition: {
+                const QPoint cursorPosition = document->property( Document::CursorPosition ).toPoint();
+                const int lineCount = document->property( Document::LineCount ).toInt();
+                dpCursor->setPosition( cursorPosition, lineCount );
+                break;
+            }
+        }
+    }
 }
 
 void StackedDocumentToolBar::cbLanguages_activated( const QString& language )
@@ -159,5 +210,15 @@ void StackedDocumentToolBar::diMode_tabWidthChanged( int width )
     
     if ( document ) {
         document->setProperty( Document::TabWidth, width );
+    }
+}
+
+void StackedDocumentToolBar::dpCursor_positionChanged( const QPoint& pos )
+{
+    Q_ASSERT( mStacker );
+    Document* document = mStacker->currentDocument();
+    
+    if ( document ) {
+        document->setProperty( Document::CursorPosition, pos );
     }
 }
