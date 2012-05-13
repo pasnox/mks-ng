@@ -151,7 +151,7 @@ bool Document::open( const QString& filePath, const QString& encoding )
     QFile file( filePath );
     
     if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
-        setProperty( Document::LastError, file.errorString() );
+        setProperty( Document::LastError, tr( "Can't open file '%1' (%2)" ).arg( filePath ).arg( file.errorString() ) );
         return false;
     }
     
@@ -183,7 +183,7 @@ bool Document::save( const QString& filePath, const QString& encoding )
     
     if ( QFile::exists( fn ) ) {
         if ( !QFile::rename( fn, backupFn ) ) {
-            setProperty( Document::LastError, tr( "Can't rename the current document for doing atomic save." ) );
+            setProperty( Document::LastError, tr( "Can't rename '%1' for doing atomic save." ).arg( filePath ) );
             return false;
         }
     }
@@ -191,12 +191,12 @@ bool Document::save( const QString& filePath, const QString& encoding )
     QFile file( fn );
     
     if ( !file.open( QIODevice::WriteOnly ) ) {
-        setProperty( Document::LastError, file.errorString() );
+        setProperty( Document::LastError, tr( "Can't save file '%1' (%2)" ).arg( filePath ).arg( file.errorString() ) );
         return false;
     }
     
     if ( !file.resize( 0 ) ) {
-        setProperty( Document::LastError, tr( "Can't truncate the current document for doing atomic save." ) );
+        setProperty( Document::LastError, tr( "Can't truncate '%1' for doing atomic save." ).arg( filePath ) );
         return false;
     }
     
@@ -234,7 +234,7 @@ bool Document::save( const QString& filePath, const QString& encoding )
     
     if ( QFile::exists( backupFn ) ) {
         if ( !QFile::remove( backupFn ) ) {
-            setProperty( Document::LastError, tr( "Can't remove the current document backup for finishing atomic save." ) );
+            setProperty( Document::LastError, tr( "Can't remove '%1' backup for finishing atomic save." ).arg( backupFn ) );
         }
     }
     
