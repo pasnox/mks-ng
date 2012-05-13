@@ -4,6 +4,7 @@
 #include "Document.h"
 #include "Menu.h"
 
+#include <FreshGui/pQueuedMessageToolBar>
 #include <FreshGui/pActionsMenuBar>
 #include <FreshGui/pActionsModel>
 
@@ -17,6 +18,11 @@ UIMain::UIMain( QWidget* parent )
     ui->setupUi( this );
     ui->sdtbDocument->setStackedDocument( ui->sdDocuments );
     ui->sdtvDocuments->setStackedDocument( ui->sdDocuments );
+    
+    removeToolBar( ui->sdtbDocument );
+    insertToolBar( queuedMessageToolBar(), ui->sdtbDocument );
+    insertToolBarBreak( queuedMessageToolBar() );
+    ui->sdtbDocument->setVisible( true );
     
 #ifndef Q_OS_MAC
     ui->sdtbDocument->insertWidget( ui->sdtbDocument->actions().first(), menuBar() );
@@ -69,15 +75,16 @@ void UIMain::open( const QStringList& filePaths, const QString& encoding )
 
 void UIMain::openPlainText( const QStringList& filePaths, const QString& encoding )
 {
-    /*foreach ( const QString& filePath, filePaths ) {
+    foreach ( const QString& filePath, filePaths ) {
         Document* document = ui->sdDocuments->createDocument();
         
-        if ( !document->open( file ) ) {
-            document->setProperty( Document::Text, file );
+        if ( !document->open( filePath, encoding ) ) {
+            appendMessage( document->property( Document::LastError ).toString() );
+            document->deleteLater();
         }
         
         ui->sdDocuments->addDocument( document );
-    }*/
+    }
 }
 
 void UIMain::changeEvent( QEvent* event )
