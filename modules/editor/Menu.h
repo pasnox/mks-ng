@@ -2,14 +2,15 @@
 #define MENU_H
 
 #define MENU_FILE "mFile"
+#define MENU_FILE_NEW_PLAIN_TEXT "mFile/aNewPlainText"
 #define MENU_FILE_OPEN "mFile/aOpen"
 #define MENU_FILE_OPEN_PLAIN_TEXT "mFile/aOpenPlainText"
 #define MENU_FILE_SEPARATOR_1 "mFile/aSeparator1"
 #define MENU_FILE_RELOAD "mFile/aReload"
 #define MENU_FILE_SEPARATOR_2 "mFile/aSeparator2"
 #define MENU_FILE_SAVE "mFile/aSave"
+#define MENU_FILE_SAVE_AS "mFile/aSaveAs"
 #define MENU_FILE_SAVE_ALL "mFile/aSaveAll"
-#define MENU_FILE_BACKUP "mFile/aBackup"
 #define MENU_FILE_SEPARATOR_3 "mFile/aSeparator3"
 #define MENU_FILE_CLOSE "mFile/aClose"
 #define MENU_FILE_CLOSE_ALL "mFile/aCloseAll"

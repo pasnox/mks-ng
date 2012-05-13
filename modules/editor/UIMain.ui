@@ -10,9 +10,6 @@
     <height>480</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Editor</string>
-  </property>
   <widget class="QWidget" name="wCentral">
    <layout class="QVBoxLayout" name="verticalLayout_3">
     <item>

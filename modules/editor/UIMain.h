@@ -6,6 +6,10 @@
 class Ui_UIMain;
 class QEvent;
 
+class pFileDialogResult;
+
+class Document;
+
 class UIMain : public pMainWindow
 {
     Q_OBJECT
@@ -16,24 +20,36 @@ public:
 
 public slots:
     virtual void retranslateUi();
-    void open( const QStringList& filePaths, const QString& encoding = QString::null );
-    void openPlainText( const QStringList& filePaths, const QString& encoding = QString::null );
+    bool open( const QStringList& filePaths, const QString& encoding = QString::null, bool readOnly = false );
+    bool openPlainText( const QStringList& filePaths, const QString& encoding = QString::null, bool readOnly = false );
+    bool saveDocument( Document* document, const QString& filePath = QString::null, const QString& encoding = QString::null );
+    bool closeDocument( Document* document );
     
 protected:
     Ui_UIMain* ui;
     
     virtual void changeEvent( QEvent* event );
+    QString currentWorkingDirectory() const;
+    QString cleanFilePath( const QString& filePath ) const;
+    QHash<QString, Document*> openedDocuments() const;
+    Document* documentForFilePath( const QString& filePath, const QHash<QString, Document*>& openedDocuments = QHash<QString, Document*>() ) const;
+    void showError( const QString& text, QObject* buddy = 0 );
+    void showDocumentError( Document* document );
+    pFileDialogResult requestUserOpenFileNames( const QString& text, const QString& path, const QString& filters, const QString& encoding = QString::null );
+    pFileDialogResult requestUserSaveFileName( const QString& text, const QString& path, const QString& filters, const QString& encoding = QString::null );
+    bool requestUserConfirmation( const QString& message );
 
 protected slots:
-    void actionOpenTriggered();
-    void actionOpenPlainTextTriggered();
-    void actionReloadTriggered();
-    void actionSaveTriggered();
-    void actionSaveAllTriggered();
-    void actionBackupTriggered();
-    void actionCloseTriggered();
-    void actionCloseAllTriggered();
-    void actionQuitTriggered();
+    bool actionNewPlainTextTriggered();
+    bool actionOpenTriggered();
+    bool actionOpenPlainTextTriggered();
+    bool actionReloadTriggered();
+    bool actionSaveTriggered();
+    bool actionSaveAsTriggered();
+    bool actionSaveAllTriggered();
+    bool actionCloseTriggered();
+    bool actionCloseAllTriggered();
+    bool actionQuitTriggered();
 };
 
 #endif // UIMAIN_H
