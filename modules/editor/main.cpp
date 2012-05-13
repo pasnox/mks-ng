@@ -24,7 +24,8 @@ int main( int argc, char** argv )
     
     UIMain w;
     w.setWindowTitle( QString( "%1 v%2 (%3)[*]" ).arg( APPLICATION_NAME ).arg( APPLICATION_VERSION ).arg( APPLICATION_VERSION_LONG ) );
-    w.showMaximized();
+    w.setWindowIcon( QApplication::windowIcon() );
+    w.show();
     
     return app.exec();
 }
