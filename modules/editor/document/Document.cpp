@@ -158,7 +158,9 @@ bool Document::open( const QString& filePath, const QString& encoding, bool read
     QTextCodec* codec = textCodec( encoding );
     
     if ( mCodeEditorAbstractor ) {
-        setProperty( Document::Language, mCodeEditorAbstractor->languageForFileName( filePath ) );
+        //if ( property( Document::Language ).toString().isEmpty() ) {
+            setProperty( Document::Language, mCodeEditorAbstractor->languageForFileName( filePath ) );
+        //}
     }
     
     setProperty( Document::NewFile, false );
@@ -240,6 +242,21 @@ bool Document::save( const QString& filePath, const QString& encoding )
     }
     
     return true;
+}
+
+bool Document::reload()
+{
+    const QString filePath = property( Document::FilePath ).toString();
+    
+    if ( filePath.isEmpty() ) {
+        const QString title = property( Document::Title ).toString();
+        setProperty( Document::LastError, tr( "Can't reload document '%1': No file path defined." ).arg( title ) );
+        return false;
+    }
+    
+    const QString encoding = property( Document::TextEncoding ).toString();
+    const bool readOnly = property( Document::ReadOnly ).toBool();
+    return open( filePath, encoding, readOnly );
 }
 
 void Document::close()
