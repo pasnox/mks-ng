@@ -141,7 +141,7 @@ void Document::updateSharedProperties()
     blockSignals( locked );
 }
 
-bool Document::open( const QString& filePath, const QString& encoding )
+bool Document::open( const QString& filePath, const QString& encoding, bool readOnly )
 {
     if ( filePath.isEmpty() ) {
         setProperty( Document::LastError, tr( "No given file path to open the document." ) );
@@ -164,6 +164,7 @@ bool Document::open( const QString& filePath, const QString& encoding )
     setProperty( Document::NewFile, false );
     setProperty( Document::FilePath, QDir::cleanPath( filePath ) );
     setProperty( Document::TextEncoding, codec->name() );
+    setProperty( Document::ReadOnly, readOnly );
     setProperty( Document::InitialText, codec->toUnicode( file.readAll() ) );
     setProperty( Document::State, Document::Unmodified );
     

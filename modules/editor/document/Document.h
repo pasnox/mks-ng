@@ -104,7 +104,7 @@ public:
     
     // the api don't care about unsaved content or already opened content
     // it's the caller responsability to check that before
-    bool open( const QString& filePath, const QString& encoding = QString::null );
+    bool open( const QString& filePath, const QString& encoding = QString::null, bool readOnly = false );
     bool save( const QString& filePath = QString::null, const QString& encoding = QString::null );
     void close();
 
