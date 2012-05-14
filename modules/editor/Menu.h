@@ -17,4 +17,11 @@
 #define MENU_FILE_SEPARATOR_4 "mFile/aSeparator4"
 #define MENU_FILE_QUIT "mFile/aQuit"
 
+#define MENU_EDIT "mEdit"
+#define MENU_EDIT_UNDO "mEdit/aUndo"
+#define MENU_EDIT_REDO "mEdit/aRedo"
+#define MENU_EDIT_COPY "mEdit/aCopy"
+#define MENU_EDIT_CUT "mEdit/aCut"
+#define MENU_EDIT_PASTE "mEdit/aPaste"
+
 #endif // MENU_H

@@ -3,6 +3,7 @@
 #include "StackedDocumentModel.h"
 #include "Document.h"
 #include "Menu.h"
+#include "main.h"
 
 #include <FreshGui/pQueuedMessageToolBar>
 #include <FreshGui/pActionsMenuBar>
@@ -32,6 +33,7 @@ UIMain::UIMain( QWidget* parent )
 #endif
 
     pActionsModel* model = menuBar()->model();
+    
     model->addMenu( MENU_FILE, tr( "File" ) );
     QAction* aNewPlainText = model->addAction( MENU_FILE_NEW_PLAIN_TEXT, tr( "New plain text file" ), QIcon::fromTheme( "document-new" ) );
     QAction* aOpen = model->addAction( MENU_FILE_OPEN, tr( "Open..." ), QIcon::fromTheme( "project-open" ) );
@@ -48,6 +50,13 @@ UIMain::UIMain( QWidget* parent )
     model->addSeparator( MENU_FILE_SEPARATOR_4 );
     QAction* aQuit = model->addAction( MENU_FILE_QUIT, tr( "Quit..." ), QIcon::fromTheme( "window-close" ) );
     
+    model->addMenu( MENU_EDIT, tr( "Edit" ) );
+    QAction* aUndo = model->addAction( MENU_EDIT_UNDO, tr( "Undo" ), QIcon::fromTheme( "edit-undo" ) );
+    QAction* aRedo = model->addAction( MENU_EDIT_REDO, tr( "Redo" ), QIcon::fromTheme( "edit-redo" ) );
+    QAction* aCopy = model->addAction( MENU_EDIT_COPY, tr( "Copy" ), QIcon::fromTheme( "edit-copy" ) );
+    QAction* aCut = model->addAction( MENU_EDIT_CUT, tr( "Cut" ), QIcon::fromTheme( "edit-cut" ) );
+    QAction* aPaste = model->addAction( MENU_EDIT_PASTE, tr( "Paste" ), QIcon::fromTheme( "edit-paste" ) );
+    
     model->setDefaultShortcut( aNewPlainText, QKeySequence::New );
     //model->setDefaultShortcut( aOpen, QKeySequence::AddTab );
     model->setDefaultShortcut( aOpenPlainText, QKeySequence::Open );
@@ -60,10 +69,27 @@ UIMain::UIMain( QWidget* parent )
     //model->setDefaultShortcut( aCloseAll, QKeySequence::CloseAll );
     model->setDefaultShortcut( aQuit, QKeySequence::Quit );
     
+    model->setDefaultShortcut( aUndo, QKeySequence::Undo );
+    aUndo->setData( Document::Undo );
+    model->setDefaultShortcut( aRedo, QKeySequence::Redo );
+    aRedo->setData( Document::Redo );
+    model->setDefaultShortcut( aCopy, QKeySequence::Copy );
+    aCopy->setData( Document::Copy );
+    model->setDefaultShortcut( aCut, QKeySequence::Cut );
+    aCut->setData( Document::Cut );
+    model->setDefaultShortcut( aPaste, QKeySequence::Paste );
+    aPaste->setData( Document::Paste );
+    
     if ( model->defaultShortcut( aSaveAs ).isEmpty() ) {
         const QString shortcut = QString( "Shift+%1" ).arg( model->defaultShortcut( aSave ).toString() );
         model->setDefaultShortcut( aSaveAs, QKeySequence( shortcut ) );
     }
+    
+    connect( aUndo, &QAction::triggered, this, &UIMain::documentActionTriggered );
+    connect( aRedo, &QAction::triggered, this, &UIMain::documentActionTriggered );
+    connect( aCopy, &QAction::triggered, this, &UIMain::documentActionTriggered );
+    connect( aCut, &QAction::triggered, this, &UIMain::documentActionTriggered );
+    connect( aPaste, &QAction::triggered, this, &UIMain::documentActionTriggered );
     
     connect( aNewPlainText, &QAction::triggered, this, &UIMain::actionNewPlainTextTriggered );
     connect( aOpen, &QAction::triggered, this, &UIMain::actionOpenTriggered );
@@ -75,11 +101,30 @@ UIMain::UIMain( QWidget* parent )
     connect( aClose, &QAction::triggered, this, &UIMain::actionCloseTriggered );
     connect( aCloseAll, &QAction::triggered, this, &UIMain::actionCloseAllTriggered );
     connect( aQuit, &QAction::triggered, this, &UIMain::actionQuitTriggered );
+    
+    on_sdDocuments_currentDocumentChanged( 0 );
 }
 
 UIMain::~UIMain()
 {
     delete ui;
+}
+
+QIcon UIMain::currentWindowIcon() const
+{
+    const Document* document = ui->sdDocuments->currentDocument();
+    return document ? document->property( Document::Decoration ).value<QIcon>() : QApplication::windowIcon();
+}
+
+QString UIMain::currentWindowTitle() const
+{
+    const Document* document = ui->sdDocuments->currentDocument();
+    const QString documentTitle = document ? document->property( Document::Title ).toString() : QString::null;
+    
+    return document
+        ? QString( "%4[*] - %1 v%2 (%3)" ).arg( APPLICATION_NAME ).arg( APPLICATION_VERSION ).arg( APPLICATION_VERSION_LONG ).arg( documentTitle )
+        : QString( "%1 v%2 (%3)[*]" ).arg( APPLICATION_NAME ).arg( APPLICATION_VERSION ).arg( APPLICATION_VERSION_LONG )
+    ;
 }
 
 void UIMain::retranslateUi()
@@ -243,7 +288,11 @@ void UIMain::showError( const QString& text, QObject* buddy )
 
 void UIMain::showDocumentError( Document* document )
 {
-    showError( document->property( Document::LastError ).toString(), document );
+    const QString text = document->property( Document::LastError ).toString();
+    
+    if ( !text.isEmpty() ) {
+        showError( text, document );
+    }
 }
 
 pFileDialogResult UIMain::requestUserOpenFileNames( const QString& text, const QString& path, const QString& filters, const QString& encoding )
@@ -261,6 +310,133 @@ pFileDialogResult UIMain::requestUserSaveFileName( const QString& text, const QS
 bool UIMain::requestUserConfirmation( const QString& message )
 {
     return QMessageBox::question( this, QString::null, message, QMessageBox::Yes, QMessageBox::No ) == QMessageBox::Yes;
+}
+
+void UIMain::on_sdDocuments_currentDocumentChanged( Document* document )
+{
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::Decoration );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::Title );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::FilePath );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::State );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::UndoAvailable );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::RedoAvailable );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::CursorPosition );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::Eol );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::Indent );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::TabWidth );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::IndentWidth );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::SelectionStart );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::SelectionEnd );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::SelectionLength );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::SelectedText );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::Text );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::Ruler );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::Language );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::Style );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::LineCount );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::NewFile );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::LastError );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::TextEncoding );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::CopyAvailable );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::CutAvailable );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::PasteAvailable );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::ReadOnly );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::InitialText );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::LineWrap );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::LineNumberMargin );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::FoldMargin );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::SymbolMargin );
+    on_sdDocuments_currentDocumentPropertyChanged( document, Document::ChangeMargin );
+}
+
+void UIMain::on_sdDocuments_currentDocumentPropertyChanged( Document* document, int property )
+{
+    const pActionsModel* model = menuBar()->model();
+    
+    switch ( property ) {
+        case Document::Decoration:
+            setWindowIcon( currentWindowIcon() );
+            return;
+        case Document::Title:
+            setWindowTitle( currentWindowTitle() );
+            return;
+        case Document::State: {
+            const int documentCount = ui->sdDocuments->count();
+            const bool documentModified = document ? document->property( property ).toInt() & Document::Modified : false;
+            setWindowModified( documentModified );
+            model->action( MENU_FILE_RELOAD )->setEnabled( document );
+            model->action( MENU_FILE_SAVE )->setEnabled( documentModified );
+            model->action( MENU_FILE_SAVE_AS )->setEnabled( document );
+            model->action( MENU_FILE_SAVE_ALL )->setEnabled( documentModified || documentCount > 0 );
+            model->action( MENU_FILE_CLOSE )->setEnabled( document );
+            model->action( MENU_FILE_CLOSE_ALL )->setEnabled( document || documentCount > 0 );
+            return;
+        }
+        case Document::UndoAvailable: {
+            const bool undoAvailable = document ? document->property( property ).toBool() : false;
+            model->action( MENU_EDIT_UNDO )->setEnabled( undoAvailable );
+            return;
+        }
+        case Document::RedoAvailable: {
+            const bool redoAvailable = document ? document->property( property ).toBool() : false;
+            model->action( MENU_EDIT_REDO )->setEnabled( redoAvailable );
+            return;
+        }
+        case Document::CopyAvailable: {
+            const bool copyAvailable = document ? document->property( property ).toBool() : false;
+            model->action( MENU_EDIT_COPY )->setEnabled( copyAvailable );
+            return;
+        }
+        case Document::CutAvailable: {
+            const bool cutAvailable = document ? document->property( property ).toBool() : false;
+            model->action( MENU_EDIT_CUT )->setEnabled( cutAvailable );
+            return;
+        }
+        case Document::PasteAvailable: {
+            const bool pasteAvailable = document ? document->property( property ).toBool() : false;
+            model->action( MENU_EDIT_PASTE )->setEnabled( pasteAvailable );
+            return;
+        }
+        case Document::LastError: // for debugging
+            /*if ( document ) {
+                showDocumentError( document );
+            }*/
+            return;
+        
+        // these properties does not (yet) have main window interest, just ignore them.
+        case Document::FilePath:
+        case Document::CursorPosition:
+        case Document::Eol:
+        case Document::Indent:
+        case Document::TabWidth:
+        case Document::IndentWidth:
+        case Document::SelectionStart:
+        case Document::SelectionEnd:
+        case Document::SelectionLength:
+        case Document::SelectedText:
+        case Document::Text:
+        case Document::Ruler:
+        case Document::Language:
+        case Document::Style:
+        case Document::LineCount:
+        case Document::NewFile:
+        case Document::TextEncoding:
+        case Document::ReadOnly:
+        case Document::InitialText:
+        case Document::LineWrap:
+        case Document::LineNumberMargin:
+        case Document::FoldMargin:
+        case Document::SymbolMargin:
+        case Document::ChangeMargin:
+            break;
+    }
+}
+
+void UIMain::documentActionTriggered()
+{
+    Document* document = ui->sdDocuments->currentDocument();
+    QAction* action = qobject_cast<QAction*>( sender() );
+    document->triggerAction( action->data().toInt() );
 }
 
 bool UIMain::actionNewPlainTextTriggered()

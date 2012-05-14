@@ -17,6 +17,9 @@ class UIMain : public pMainWindow
 public:
     UIMain( QWidget* parent = 0 );
     virtual ~UIMain();
+    
+    QIcon currentWindowIcon() const;
+    QString currentWindowTitle() const;
 
 public slots:
     virtual void retranslateUi();
@@ -40,6 +43,11 @@ protected:
     bool requestUserConfirmation( const QString& message );
 
 protected slots:
+    void on_sdDocuments_currentDocumentChanged( Document* document );
+    void on_sdDocuments_currentDocumentPropertyChanged( Document* document, int property );
+    
+    void documentActionTriggered();
+    
     bool actionNewPlainTextTriggered();
     bool actionOpenTriggered();
     bool actionOpenPlainTextTriggered();

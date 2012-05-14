@@ -23,8 +23,8 @@ int main( int argc, char** argv )
     //Abstractors::add( Abstractors::CodeEditor, &QScintillaCodeEditor::staticMetaObject );
     
     UIMain w;
-    w.setWindowTitle( QString( "%1 v%2 (%3)[*]" ).arg( APPLICATION_NAME ).arg( APPLICATION_VERSION ).arg( APPLICATION_VERSION_LONG ) );
-    w.setWindowIcon( QApplication::windowIcon() );
+    w.setWindowIcon( w.currentWindowIcon() );
+    w.setWindowTitle( w.currentWindowTitle() );
     w.show();
     
     return app.exec();
