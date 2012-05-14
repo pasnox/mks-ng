@@ -24,6 +24,7 @@ public:
 
 public slots:
     virtual void setProperty( int property, const QVariant& value );
+    virtual void triggerAction( int action );
     virtual void clearProperties();
     
 protected:

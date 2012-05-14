@@ -8,6 +8,8 @@
 #include <QPlainTextEdit>
 #include <QIcon>
 #include <QApplication>
+#include <QClipboard>
+#include <QMimeData>
 #include <QDebug>
 
 SourceHighlightQtDocument::SourceHighlightQtDocument( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent )
@@ -53,15 +55,16 @@ QVariant SourceHighlightQtDocument::property( int property ) const
     
     switch ( property ) {
         case Document::CopyAvailable:
-            return !cursor.selectedText().isEmpty();
+            return cursor.hasSelection();
         case Document::CutAvailable:
-            return !cursor.selectedText().isEmpty();
+            return cursor.hasSelection();
         case Document::PasteAvailable:
-            return mEditor->canPaste();
+            //return mEditor->canPaste(); // should use this one but it's so slow call !!!!
+            return QApplication::clipboard()->mimeData()->hasText();
         case Document::UndoAvailable:
-            return document->availableUndoSteps() > 0;
+            return document->isUndoAvailable();
         case Document::RedoAvailable:
-            return document->availableRedoSteps() > 0;
+            return document->isRedoAvailable();
         case Document::CursorPosition:
             return cursor.isNull() ? QPoint() : QPoint( cursor.positionInBlock(), cursor.blockNumber() );
         case Document::SelectionStart:
@@ -86,9 +89,9 @@ QVariant SourceHighlightQtDocument::property( int property ) const
             return int( state );
         }
         case Document::Language:
-            return mHighlighter ? mHighlighter->getLangFile() : QString::null;
+            return mHighlighter->getLangFile();
         case Document::Style:
-            return mHighlighter ? mHighlighter->getFormattingStyle() : QString::null;
+            return mHighlighter->getFormattingStyle();
         
         case Document::Decoration:
         case Document::Title:
@@ -235,6 +238,27 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
     
     emit propertyChanged( property );
     emit propertiesChanged();
+}
+
+void SourceHighlightQtDocument::triggerAction( int action )
+{
+    switch ( action ) {
+        case Document::Undo:
+            mEditor->undo();
+            return;
+        case Document::Redo:
+            mEditor->redo();
+            return;
+        case Document::Copy:
+            mEditor->copy();
+            return;
+        case Document::Cut:
+            mEditor->cut();
+            return;
+        case Document::Paste:
+            mEditor->paste();
+            return;
+    }
 }
 
 void SourceHighlightQtDocument::clearProperties()
