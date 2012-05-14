@@ -62,7 +62,7 @@ QVariant StackedDocumentModel::data( const QModelIndex& index, int role ) const
         case Qt::DecorationRole:
             return document->property( Document::Decoration );
         case Qt::DisplayRole:
-            return document->property( Document::Title ).toString().replace( "[*]", QString::null );
+            return document->property( Document::Title ).toString();
         case Qt::ToolTipRole:
             return document->property( Document::FilePath );
         case Qt::CheckStateRole:
