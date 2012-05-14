@@ -96,6 +96,14 @@ public:
         UserProperty = 1000 // first user usable extension
     };
     
+    enum Action {
+        Undo = 0,
+        Redo = 1,
+        Copy = 2,
+        Cut = 3,
+        Paste = 4
+    };
+    
     Document( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent = 0 );
     virtual ~Document();
     
@@ -112,6 +120,7 @@ public:
 public slots:
     virtual void retranslateUi();
     virtual void setProperty( int property, const QVariant& value );
+    virtual void triggerAction( int action ) = 0;
     virtual void clearProperties() = 0;
     
 protected:

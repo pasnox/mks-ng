@@ -78,7 +78,7 @@ QVariant Document::property( int property ) const
         }
         case Document::Title: {
             const QString fileName = QFileInfo( this->property( Document::FilePath ).toString() ).fileName();
-            return QString( "%1[*]" ).arg( fileName );
+            return QString( "%1" ).arg( fileName );
         }
         case Document::Eol:
             return Document::Unix;
