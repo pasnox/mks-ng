@@ -258,7 +258,7 @@ QString UIMain::currentWorkingDirectory() const
 {
     // this could evoluate when advanced things exists (projects, etc...)
     Document* document = ui->sdDocuments->currentDocument();
-    const QString filePath = document->property( Document::FilePath ).toString();
+    const QString filePath = document ? document->property( Document::FilePath ).toString() : QString::null;
     return document && !filePath.isEmpty() ? QFileInfo( filePath ).absolutePath() : QDir::currentPath();
 }
 
