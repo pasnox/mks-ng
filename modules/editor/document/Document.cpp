@@ -77,8 +77,8 @@ QVariant Document::property( int property ) const
             return QIcon::fromTheme( newFile ? "document-new" : "text-x-generic" );
         }
         case Document::Title: {
-            const QString fileName = QFileInfo( this->property( Document::FilePath ).toString() ).fileName();
-            return QString( "%1" ).arg( fileName );
+            const QString filePath = this->property( Document::FilePath ).toString();
+            return filePath.isEmpty() ? QString::null : QFileInfo( filePath ).fileName();
         }
         case Document::Eol:
             return Document::Unix;
