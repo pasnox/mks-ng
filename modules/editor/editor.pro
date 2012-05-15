@@ -28,7 +28,8 @@ RESOURCES *= resources/resources.qrc
 FORMS *=  \
     UIMain.ui \
     document/DocumentIndentationPopup.ui \
-    document/DocumentPositionPopup.ui
+    document/DocumentPositionPopup.ui \
+    document/StackedDocumentCloseQuery.ui
 
 HEADERS *=  \
     Menu.h \
@@ -44,6 +45,8 @@ HEADERS *=  \
     document/StackedDocumentModel.h \
     document/StackedDocumentTreeView.h \
     document/StackedDocumentToolBar.h \
+    document/StackedDocumentCloseQueryModel.h \
+    document/StackedDocumentCloseQuery.h \
     abstractors/Abstractors.h \
     abstractors/BaseAbstractor.h \
     abstractors/CodeEditorAbstractor.h \
@@ -64,6 +67,8 @@ SOURCES *= main.cpp \
     document/StackedDocumentModel.cpp \
     document/StackedDocumentTreeView.cpp \
     document/StackedDocumentToolBar.cpp \
+    document/StackedDocumentCloseQueryModel.cpp \
+    document/StackedDocumentCloseQuery.cpp \
     abstractors/Abstractors.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.cpp \
