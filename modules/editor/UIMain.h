@@ -31,11 +31,12 @@ public slots:
 protected:
     Ui_UIMain* ui;
     
+    virtual void closeEvent( QCloseEvent* event );
     virtual void changeEvent( QEvent* event );
     QString currentWorkingDirectory() const;
     QString cleanFilePath( const QString& filePath ) const;
-    QHash<QString, Document*> openedDocuments() const;
-    Document* documentForFilePath( const QString& filePath, const QHash<QString, Document*>& openedDocuments = QHash<QString, Document*>() ) const;
+    QHash<Document*, QString> openedDocuments( bool modifiedOnly = false ) const;
+    Document* documentForFilePath( const QString& filePath, const QHash<Document*, QString>& openedDocuments = QHash<Document*, QString>() ) const;
     void showError( const QString& text, QObject* buddy = 0 );
     void showDocumentError( Document* document );
     pFileDialogResult requestUserOpenFileNames( const QString& text, const QString& path, const QString& filters, const QString& encoding = QString::null );

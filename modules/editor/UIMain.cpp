@@ -4,13 +4,14 @@
 #include "Document.h"
 #include "Menu.h"
 #include "main.h"
+#include "StackedDocumentCloseQuery.h"
 
 #include <FreshGui/pQueuedMessageToolBar>
 #include <FreshGui/pActionsMenuBar>
 #include <FreshGui/pActionsModel>
 #include <FreshGui/pFileDialog>
 
-#include <QEvent>
+#include <QCloseEvent>
 #include <QDir>
 #include <QMessageBox>
 #include <QDebug>
@@ -145,7 +146,7 @@ bool UIMain::open( const QStringList& filePaths, const QString& encoding, bool r
 
 bool UIMain::openPlainText( const QStringList& filePaths, const QString& encoding, bool readOnly )
 {
-    const QHash<QString, Document*> documents = openedDocuments();
+    const QHash<Document*, QString> documents = openedDocuments();
     Document* lastDocument = 0;
     bool ok = true;
     
@@ -232,6 +233,18 @@ bool UIMain::closeDocument( Document* document )
     return true;
 }
 
+void UIMain::closeEvent( QCloseEvent* event )
+{
+    if ( actionCloseAllTriggered() ) {
+    }
+    else {
+        event->ignore();
+        return;
+    }
+    
+    pMainWindow::closeEvent( event );
+}
+
 void UIMain::changeEvent( QEvent* event )
 {
     pMainWindow::changeEvent( event );
@@ -245,7 +258,8 @@ QString UIMain::currentWorkingDirectory() const
 {
     // this could evoluate when advanced things exists (projects, etc...)
     Document* document = ui->sdDocuments->currentDocument();
-    return document ? QFileInfo( document->property( Document::FilePath ).toString() ).absolutePath() : QDir::currentPath();
+    const QString filePath = document->property( Document::FilePath ).toString();
+    return document && !filePath.isEmpty() ? QFileInfo( filePath ).absolutePath() : QDir::currentPath();
 }
 
 QString UIMain::cleanFilePath( const QString& filePath ) const
@@ -253,31 +267,32 @@ QString UIMain::cleanFilePath( const QString& filePath ) const
     return QDir::cleanPath( QDir::toNativeSeparators( filePath ) );
 }
 
-QHash<QString, Document*> UIMain::openedDocuments() const
+QHash<Document*, QString> UIMain::openedDocuments( bool modifiedOnly ) const
 {
-    QHash<QString, Document*> documents;
+    QHash<Document*, QString> documents;
     
     for ( int i = 0; i < ui->sdDocuments->count(); i++ ) {
         Document* document = ui->sdDocuments->document( i );
         const QString filePath = document->property( Document::FilePath ).toString();
+        const bool fileModified = document->property( Document::State ).toInt() & Document::Modified;
         
-        if ( !filePath.isEmpty() ) {
-            documents[ cleanFilePath( filePath ) ] = document;
+        if ( ( !modifiedOnly ) || ( modifiedOnly && fileModified ) ) {
+            documents[ document ] = cleanFilePath( filePath );
         }
     }
     
     return documents;
 }
 
-Document* UIMain::documentForFilePath( const QString& filePath, const QHash<QString, Document*>& openedDocuments ) const
+Document* UIMain::documentForFilePath( const QString& filePath, const QHash<Document*, QString>& openedDocuments ) const
 {
-    QHash<QString, Document*> documents = openedDocuments;
+    QHash<Document*, QString> documents = openedDocuments;
     
     if ( documents.isEmpty() ) {
         documents = this->openedDocuments();
     }
     
-    return openedDocuments.value( cleanFilePath( filePath ) );
+    return openedDocuments.key( cleanFilePath( filePath ) );
 }
 
 void UIMain::showError( const QString& text, QObject* buddy )
@@ -540,30 +555,26 @@ bool UIMain::actionCloseTriggered()
 
 bool UIMain::actionCloseAllTriggered()
 {
-    bool ok = true;
+    const QHash<Document*, QString> modifiedDocuments = openedDocuments( true );
     
-    for ( int i = ui->sdDocuments->count() -1; i >= 0; i-- ) {
-        Document* document = ui->sdDocuments->document( i );
+    if ( !modifiedDocuments.isEmpty() ) {
+        StackedDocumentCloseQuery dlg( modifiedDocuments.keys(), this );
         
-        if ( !closeDocument( document ) ) {
-            ok = false;
+        if ( dlg.exec() == QDialog::Rejected ) {
+            return false;
         }
     }
     
-    return ok;
+    for ( int i = ui->sdDocuments->count() -1; i >= 0; i-- ) {
+        Document* document = ui->sdDocuments->document( i );
+        ui->sdDocuments->removeDocument( document );
+        document->deleteLater();
+    }
+    
+    return true;
 }
 
 bool UIMain::actionQuitTriggered()
 {
-    bool ok = actionSaveAllTriggered();
-    
-    if ( !ok ) {
-        ok = requestUserConfirmation( tr( "Some files were not saved, exit anyway ?" ) );
-    }
-    
-    if ( ok ) {
-        qApp->quit();
-    }
-    
-    return ok;
+    return close();
 }
