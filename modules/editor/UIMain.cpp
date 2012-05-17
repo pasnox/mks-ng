@@ -563,6 +563,12 @@ bool UIMain::actionCloseAllTriggered()
         if ( dlg.exec() == QDialog::Rejected ) {
             return false;
         }
+        
+        const QList<Document*> checkedDocuments = dlg.checkedDocuments();
+        
+        foreach ( Document* document, checkedDocuments ) {
+            saveDocument( document );
+        }
     }
     
     for ( int i = ui->sdDocuments->count() -1; i >= 0; i-- ) {

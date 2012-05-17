@@ -2,18 +2,16 @@
 #include "ui_StackedDocumentCloseQuery.h"
 #include "StackedDocumentCloseQueryModel.h"
 #include "StackedDocument.h"
-#include "UIMain.h"
 
 #include <QEvent>
 
-StackedDocumentCloseQuery::StackedDocumentCloseQuery( const QList<Document*>& documents, UIMain* window )
-    : QDialog( window ),
+StackedDocumentCloseQuery::StackedDocumentCloseQuery( const QList<Document*>& documents, QWidget* parent )
+    : QDialog( parent ),
         ui( new Ui_StackedDocumentCloseQuery ),
         mModel( new StackedDocumentCloseQueryModel( documents, this ) ),
-        mWindow( window )
+        mResult( QDialogButtonBox::NoButton )
 {
     Q_ASSERT( !documents.isEmpty() );
-    Q_ASSERT( window );
     ui->setupUi( this );
     ui->tvDocuments->setModel( mModel );
 }
@@ -21,6 +19,11 @@ StackedDocumentCloseQuery::StackedDocumentCloseQuery( const QList<Document*>& do
 StackedDocumentCloseQuery::~StackedDocumentCloseQuery()
 {
     delete ui;
+}
+
+QList<Document*> StackedDocumentCloseQuery::checkedDocuments() const
+{
+    return mResult == QDialogButtonBox::SaveAll ? mModel->checkedDocumentList() : QList<Document*>();
 }
 
 void StackedDocumentCloseQuery::retranslateUi()
@@ -40,19 +43,12 @@ void StackedDocumentCloseQuery::changeEvent( QEvent* event )
 
 void StackedDocumentCloseQuery::on_dbbButtons_clicked( QAbstractButton* button )
 {
-    const QDialogButtonBox::StandardButton type = ui->dbbButtons->standardButton( button );
+    mResult = ui->dbbButtons->standardButton( button );
     
-    switch ( type ) {
-        case QDialogButtonBox::SaveAll: {
-            const QList<Document*> checkedDocuments = mModel->checkedDocumentList();
-            
-            foreach ( Document* document, checkedDocuments ) {
-                mWindow->saveDocument( document );
-            }
-            
+    switch ( mResult ) {
+        case QDialogButtonBox::SaveAll:
             accept();
             break;
-        }
         case QDialogButtonBox::Cancel:
             reject();
             break;

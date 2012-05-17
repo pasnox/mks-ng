@@ -2,6 +2,7 @@
 #define STACKEDDOCUMENTCLOSEQUERY_H
 
 #include <QDialog>
+#include <QDialogButtonBox>
 
 class Ui_StackedDocumentCloseQuery;
 class QEvent;
@@ -9,15 +10,16 @@ class QAbstractButton;
 
 class StackedDocumentCloseQueryModel;
 class Document;
-class UIMain;
 
 class StackedDocumentCloseQuery : public QDialog
 {
     Q_OBJECT
 
 public:
-    StackedDocumentCloseQuery( const QList<Document*>& documents, UIMain* window );
+    StackedDocumentCloseQuery( const QList<Document*>& documents, QWidget* parent );
     virtual ~StackedDocumentCloseQuery();
+    
+    QList<Document*> checkedDocuments() const;
 
 public slots:
     virtual void retranslateUi();
@@ -25,7 +27,7 @@ public slots:
 protected:
     Ui_StackedDocumentCloseQuery* ui;
     StackedDocumentCloseQueryModel* mModel;
-    UIMain* mWindow;
+    QDialogButtonBox::StandardButton mResult;
     
     virtual void changeEvent( QEvent* event );
 
