@@ -305,7 +305,8 @@ void SourceHighlightQtDocument::editor_redoAvailable( bool available )
 
 void SourceHighlightQtDocument::editor_selectionChanged()
 {
-    //
+    emit propertyChanged( Document::SelectedText );
+    emit propertiesChanged();
 }
 
 void SourceHighlightQtDocument::editor_textChanged()
