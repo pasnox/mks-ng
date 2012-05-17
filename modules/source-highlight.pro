@@ -31,7 +31,7 @@ initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGE
 #    $$name = $$replace( $$name, $${Q_QUOTE}, $${Q_NULL} )
 #}
 
-#autoGenerateFile( source-highlite-config.h.in, ../3rdparty/source-highlight.git/lib/srchilite/config.h )
+#autoGenerateFile( source-highlight-config.h.in, ../3rdparty/source-highlight.git/lib/srchilite/config.h )
 
 #DEFINES *= HAVE_CONFIG_H
 #CONFIG += create_prl

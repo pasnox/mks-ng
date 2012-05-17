@@ -5,5 +5,3 @@
 #define LIBRARY_VERSION "$${LIBRARY_VERSION}"
 #define PACKAGE "$${PACKAGE}"
 #define RELATIVEDATADIR "$${RELATIVEDATADIR}"
-#define TEST "$$LOL $$LUL"
-#define lol "$$test.ok$$here"
