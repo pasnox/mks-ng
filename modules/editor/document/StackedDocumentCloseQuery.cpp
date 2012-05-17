@@ -5,7 +5,7 @@
 
 #include <QEvent>
 
-StackedDocumentCloseQuery::StackedDocumentCloseQuery( const QList<Document*>& documents, QWidget* parent )
+StackedDocumentCloseQuery::StackedDocumentCloseQuery( const DocumentList& documents, QWidget* parent )
     : QDialog( parent ),
         ui( new Ui_StackedDocumentCloseQuery ),
         mModel( new StackedDocumentCloseQueryModel( documents, this ) ),
@@ -21,9 +21,9 @@ StackedDocumentCloseQuery::~StackedDocumentCloseQuery()
     delete ui;
 }
 
-QList<Document*> StackedDocumentCloseQuery::checkedDocuments() const
+DocumentList StackedDocumentCloseQuery::checkedDocuments() const
 {
-    return mResult == QDialogButtonBox::SaveAll ? mModel->checkedDocumentList() : QList<Document*>();
+    return mResult == QDialogButtonBox::SaveAll ? mModel->checkedDocumentList() : DocumentList();
 }
 
 void StackedDocumentCloseQuery::retranslateUi()

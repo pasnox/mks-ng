@@ -2,16 +2,14 @@
 #define STACKEDDOCUMENTCLOSEQUERYMODEL_H
 
 #include <QAbstractListModel>
-#include <QList>
-
-class Document;
+#include "Document.h"
 
 class StackedDocumentCloseQueryModel : public QAbstractListModel
 {
     Q_OBJECT
     
 public:
-    StackedDocumentCloseQueryModel( const QList<Document*>& documents, QObject* parent = 0 );
+    StackedDocumentCloseQueryModel( const DocumentList& documents, QObject* parent = 0 );
     virtual ~StackedDocumentCloseQueryModel();
     
     virtual int rowCount( const QModelIndex& parent = QModelIndex() ) const;
@@ -19,10 +17,10 @@ public:
     virtual Qt::ItemFlags flags( const QModelIndex& index ) const;
     virtual bool setData( const QModelIndex& index, const QVariant& value, int role = Qt::EditRole );
     
-    QList<Document*> checkedDocumentList() const;
+    DocumentList checkedDocumentList() const;
 
 protected:
-    QList<Document*> mDocuments;
+    DocumentList mDocuments;
     QHash<Document*, bool> mDocumentsState;
 };
 

@@ -4,22 +4,23 @@
 #include <QDialog>
 #include <QDialogButtonBox>
 
+#include "Document.h"
+
 class Ui_StackedDocumentCloseQuery;
 class QEvent;
 class QAbstractButton;
 
 class StackedDocumentCloseQueryModel;
-class Document;
 
 class StackedDocumentCloseQuery : public QDialog
 {
     Q_OBJECT
 
 public:
-    StackedDocumentCloseQuery( const QList<Document*>& documents, QWidget* parent );
+    StackedDocumentCloseQuery( const DocumentList& documents, QWidget* parent );
     virtual ~StackedDocumentCloseQuery();
     
-    QList<Document*> checkedDocuments() const;
+    DocumentList checkedDocuments() const;
 
 public slots:
     virtual void retranslateUi();

@@ -1,7 +1,6 @@
 #include "StackedDocumentCloseQueryModel.h"
-#include "Document.h"
 
-StackedDocumentCloseQueryModel::StackedDocumentCloseQueryModel( const QList<Document*>& documents, QObject* parent )
+StackedDocumentCloseQueryModel::StackedDocumentCloseQueryModel( const DocumentList& documents, QObject* parent )
     : QAbstractListModel( parent )
 {
     Q_ASSERT( !documents.isEmpty() );
@@ -15,9 +14,9 @@ StackedDocumentCloseQueryModel::~StackedDocumentCloseQueryModel()
 {
 }
 
-QList<Document*> StackedDocumentCloseQueryModel::checkedDocumentList() const
+DocumentList StackedDocumentCloseQueryModel::checkedDocumentList() const
 {
-    QList<Document*> documents;
+    DocumentList documents;
     
     foreach ( Document* document, mDocuments ) {
         const bool checked = mDocumentsState.value( document, true );

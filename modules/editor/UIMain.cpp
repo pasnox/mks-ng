@@ -564,7 +564,7 @@ bool UIMain::actionCloseAllTriggered()
             return false;
         }
         
-        const QList<Document*> checkedDocuments = dlg.checkedDocuments();
+        const DocumentList checkedDocuments = dlg.checkedDocuments();
         
         foreach ( Document* document, checkedDocuments ) {
             saveDocument( document );

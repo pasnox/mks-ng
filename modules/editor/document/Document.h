@@ -141,4 +141,6 @@ signals:
     void propertiesChanged();
 };
 
+typedef QList<Document*> DocumentList;
+
 #endif // DOCUMENT_H
