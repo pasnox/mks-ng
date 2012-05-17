@@ -5,6 +5,9 @@ import os
 import platform
 import shlex
 import subprocess
+import tarfile
+import urllib2
+import shutil
 
 class RepositoryInitializer:
     # errors
@@ -24,6 +27,10 @@ class RepositoryInitializer:
         'svn':
             {
                 'ctags': 'https://ctags.svn.sourceforge.net/svnroot/ctags/trunk'
+            },
+        'tar.gz':
+            {
+                'qscintilla2': 'http://www.riverbankcomputing.co.uk/static/Downloads/QScintilla2/QScintilla-gpl-2.6.1.tar.gz'
             }
     }
 
@@ -72,6 +79,8 @@ class RepositoryInitializer:
             else:
                 if not self.execute( 'svn update' ):
                     return RepositoryInitializer.EC_CANT_UPDATE
+        else:
+            print 'Already up-to-date.'
         return RepositoryInitializer.EC_OK
 
     def systemExport(self, cvs, uri, folder):
@@ -89,6 +98,27 @@ class RepositoryInitializer:
             else:
                 if not self.execute( 'svn co -q "%s"' % ( uri ) ):
                     return RepositoryInitializer.EC_CANT_EXPORT
+        elif cvs == 'tar.gz':
+            pathName = os.path.dirname( folder )
+            fileName = os.path.basename( uri )
+            baseName = os.path.splitext( os.path.splitext( fileName )[ 0 ] )[ 0 ]
+            extractedPathName = '%s/%s' % ( pathName, baseName )
+            try:
+                tarGzData = urllib2.urlopen( uri )
+                output = open( fileName , 'wb' )
+                output.write( tarGzData.read() )
+                output.close()
+                tar = tarfile.open( fileName )
+                tar.extractall( pathName )
+                tar.close()
+                os.remove( fileName )
+                os.rename( extractedPathName, folder )
+            except:
+                if os.path.exists( fileName ):
+                    os.remove( fileName )
+                if os.path.exists( extractedPathName ):
+                    shutil.rmtree( extractedPathName )
+                return RepositoryInitializer.EC_CANT_EXPORT
         return RepositoryInitializer.EC_OK
 
     def moduleExport(self, cvs, module, uri):
