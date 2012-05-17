@@ -2,7 +2,6 @@
 #define STACKEDDOCUMENTTREEVIEW_H
 
 #include <QTreeView>
-#include <QPointer>
 
 class QEvent;
 
@@ -23,7 +22,7 @@ public slots:
     virtual void retranslateUi();
     
 protected:
-    QPointer<StackedDocument> mStacker;
+    StackedDocument* mStacker;
     
     virtual void changeEvent( QEvent* event );
     void updateCurrentIndex( const QModelIndex& index );

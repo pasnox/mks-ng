@@ -20,7 +20,7 @@ SourceHighlightQtDataWatcher::SourceHighlightQtDataWatcher( QObject* parent )
         << "*.css"
     ;
     
-    setFilePath( QString( "%1/source-highlight-data" ).arg( qApp->applicationDirPath() ) );
+    setFilePath( QString( "%1/../../data/source-highlight" ).arg( qApp->applicationDirPath() ) );
     
     connect( this, &QFileSystemWatcher::directoryChanged, this, &SourceHighlightQtDataWatcher::_q_directoryChanged );
 }

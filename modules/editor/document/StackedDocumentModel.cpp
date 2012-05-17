@@ -27,19 +27,19 @@ void StackedDocumentModel::setStackedDocument( StackedDocument* stackedDocument 
     }
     
     if ( mStacker ) {
-        disconnect( mStacker.data(), &StackedDocument::documentIndexInserted, this, &StackedDocumentModel::_q_documentIndexInserted );
-        disconnect( mStacker.data(), &StackedDocument::documentIndexPropertiesChanged, this, &StackedDocumentModel::_q_documentIndexPropertiesChanged );
-        disconnect( mStacker.data(), &StackedDocument::currentDocumentIndexChanged, this, &StackedDocumentModel::_q_currentDocumentIndexChanged );
-        disconnect( mStacker.data(), &StackedDocument::documentIndexRemoved, this, &StackedDocumentModel::_q_documentIndexRemoved );
+        disconnect( mStacker, &StackedDocument::documentIndexInserted, this, &StackedDocumentModel::_q_documentIndexInserted );
+        disconnect( mStacker, &StackedDocument::documentIndexPropertiesChanged, this, &StackedDocumentModel::_q_documentIndexPropertiesChanged );
+        disconnect( mStacker, &StackedDocument::currentDocumentIndexChanged, this, &StackedDocumentModel::_q_currentDocumentIndexChanged );
+        disconnect( mStacker, &StackedDocument::documentIndexRemoved, this, &StackedDocumentModel::_q_documentIndexRemoved );
     }
     
     mStacker = stackedDocument;
     
     if ( mStacker ) {
-        connect( mStacker.data(), &StackedDocument::documentIndexInserted, this, &StackedDocumentModel::_q_documentIndexInserted );
-        connect( mStacker.data(), &StackedDocument::documentIndexPropertiesChanged, this, &StackedDocumentModel::_q_documentIndexPropertiesChanged );
-        connect( mStacker.data(), &StackedDocument::currentDocumentIndexChanged, this, &StackedDocumentModel::_q_currentDocumentIndexChanged );
-        connect( mStacker.data(), &StackedDocument::documentIndexRemoved, this, &StackedDocumentModel::_q_documentIndexRemoved );
+        connect( mStacker, &StackedDocument::documentIndexInserted, this, &StackedDocumentModel::_q_documentIndexInserted );
+        connect( mStacker, &StackedDocument::documentIndexPropertiesChanged, this, &StackedDocumentModel::_q_documentIndexPropertiesChanged );
+        connect( mStacker, &StackedDocument::currentDocumentIndexChanged, this, &StackedDocumentModel::_q_currentDocumentIndexChanged );
+        connect( mStacker, &StackedDocument::documentIndexRemoved, this, &StackedDocumentModel::_q_documentIndexRemoved );
     }
     
     reset();

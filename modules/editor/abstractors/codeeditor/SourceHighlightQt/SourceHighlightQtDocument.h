@@ -3,8 +3,6 @@
 
 #include "Document.h"
 
-#include <QPointer>
-
 class QEvent;
 class QPlainTextEdit;
 
@@ -29,7 +27,7 @@ public slots:
     
 protected:
     QPlainTextEdit* mEditor;
-    QPointer<srchiliteqt::Qt4SyntaxHighlighter> mHighlighter;
+    srchiliteqt::Qt4SyntaxHighlighter* mHighlighter;
     QHash<int, QVariant> mProperties;
 
 protected slots:

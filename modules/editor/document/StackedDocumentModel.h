@@ -2,7 +2,6 @@
 #define STACKEDDOCUMENTMODEL_H
 
 #include <QAbstractListModel>
-#include <QPointer>
 
 class StackedDocument;
 
@@ -23,7 +22,7 @@ public:
     void setStackedDocument( StackedDocument* stackedDocument );
 
 protected:
-    QPointer<StackedDocument> mStacker;
+    StackedDocument* mStacker;
 
 protected slots:
     void _q_documentIndexInserted( int index );

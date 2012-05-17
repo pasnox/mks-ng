@@ -6,7 +6,8 @@
 #include <QDebug>
 
 StackedDocumentTreeView::StackedDocumentTreeView( QWidget* parent )
-    : QTreeView( parent )
+    : QTreeView( parent ),
+        mStacker( 0 )
 {
     setEditTriggers( QAbstractItemView::NoEditTriggers );
     setAlternatingRowColors( false );
@@ -32,7 +33,7 @@ void StackedDocumentTreeView::setStackedDocument( StackedDocument* stackedDocume
     }
     
     if ( mStacker ) {
-        disconnect( mStacker.data(), &StackedDocument::currentDocumentIndexChanged, this, &StackedDocumentTreeView::_q_currentDocumentIndexChanged );
+        disconnect( mStacker, &StackedDocument::currentDocumentIndexChanged, this, &StackedDocumentTreeView::_q_currentDocumentIndexChanged );
         disconnect( selectionModel(), &QItemSelectionModel::selectionChanged, this, &StackedDocumentTreeView::_q_selectionChanged );
     }
     
@@ -40,7 +41,7 @@ void StackedDocumentTreeView::setStackedDocument( StackedDocument* stackedDocume
     setModel( mStacker ? mStacker->model() : 0 );
     
     if ( mStacker ) {
-        connect( mStacker.data(), &StackedDocument::currentDocumentIndexChanged, this, &StackedDocumentTreeView::_q_currentDocumentIndexChanged );
+        connect( mStacker, &StackedDocument::currentDocumentIndexChanged, this, &StackedDocumentTreeView::_q_currentDocumentIndexChanged );
         connect( selectionModel(), &QItemSelectionModel::selectionChanged, this, &StackedDocumentTreeView::_q_selectionChanged );
         
         _q_currentDocumentIndexChanged( mStacker->currentIndex() );
