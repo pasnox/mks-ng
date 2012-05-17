@@ -19,8 +19,8 @@ include( $$PWD/config.pri )
 QT *= widgets network xml
 
 INCLUDEPATH = \
-    $$PWD/../3rdparty/src_highlite.git/lib \
-    $$PWD/../3rdparty/src_highlite_qt.git/lib \
+    $$PWD/../3rdparty/source-highlight.git/lib \
+    $$PWD/../3rdparty/source-highlight-qt.git/lib \
     $$getFolders( $$PWD/../3rdparty/fresh.git/src ) \
     $$PWD/../3rdparty/fresh.git/include
 
@@ -29,7 +29,7 @@ DEPENDPATH = $${INCLUDEPATH}
 LIBS *= -L$${BUILD_TARGET_PATH}
 LIBS *= \
     -l$$targetForMode( fresh ) \
-    -l$$targetForMode( source-highlite-qt ) \
-    -l$$targetForMode( source-highlite ) \
-    -lboost_regex-mt
+    -l$$targetForMode( source-highlight-qt ) \
+    -l$$targetForMode( source-highlight ) \
+    -lboost_regex
     

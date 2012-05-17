@@ -19,7 +19,7 @@ include( config.pri )
 TEMPLATE = subdirs
 CONFIG *= ordered
 SUBDIRS *= \
-    source-highlite.pro \
-    source-highlite-qt.pro \
+    source-highlight.pro \
+    source-highlight-qt.pro \
     fresh.pro \
     editor/editor.pro
