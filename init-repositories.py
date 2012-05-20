@@ -22,7 +22,8 @@ class RepositoryInitializer:
             {
                 'source-highlight': 'git://git.savannah.gnu.org/src-highlite.git',
                 'source-highlight-qt': 'git://srchiliteqt.git.sourceforge.net/gitroot/srchiliteqt/srchiliteqt',
-                'fresh': 'git://github.com/pasnox/fresh.git'
+                'fresh': 'git://github.com/pasnox/fresh.git',
+                'kate': 'git://anongit.kde.org/kate'
             },
         'svn':
             {
