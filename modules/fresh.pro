@@ -64,6 +64,7 @@ HEADERS *=  \
     ../3rdparty/fresh.git/src/gui/gc-updatechecker/pUpdateChecker.h \
     ../3rdparty/fresh.git/src/gui/pGuiUtils.h \
     ../3rdparty/fresh.git/src/gui/pColorButton.h \
+    ../3rdparty/fresh.git/src/gui/pFontButton.h \
     ../3rdparty/fresh.git/src/gui/actionmanager/pActionsShortcutEditor.h \
     ../3rdparty/fresh.git/src/gui/actionmanager/pActionsModel.h \
     ../3rdparty/fresh.git/src/gui/pFileDialog.h \
@@ -128,6 +129,7 @@ SOURCES *=  \
     ../3rdparty/fresh.git/src/gui/pTreeComboBox.cpp \
     ../3rdparty/fresh.git/src/core/pVersion.cpp \
     ../3rdparty/fresh.git/src/gui/pColorButton.cpp \
+    ../3rdparty/fresh.git/src/gui/pFontButton.cpp \
     ../3rdparty/fresh.git/src/gui/consolemanager/pConsole.cpp
 
 win32 {
