@@ -5,11 +5,13 @@
 #include "Menu.h"
 #include "main.h"
 #include "StackedDocumentCloseQuery.h"
+#include "SettingsNodeDialogBuilder.h"
 
 #include <FreshGui/pQueuedMessageToolBar>
 #include <FreshGui/pActionsMenuBar>
 #include <FreshGui/pActionsModel>
 #include <FreshGui/pFileDialog>
+#include <FreshCore/pSettings>
 
 #include <QCloseEvent>
 #include <QDir>
@@ -57,6 +59,8 @@ UIMain::UIMain( QWidget* parent )
     QAction* aCopy = model->addAction( MENU_EDIT_COPY, tr( "Copy" ), QIcon::fromTheme( "edit-copy" ) );
     QAction* aCut = model->addAction( MENU_EDIT_CUT, tr( "Cut" ), QIcon::fromTheme( "edit-cut" ) );
     QAction* aPaste = model->addAction( MENU_EDIT_PASTE, tr( "Paste" ), QIcon::fromTheme( "edit-paste" ) );
+    QAction* aPreferences = model->addAction( MENU_EDIT_PREFERENCES, tr( "Preferences" ), QIcon::fromTheme( "preferences-other" ) );
+    
     
     model->setDefaultShortcut( aNewPlainText, QKeySequence::New );
     //model->setDefaultShortcut( aOpen, QKeySequence::AddTab );
@@ -69,6 +73,7 @@ UIMain::UIMain( QWidget* parent )
     model->setDefaultShortcut( aClose, QKeySequence::Close );
     //model->setDefaultShortcut( aCloseAll, QKeySequence::CloseAll );
     model->setDefaultShortcut( aQuit, QKeySequence::Quit );
+    aQuit->setMenuRole( QAction::QuitRole );
     
     model->setDefaultShortcut( aUndo, QKeySequence::Undo );
     aUndo->setData( Document::Undo );
@@ -80,6 +85,8 @@ UIMain::UIMain( QWidget* parent )
     aCut->setData( Document::Cut );
     model->setDefaultShortcut( aPaste, QKeySequence::Paste );
     aPaste->setData( Document::Paste );
+    model->setDefaultShortcut( aPreferences, QKeySequence( "Ctrl+Shift+P" ) );
+    aPreferences->setMenuRole( QAction::PreferencesRole );
     
     if ( model->defaultShortcut( aSaveAs ).isEmpty() ) {
         const QString shortcut = QString( "Shift+%1" ).arg( model->defaultShortcut( aSave ).toString() );
@@ -91,6 +98,7 @@ UIMain::UIMain( QWidget* parent )
     connect( aCopy, &QAction::triggered, this, &UIMain::documentActionTriggered );
     connect( aCut, &QAction::triggered, this, &UIMain::documentActionTriggered );
     connect( aPaste, &QAction::triggered, this, &UIMain::documentActionTriggered );
+    connect( aPreferences, &QAction::triggered, this, &UIMain::actionPreferencesTriggered );
     
     connect( aNewPlainText, &QAction::triggered, this, &UIMain::actionNewPlainTextTriggered );
     connect( aOpen, &QAction::triggered, this, &UIMain::actionOpenTriggered );
@@ -109,6 +117,11 @@ UIMain::UIMain( QWidget* parent )
 UIMain::~UIMain()
 {
     delete ui;
+}
+
+ApplicationSettings UIMain::applicationSettings() const
+{
+    return mApplicationSettings;
 }
 
 QIcon UIMain::currentWindowIcon() const
@@ -132,6 +145,18 @@ void UIMain::retranslateUi()
 {
     ui->retranslateUi( this );
     // do your custom retranslate here
+}
+
+void UIMain::saveState()
+{
+    pMainWindow::saveState();
+    mApplicationSettings.save( settings() );
+}
+
+void UIMain::restoreState()
+{
+    mApplicationSettings.load( settings() );
+    pMainWindow::restoreState();
 }
 
 bool UIMain::open( const QStringList& filePaths, const QString& encoding, bool readOnly )
@@ -583,4 +608,16 @@ bool UIMain::actionCloseAllTriggered()
 bool UIMain::actionQuitTriggered()
 {
     return close();
+}
+
+void UIMain::actionPreferencesTriggered()
+{
+    SettingsNodeDialogBuilder dlg( this );
+    
+    if ( !dlg.build( mApplicationSettings ) ) {
+        showError( tr( "Can't build the preferences dialog." ), this );
+        return;
+    }
+    
+    dlg.exec();
 }

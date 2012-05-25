@@ -23,5 +23,6 @@
 #define MENU_EDIT_COPY "mEdit/aCopy"
 #define MENU_EDIT_CUT "mEdit/aCut"
 #define MENU_EDIT_PASTE "mEdit/aPaste"
+#define MENU_EDIT_PREFERENCES "mEdit/aPreferences"
 
 #endif // MENU_H

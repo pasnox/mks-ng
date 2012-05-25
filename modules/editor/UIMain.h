@@ -1,6 +1,8 @@
 #ifndef UIMAIN_H
 #define UIMAIN_H
 
+#include "ApplicationSettings.h"
+
 #include <FreshGui/pMainWindow>
 
 class Ui_UIMain;
@@ -18,11 +20,14 @@ public:
     UIMain( QWidget* parent = 0 );
     virtual ~UIMain();
     
+    ApplicationSettings applicationSettings() const;
     QIcon currentWindowIcon() const;
     QString currentWindowTitle() const;
 
 public slots:
     virtual void retranslateUi();
+    virtual void saveState();
+    virtual void restoreState();
     bool open( const QStringList& filePaths, const QString& encoding = QString::null, bool readOnly = false );
     bool openPlainText( const QStringList& filePaths, const QString& encoding = QString::null, bool readOnly = false );
     bool saveDocument( Document* document, const QString& filePath = QString::null, const QString& encoding = QString::null );
@@ -30,6 +35,7 @@ public slots:
     
 protected:
     Ui_UIMain* ui;
+    ApplicationSettings mApplicationSettings;
     
     virtual void closeEvent( QCloseEvent* event );
     virtual void changeEvent( QEvent* event );
@@ -59,6 +65,8 @@ protected slots:
     bool actionCloseTriggered();
     bool actionCloseAllTriggered();
     bool actionQuitTriggered();
+    
+    void actionPreferencesTriggered();
 };
 
 #endif // UIMAIN_H
