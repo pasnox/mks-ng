@@ -21,11 +21,12 @@ initializeProject( app, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGE
 
 INCLUDEPATH *= $$getFolders( . )
 
-DEPENDPATH = $${INCLUDEPATH}
+DEPENDPATH *= $${INCLUDEPATH}
 
 RESOURCES *= resources/resources.qrc
 
 FORMS *=  \
+    settings/SettingsNodeDialogBuilder.ui \
     UIMain.ui \
     document/DocumentIndentationPopup.ui \
     document/DocumentPositionPopup.ui \
@@ -33,6 +34,10 @@ FORMS *=  \
 
 HEADERS *=  \
     Menu.h \
+    settings/SettingsNode.h \
+    settings/SettingsNodeDialogBuilder.h \
+    settings/SettingsNodeDialogBuilderDelegate.h \
+    settings/ApplicationSettings.h \
     UIMain.h \
     document/Document.h \
     document/DocumentLanguageModel.h \
@@ -55,6 +60,10 @@ HEADERS *=  \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.h
 
 SOURCES *= main.cpp \
+    settings/SettingsNode.cpp \
+    settings/SettingsNodeDialogBuilder.cpp \
+    settings/SettingsNodeDialogBuilderDelegate.cpp \
+    settings/ApplicationSettings.cpp \
     UIMain.cpp \
     document/Document.cpp \
     document/DocumentLanguageModel.cpp \
