@@ -38,7 +38,7 @@ public:
     
     enum EolHint {
         Unix = 0,
-        Windows = 1,
+        DOS = 1,
         MacOS = 2
     };
     

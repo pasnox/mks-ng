@@ -45,6 +45,8 @@ void Document::changeEvent( QEvent* event )
 
 QVariant Document::property( int property ) const
 {
+    const ApplicationSettings& settings = Abstractors::applicationSettings();
+    
     // handle default properties
     switch ( property ) {
         case Document::Decoration: {
@@ -81,27 +83,27 @@ QVariant Document::property( int property ) const
             return filePath.isEmpty() ? QString::null : QFileInfo( filePath ).fileName();
         }
         case Document::Eol:
-            return Document::Unix;
-        case Document::Indent:
+            return settings.editor.documents.eol;
+        case Document::Indent: //
             return Document::Spaces;
         case Document::TabWidth:
-            return 4;
+            return settings.editor.documents.tabWidth;
         case Document::IndentWidth:
-            return 4;
-        case Document::Ruler:
+            return settings.editor.documents.indentWidth;
+        case Document::Ruler: //
             return Document::NoRuler;
         case Document::TextEncoding:
-            return "UTF-8";
-        case Document::LineWrap:
+            return settings.editor.documents.codec;
+        case Document::LineWrap: //
             return Document::NoWrap;
         case Document::LineNumberMargin:
-            return true;
+            return settings.editor.margins.lineNumber;
         case Document::FoldMargin:
-            return true;
+            return settings.editor.margins.fold;
         case Document::SymbolMargin:
-            return true;
+            return settings.editor.margins.symbol;
         case Document::ChangeMargin:
-            return true;
+            return settings.editor.margins.lineState;
         default:
             return QVariant();
     }
@@ -217,7 +219,7 @@ bool Document::save( const QString& filePath, const QString& encoding )
         case Document::Unix:
             // nothing to do
             break;
-        case Document::Windows:
+        case Document::DOS:
             text.replace( "\n", "\r\n" );
             break;
         case Document::MacOS:
