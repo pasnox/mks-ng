@@ -1,55 +1,67 @@
 #include "SettingsNodeDialogBuilder.h"
 #include "ui_SettingsNodeDialogBuilder.h"
 #include "SettingsNodeDialogBuilderDelegate.h"
+#include "SettingsNode.h"
 
 #include <QToolTip>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
-#include <QGroupBox>
 #include <QPushButton>
+#include <QGroupBox>
 #include <QDebug>
 
-SettingsNodeDialogBuilder::SettingsNodeDialogBuilder( QWidget* parent )
-    : QDialog( parent ),
+// SettingsNodeDialogBuilderPrivate
+
+class SettingsNodeDialogBuilderPrivate : public QObject
+{
+    Q_OBJECT
+
+public:
+    SettingsNodeDialogBuilderPrivate( SettingsNodeDialogBuilder* builder );
+    ~SettingsNodeDialogBuilderPrivate();
+    
+    bool build( const SettingsNode& node );
+    
+    void addToParentSettingsNode( QWidget* widget, const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate );
+    QWidget* createSettingsNodeEditor( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate );
+    QBoxLayout* createSettingsNodeLayout( QWidget* widget, const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate );
+    QWidget* createSettingsNodePage( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate );
+    QWidget* createSettingsNodeGroup( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate );
+    QWidget* createSettingsNodeValue( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate );
+    QWidget* createSettingsNodeGroupValue( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate );
+    bool recurseBuild( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate );
+
+public slots:
+    void twPages_itemSelectionChanged();
+    void dbbButtons_clicked( QAbstractButton* button );
+
+public:
+    SettingsNodeDialogBuilder* mBuilder;
+    Ui_SettingsNodeDialogBuilder* ui;
+    SettingsNode mRootNode;
+    SettingsNodeDialogBuilderDelegate* mDelegate;
+    QHash<SettingsNode, QTreeWidgetItem*> mItems;
+    QHash<SettingsNode, QWidget*> mEditors;
+};
+
+SettingsNodeDialogBuilderPrivate::SettingsNodeDialogBuilderPrivate( SettingsNodeDialogBuilder* builder )
+    :
+        mBuilder( builder ),
         ui( new Ui_SettingsNodeDialogBuilder ),
         mDelegate( 0 )
 {
-    ui->setupUi( this );
-    /*layout()->setMargin( margin() );
-    layout()->setSpacing( spacing() );*/
+    ui->setupUi( builder );
+    
+    connect( ui->twPages, &QTreeWidget::itemSelectionChanged, this, &SettingsNodeDialogBuilderPrivate::twPages_itemSelectionChanged );
+    connect( ui->dbbButtons, &QDialogButtonBox::clicked, this, &SettingsNodeDialogBuilderPrivate::dbbButtons_clicked );
 }
 
-SettingsNodeDialogBuilder::~SettingsNodeDialogBuilder()
+SettingsNodeDialogBuilderPrivate::~SettingsNodeDialogBuilderPrivate()
 {
     delete ui;
 }
 
-SettingsNode SettingsNodeDialogBuilder::rootNode() const
-{
-    return mRootNode;
-}
-
-SettingsNodeDialogBuilderDelegate* SettingsNodeDialogBuilder::delegate() const
-{
-    return mDelegate;
-}
-
-void SettingsNodeDialogBuilder::setDelegate( SettingsNodeDialogBuilderDelegate* delegate )
-{
-    mDelegate = delegate;
-}
-
-int SettingsNodeDialogBuilder::margin() const
-{
-    return 6;
-}
-
-int SettingsNodeDialogBuilder::spacing() const
-{
-    return 4;
-}
-
-bool SettingsNodeDialogBuilder::build( const SettingsNode& node )
+bool SettingsNodeDialogBuilderPrivate::build( const SettingsNode& node )
 {
     if ( !mRootNode.isNull() ) {
         return mRootNode == node;
@@ -81,7 +93,7 @@ bool SettingsNodeDialogBuilder::build( const SettingsNode& node )
     return result;
 }
 
-void SettingsNodeDialogBuilder::addToParentSettingsNode( QWidget* widget, const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
+void SettingsNodeDialogBuilderPrivate::addToParentSettingsNode( QWidget* widget, const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
 {
     Q_UNUSED( delegate );
     
@@ -99,7 +111,7 @@ void SettingsNodeDialogBuilder::addToParentSettingsNode( QWidget* widget, const 
     }
 }
 
-QWidget* SettingsNodeDialogBuilder::createSettingsNodeEditor( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
+QWidget* SettingsNodeDialogBuilderPrivate::createSettingsNodeEditor( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
 {
     Q_ASSERT( delegate );
     
@@ -107,7 +119,7 @@ QWidget* SettingsNodeDialogBuilder::createSettingsNodeEditor( const SettingsNode
         return 0;
     }
     
-    QWidget* editor = delegate->createEditor( node, this );
+    QWidget* editor = delegate->createEditor( node, mBuilder );
     
     if ( editor ) {
         mEditors[ node ] = editor;
@@ -117,7 +129,7 @@ QWidget* SettingsNodeDialogBuilder::createSettingsNodeEditor( const SettingsNode
     return editor;
 }
 
-QBoxLayout* SettingsNodeDialogBuilder::createSettingsNodeLayout( QWidget* widget, const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
+QBoxLayout* SettingsNodeDialogBuilderPrivate::createSettingsNodeLayout( QWidget* widget, const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
 {
     Q_ASSERT( delegate );
     
@@ -139,17 +151,17 @@ QBoxLayout* SettingsNodeDialogBuilder::createSettingsNodeLayout( QWidget* widget
     
     if ( widget->inherits( "QFrame" ) ) {
         layout->setMargin( 0 );
-        layout->setSpacing( spacing() );
+        layout->setSpacing( mBuilder->spacing() );
     }
     else  {
-        layout->setMargin( margin() );
-        layout->setSpacing( spacing() );
+        layout->setMargin( mBuilder->margin() );
+        layout->setSpacing( mBuilder->spacing() );
     }
     
     return layout;
 }
 
-QWidget* SettingsNodeDialogBuilder::createSettingsNodePage( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
+QWidget* SettingsNodeDialogBuilderPrivate::createSettingsNodePage( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
 {
     if ( node.isNull() ) {
         return 0;
@@ -166,7 +178,7 @@ QWidget* SettingsNodeDialogBuilder::createSettingsNodePage( const SettingsNode& 
         ui->twPages->addTopLevelItem( item );
     }
     
-    QWidget* page = new QWidget( this );
+    QWidget* page = new QWidget( mBuilder );
     page->setToolTip( node.help() );
     createSettingsNodeLayout( page, node, delegate );
     addToParentSettingsNode( page, node, delegate );
@@ -177,7 +189,7 @@ QWidget* SettingsNodeDialogBuilder::createSettingsNodePage( const SettingsNode& 
     return page;
 }
 
-QWidget* SettingsNodeDialogBuilder::createSettingsNodeGroup( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
+QWidget* SettingsNodeDialogBuilderPrivate::createSettingsNodeGroup( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
 {
     if ( node.isNull() ) {
         return 0;
@@ -186,11 +198,11 @@ QWidget* SettingsNodeDialogBuilder::createSettingsNodeGroup( const SettingsNode&
     QWidget* widget = 0;
     
     if ( node.label().isEmpty() ) {
-        QFrame* frame = new QFrame( this );
+        QFrame* frame = new QFrame( mBuilder );
         widget = frame;
     }
     else {
-        QGroupBox* group = new QGroupBox( this );
+        QGroupBox* group = new QGroupBox( mBuilder );
         group->setTitle( node.label() );
         widget = group;
     }
@@ -203,7 +215,7 @@ QWidget* SettingsNodeDialogBuilder::createSettingsNodeGroup( const SettingsNode&
     return widget;
 }
 
-QWidget* SettingsNodeDialogBuilder::createSettingsNodeValue( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
+QWidget* SettingsNodeDialogBuilderPrivate::createSettingsNodeValue( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
 {
     if ( node.isNull() ) {
         return 0;
@@ -216,12 +228,12 @@ QWidget* SettingsNodeDialogBuilder::createSettingsNodeValue( const SettingsNode&
     }
     
     if ( delegate->editorNeedLabel( node ) ) {
-        QLabel* label = new QLabel( this );
+        QLabel* label = new QLabel( mBuilder );
         label->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Preferred );
         label->setText( node.label() );
         label->setToolTip( node.help() );
         
-        QWidget* widget = new QWidget( this );
+        QWidget* widget = new QWidget( mBuilder );
         QBoxLayout* layout = createSettingsNodeLayout( widget, node, delegate );
         layout->setMargin( 0 );
         layout->addWidget( label );
@@ -235,7 +247,7 @@ QWidget* SettingsNodeDialogBuilder::createSettingsNodeValue( const SettingsNode&
     return editor;
 }
 
-QWidget* SettingsNodeDialogBuilder::createSettingsNodeGroupValue( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
+QWidget* SettingsNodeDialogBuilderPrivate::createSettingsNodeGroupValue( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
 {
     Q_ASSERT( delegate );
     
@@ -255,12 +267,12 @@ QWidget* SettingsNodeDialogBuilder::createSettingsNodeGroupValue( const Settings
     return editor;
 }
 
-bool SettingsNodeDialogBuilder::recurseBuild( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
+bool SettingsNodeDialogBuilderPrivate::recurseBuild( const SettingsNode& node, SettingsNodeDialogBuilderDelegate* delegate )
 {
     switch ( node.type() ) {
         case SettingsNode::Root:
-            setWindowIcon( node.icon() );
-            setWindowTitle( node.label() );
+            mBuilder->setWindowIcon( node.icon() );
+            mBuilder->setWindowTitle( node.label() );
             break;
         case SettingsNode::VerticalPage:
         case SettingsNode::HorizontalPage:
@@ -304,7 +316,7 @@ bool SettingsNodeDialogBuilder::recurseBuild( const SettingsNode& node, Settings
     return true;
 }
 
-void SettingsNodeDialogBuilder::on_twPages_itemSelectionChanged()
+void SettingsNodeDialogBuilderPrivate::twPages_itemSelectionChanged()
 {
     const QTreeWidgetItem* item = ui->twPages->selectedItems().value( 0 );
     ui->lTitle->setText( item ? item->text( 0 ) : QString::null );
@@ -315,14 +327,14 @@ void SettingsNodeDialogBuilder::on_twPages_itemSelectionChanged()
     ui->dbbButtons->button( QDialogButtonBox::Help )->setEnabled( enabled );
 }
 
-void SettingsNodeDialogBuilder::on_dbbButtons_clicked( QAbstractButton* button )
+void SettingsNodeDialogBuilderPrivate::dbbButtons_clicked( QAbstractButton* button )
 {
     const QDialogButtonBox::StandardButton type = ui->dbbButtons->standardButton( button );
     
     switch ( type ) {
         case QDialogButtonBox::Help: {
             QWidget* page = ui->swPages->currentWidget();
-            QToolTip::showText( geometry().topLeft(), page->toolTip(), page );
+            QToolTip::showText( mBuilder->geometry().topLeft(), page->toolTip(), page );
             break;
         }
         case QDialogButtonBox::Reset: {
@@ -345,8 +357,8 @@ void SettingsNodeDialogBuilder::on_dbbButtons_clicked( QAbstractButton* button )
             break;
         }
         case QDialogButtonBox::Ok:
-            on_dbbButtons_clicked( ui->dbbButtons->button( QDialogButtonBox::Apply ) );
-            accept();
+            dbbButtons_clicked( ui->dbbButtons->button( QDialogButtonBox::Apply ) );
+            mBuilder->accept();
             break;
         case QDialogButtonBox::Apply: {
             SettingsNodeDialogBuilderDelegate* delegate = mDelegate;
@@ -368,10 +380,58 @@ void SettingsNodeDialogBuilder::on_dbbButtons_clicked( QAbstractButton* button )
             break;
         }
         case QDialogButtonBox::Cancel:
-            reject();
+            mBuilder->reject();
             break;
         default:
             Q_ASSERT( 0 );
             break;
     }
 }
+
+
+// SettingsNodeDialogBuilder
+
+SettingsNodeDialogBuilder::SettingsNodeDialogBuilder( QWidget* parent )
+    : QDialog( parent ),
+        d( new SettingsNodeDialogBuilderPrivate( this ) )
+{
+    /*layout()->setMargin( margin() );
+    layout()->setSpacing( spacing() );*/
+}
+
+SettingsNodeDialogBuilder::~SettingsNodeDialogBuilder()
+{
+    delete d;
+}
+
+SettingsNode SettingsNodeDialogBuilder::rootNode() const
+{
+    return d->mRootNode;
+}
+
+SettingsNodeDialogBuilderDelegate* SettingsNodeDialogBuilder::delegate() const
+{
+    return d->mDelegate;
+}
+
+void SettingsNodeDialogBuilder::setDelegate( SettingsNodeDialogBuilderDelegate* delegate )
+{
+    d->mDelegate = delegate;
+}
+
+int SettingsNodeDialogBuilder::margin() const
+{
+    return 6;
+}
+
+int SettingsNodeDialogBuilder::spacing() const
+{
+    return 4;
+}
+
+bool SettingsNodeDialogBuilder::build( const SettingsNode& node )
+{
+    return d->build( node );
+}
+
+#include "SettingsNodeDialogBuilder.moc"
