@@ -5,18 +5,12 @@
 #include <QGroupBox>
 #include <QSpinBox>
 #include <QDoubleSpinBox>
+#include <QLineEdit>
+#include <QComboBox>
 #include <QDebug>
 
 #include <FreshGui/pColorButton>
 #include <FreshGui/pFontButton>
-
-SettingsNodeDialogBuilderDelegate::SettingsNodeDialogBuilderDelegate()
-{
-}
-
-SettingsNodeDialogBuilderDelegate::~SettingsNodeDialogBuilderDelegate()
-{
-}
 
 bool SettingsNodeDialogBuilderDelegate::editorNeedLabel( const SettingsNode& node ) const
 {
@@ -46,6 +40,13 @@ QWidget* SettingsNodeDialogBuilderDelegate::createEditor( const SettingsNode& no
             return new QSpinBox( parent );
         case QVariant::Double:
             return new QDoubleSpinBox( parent );
+        case QVariant::String:
+            if ( node.guiData().toStringList().isEmpty() ) {
+                return new QLineEdit( parent );
+            }
+            else {
+                return new QComboBox( parent );
+            }
     }
     
     qWarning() << Q_FUNC_INFO << "Unhandled type" << node.name() << node.value() << node.guiType() << QVariant::typeToName( QVariant::Type( node.guiType() ) );
@@ -104,6 +105,21 @@ void SettingsNodeDialogBuilderDelegate::setEditorData( QWidget* editor, const Se
             sb->setValue( value.toInt() );
             break;
         }
+        case QVariant::String: {
+            const QStringList list = node.guiData().toStringList();
+            if ( list.isEmpty() ) {
+                QLineEdit* le = qobject_cast<QLineEdit*>( editor );
+                Q_ASSERT( le );
+                le->setText( value.toString() );
+            }
+            else {
+                QComboBox* cb = qobject_cast<QComboBox*>( editor );
+                Q_ASSERT( cb );
+                cb->addItems( list );
+                cb->setCurrentIndex( cb->findText( value.toString() ) );
+            }
+            break;
+        }
         default:
             qWarning() << Q_FUNC_INFO << "Unhandled type" << node.name() << node.value() << node.guiType() << QVariant::typeToName( QVariant::Type( node.guiType() ) );
             break;
@@ -148,6 +164,19 @@ void SettingsNodeDialogBuilderDelegate::setNodeData( QWidget* editor, SettingsNo
             QDoubleSpinBox* sb = qobject_cast<QDoubleSpinBox*>( editor );
             Q_ASSERT( sb );
             node.setValue( sb->value() );
+            break;
+        }
+        case QVariant::String: {
+            if ( node.guiData().toStringList().isEmpty() ) {
+                QLineEdit* le = qobject_cast<QLineEdit*>( editor );
+                Q_ASSERT( le );
+                node.setValue( le->text() );
+            }
+            else {
+                QComboBox* cb = qobject_cast<QComboBox*>( editor );
+                Q_ASSERT( cb );
+                node.setValue( cb->itemText( cb->currentIndex() ) );
+            }
             break;
         }
         default:
