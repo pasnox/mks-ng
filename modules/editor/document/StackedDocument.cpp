@@ -102,6 +102,11 @@ void StackedDocument::setCurrentDocument( Document* document )
     QStackedWidget::setCurrentWidget( document );
 }
 
+void StackedDocument::applyPreferences()
+{
+    //
+}
+
 void StackedDocument::changeEvent( QEvent* event )
 {
     QStackedWidget::changeEvent( event );

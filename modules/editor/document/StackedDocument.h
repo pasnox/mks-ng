@@ -31,6 +31,7 @@ public:
 public slots:
     virtual void retranslateUi();
     void setCurrentDocument( Document* document );
+    void applyPreferences();
     
 protected:
     CodeEditorAbstractor* mCodeEditorAbstractor;
