@@ -313,6 +313,14 @@ bool SettingsNodeDialogBuilderPrivate::recurseBuild( const SettingsNode& node, S
         layout->addStretch();
     }
     
+    if ( node.type() & SettingsNode::GroupFlag ) {
+        if ( mBuilder->boldGroupTitle() ) {
+            QWidget* widget = mEditors[ node ];
+            Q_ASSERT( widget );
+            widget->setStyleSheet( "QGroupBox { font-weight: bold; }" );
+        }
+    }
+    
     return true;
 }
 
@@ -427,6 +435,11 @@ int SettingsNodeDialogBuilder::margin() const
 int SettingsNodeDialogBuilder::spacing() const
 {
     return 4;
+}
+
+bool SettingsNodeDialogBuilder::boldGroupTitle() const
+{
+    return true;
 }
 
 bool SettingsNodeDialogBuilder::build( const SettingsNode& node )

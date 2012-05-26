@@ -21,6 +21,7 @@ public:
     
     virtual int margin() const;
     virtual int spacing() const;
+    virtual bool boldGroupTitle() const;
     
     bool build( const SettingsNode& node );
 
