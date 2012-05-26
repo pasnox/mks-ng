@@ -42,6 +42,7 @@ public:
     
     bool operator==( const SettingsNode& other ) const;
     bool operator!=( const SettingsNode& other ) const;
+    operator QVariant() const;
     SettingsNode& operator=( const SettingsNode& other );
     
     bool isNull() const;
@@ -98,7 +99,7 @@ public:
     SettingsNode addVValue( const QString& name, const QVariant& value, int guiType );
     SettingsNode addHValue( const QString& name, const QVariant& value, int guiType );
 
-protected:
+private:
     QExplicitlySharedDataPointer<class SettingsNodePrivate> d;
 };
 

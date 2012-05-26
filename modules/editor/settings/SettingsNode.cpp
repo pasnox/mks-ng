@@ -124,6 +124,12 @@ bool SettingsNode::operator!=( const SettingsNode& other ) const
     return !operator==( other );
 }
 
+SettingsNode::operator QVariant() const
+{
+    Q_ASSERT( d );
+    return d ? d->value : QVariant();
+}
+
 SettingsNode& SettingsNode::operator=( const SettingsNode& other )
 {
     if ( operator==( other ) ) {
