@@ -3,11 +3,13 @@
 #include <QHash>
 #include <QStringList>
 #include <QMimeDatabase>
+#include <QApplication>
 
 namespace Abstractors {
     static QHash<Abstractors::Type, QHash<QString, const QMetaObject*> > mAbstractors;
     static QHash<Abstractors::Type, QString> mCurrentAbstractors;
     static QMimeDatabase mMimeDb;
+    static ApplicationSettings* mApplicationSettings = 0;
 }
 
 void Abstractors::add( Abstractors::Type type, const QMetaObject* meta )
@@ -56,4 +58,13 @@ BaseAbstractor* Abstractors::create( Abstractors::Type type, QObject* parent )
 const QMimeDatabase& Abstractors::mimeDatabase()
 {
     return Abstractors::mMimeDb;
+}
+
+ApplicationSettings& Abstractors::applicationSettings()
+{
+    if ( !Abstractors::mApplicationSettings ) {
+        Abstractors::mApplicationSettings = new ApplicationSettings( qApp );
+    }
+    
+    return *Abstractors::mApplicationSettings;
 }

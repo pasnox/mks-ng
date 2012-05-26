@@ -4,6 +4,7 @@
 #include <QObject>
 
 #include "BaseAbstractor.h"
+#include "ApplicationSettings.h"
 
 class QMetaObject;
 class QString;
@@ -25,6 +26,7 @@ namespace Abstractors
     template <class T> T castedCreate( Abstractors::Type type, QObject* parent = 0 );
     
     const QMimeDatabase& mimeDatabase();
+    ApplicationSettings& applicationSettings();
 };
 
 template <class T> T Abstractors::castedCreate( Abstractors::Type type, QObject* parent )
