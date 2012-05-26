@@ -7,7 +7,6 @@
 
 class Ui_DocumentIndentationPopup;
 class QEvent;
-class QButtonGroup;
 
 class DocumentIndentationPopup : public QFrame
 {
@@ -26,7 +25,6 @@ public slots:
     
 protected:
     Ui_DocumentIndentationPopup* ui;
-    QButtonGroup* mGroup;
     
     virtual void changeEvent( QEvent* event );
 

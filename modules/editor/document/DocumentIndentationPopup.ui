@@ -18,27 +18,25 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayout">
-     <item>
-      <widget class="QRadioButton" name="rbSpaces">
-       <property name="text">
-        <string>Spaces</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="rbTabs">
-       <property name="text">
-        <string>Tabs</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+    <widget class="IndentationRadioGroup" name="irgType" native="true"/>
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="lIndentWidth">
      <property name="text">
       <string>Indentation width:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QLabel" name="lTabWidthCounter">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text">
+      <string notr="true">0</string>
      </property>
     </widget>
    </item>
@@ -55,8 +53,25 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0" colspan="2">
-    <widget class="QSlider" name="sIndentWidth">
+   <item row="5" column="0" colspan="2">
+    <widget class="Line" name="lBottom">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QPushButton" name="pbConvertDocument">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>Convert the document</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QSlider" name="sTabWidth">
      <property name="minimum">
       <number>0</number>
      </property>
@@ -84,21 +99,8 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QLabel" name="lTabWidthCounter">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text">
-      <string notr="true">0</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QSlider" name="sTabWidth">
+   <item row="2" column="0" colspan="2">
+    <widget class="QSlider" name="sIndentWidth">
      <property name="minimum">
       <number>0</number>
      </property>
@@ -119,25 +121,16 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="Line" name="lBottom">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item row="6" column="0" colspan="2">
-    <widget class="QPushButton" name="pbConvertDocument">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>Convert the document</string>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>IndentationRadioGroup</class>
+   <extends>QWidget</extends>
+   <header>IndentationRadioGroup.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -169,38 +162,6 @@
     <hint type="destinationlabel">
      <x>224</x>
      <y>90</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rbSpaces</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>sTabWidth</receiver>
-   <slot>setDisabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>65</x>
-     <y>16</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>63</x>
-     <y>118</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>rbTabs</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>sTabWidth</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>144</x>
-     <y>17</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>132</x>
-     <y>122</y>
     </hint>
    </hints>
   </connection>

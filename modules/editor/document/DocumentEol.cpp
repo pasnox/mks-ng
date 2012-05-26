@@ -10,7 +10,7 @@ DocumentEol::DocumentEol( QWidget* parent )
 {
     mActions[ Document::Unix ] = mGroup->addAction( QIcon( ":/icons/linux.png" ), "LF: Linux" );
     mActions[ Document::MacOS ] = mGroup->addAction( QIcon( ":/icons/macos.png" ), "CR: Mac OS (< OS X)" );
-    mActions[ Document::Windows ] = mGroup->addAction( QIcon( ":/icons/windows.png" ), "CR+LF: Windows" );
+    mActions[ Document::DOS ] = mGroup->addAction( QIcon( ":/icons/windows.png" ), "CR+LF: DOS/Windows" );
     
     foreach ( QAction* action, mActions ) {
         action->setCheckable( true );

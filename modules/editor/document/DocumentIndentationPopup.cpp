@@ -2,21 +2,14 @@
 #include "ui_DocumentIndentationPopup.h"
 
 #include <QEvent>
-#include <QButtonGroup>
 
 DocumentIndentationPopup::DocumentIndentationPopup( QWidget* parent )
     : QFrame( parent, Qt::Popup ),
-    ui( new Ui_DocumentIndentationPopup ),
-    mGroup( new QButtonGroup( this ) )
+    ui( new Ui_DocumentIndentationPopup )
 {
     ui->setupUi( this );
-    mGroup->addButton( ui->rbSpaces, Document::Spaces );
-    mGroup->addButton( ui->rbTabs, Document::Tabs );
     
-    typedef void (QButtonGroup::*QButtonGroupButtonClickedInt)(int);
-    QButtonGroupButtonClickedInt ptr = &QButtonGroup::buttonClicked;
-    
-    connect( mGroup, ptr, this, &DocumentIndentationPopup::modeChanged );
+    connect( ui->irgType, &RadioGroup::buttonIdClicked, this, &DocumentIndentationPopup::modeChanged );
     connect( ui->sIndentWidth, &QSlider::valueChanged, this, &DocumentIndentationPopup::indentWidthChanged );
     connect( ui->sTabWidth, &QSlider::valueChanged, this, &DocumentIndentationPopup::tabWidthChanged );
     connect( ui->pbConvertDocument, &QPushButton::clicked, this, &DocumentIndentationPopup::convertionRequested );
@@ -44,7 +37,7 @@ void DocumentIndentationPopup::changeEvent( QEvent* event )
 
 void DocumentIndentationPopup::setMode( Document::IndentHint mode )
 {
-    mGroup->button( mode )->setChecked( true );
+    ui->irgType->setCheckedId( mode );
 }
 
 void DocumentIndentationPopup::setIndentWidth( int width )
