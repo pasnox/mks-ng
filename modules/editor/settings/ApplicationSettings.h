@@ -3,6 +3,8 @@
 
 #include "SettingsNode.h"
 
+#include <QObject>
+
 class GeneralSettings : public SettingsNode
 {
 public:
@@ -32,41 +34,40 @@ public:
     public:
         Documents();
         
-        SettingsNode paper;
-        SettingsNode pen;
+        SettingsNode codec;
         SettingsNode font;
+        SettingsNode indentType;
         SettingsNode indentWidth;
         SettingsNode tabWidth;
+        SettingsNode eol;
     };
     
     class Colors : public SettingsNode {
     public:
         Colors();
         
+        SettingsNode paper;
+        SettingsNode pen;
         SettingsNode selectionBackground;
         SettingsNode selectionForeground;
         SettingsNode lineBackground;
         SettingsNode lineForeground;
     };
     
+    SettingsNode detectEol;
+    SettingsNode convertEol;
+    SettingsNode detectIndentation;
+    SettingsNode convertIndentation;
+    
     Margins margins;
     Documents documents;
     Colors colors;
 };
 
-class ApplicationSettings : public SettingsNode
+class ApplicationSettings : public QObject, public SettingsNode
 {
 public:
-    enum ExtendedVariantType {
-        FirstExtendedType = QVariant::UserType,
-        Eol,
-        Indent,
-        Ruler,
-        TextEncoding,
-        LineWrap
-    };
-    
-    ApplicationSettings();
+    ApplicationSettings( QObject* parent = 0 );
 
     GeneralSettings general;
     EditorSettings editor;

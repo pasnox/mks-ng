@@ -1,5 +1,8 @@
 #include "ApplicationSettings.h"
+#include "ApplicationSettingsDelegate.h"
 #include "Document.h"
+
+#include <FreshCore/pCoreUtils>
 
 // General Settings
 
@@ -52,23 +55,27 @@ EditorSettings::Documents::Documents()
     setGuiContent( QT_TRANSLATE_NOOP( "ApplicationSettings", "Documents" ), QIcon::fromTheme( "document-properties" ) );
     setHelp( QT_TRANSLATE_NOOP( "ApplicationSettings", "Editor documents help" ) );
     
-    paper = addHValue( "paper", QColor( 255, 255, 255, 255 ), QVariant::Color );
-    paper.setGuiData( true );
-    paper.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Paper" ) );
-    
-    pen = addHValue( "pen", QColor( 0, 0, 0, 255 ), QVariant::Color );
-    pen.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Pen" ) );
-    
     font = addHValue( "font", QFont(), QVariant::Font );
     font.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Font" ) );
     
-    indentWidth = addHValue( "indentWidth", 4, QVariant::Int );
-    indentWidth.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Indent width" ) );
+    codec = addHValue( "codec", "UTF-8", QVariant::String );
+    codec.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Text codec" ) );
+    codec.setGuiData( pCoreUtils::textCodecs() );
+    
+    SettingsNode indentationGroup = addVGroup( QT_TRANSLATE_NOOP( "ApplicationSettings", "Indentation" ), "indentation" );
+    SettingsNode eolGroup = addHGroup( QT_TRANSLATE_NOOP( "ApplicationSettings", "End of line" ), "eol" );
+    
+    indentType = indentationGroup.addHValue( "type", Document::Spaces, ApplicationSettingsDelegate::Indent );
+    
+    indentWidth = indentationGroup.addHValue( "width", 4, QVariant::Int );
+    indentWidth.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Width" ) );
     indentWidth.setGuiData( PairInt( qMakePair( 0, 16 ) ) );
     
-    tabWidth = addHValue( "tabWidth", 4, QVariant::Int );
+    tabWidth = indentationGroup.addHValue( "tabWidth", 4, QVariant::Int );
     tabWidth.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Tab width" ) );
     tabWidth.setGuiData( PairInt( qMakePair( 0, 16 ) ) );
+    
+    eol = eolGroup.addHValue( "type", Document::Unix, ApplicationSettingsDelegate::Eol );
 }
 
 EditorSettings::Colors::Colors()
@@ -78,21 +85,32 @@ EditorSettings::Colors::Colors()
     setGuiContent( QT_TRANSLATE_NOOP( "ApplicationSettings", "Colors" ), QIcon::fromTheme( "format-text-color" ) );
     setHelp( QT_TRANSLATE_NOOP( "ApplicationSettings", "Editor colors help" ) );
     
-    selectionBackground = addHValue( "selectionBackground", QColor( 189, 255, 155, 255 ), QVariant::Color );
+    SettingsNode editorGroup = addHGroup( QT_TRANSLATE_NOOP( "ApplicationSettings", "Editor" ), "editor" );
+    SettingsNode selectionGroup = addHGroup( QT_TRANSLATE_NOOP( "ApplicationSettings", "Selection" ), "selection" );
+    SettingsNode caretLineGroup = addHGroup( QT_TRANSLATE_NOOP( "ApplicationSettings", "Caret line" ), "caretLne" );
+    
+    paper = editorGroup.addHValue( "paper", QColor( 255, 255, 255, 255 ), QVariant::Color );
+    paper.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Paper" ) );
+    paper.setGuiData( true );
+    
+    pen = editorGroup.addHValue( "pen", QColor( 0, 0, 0, 255 ), QVariant::Color );
+    pen.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Pen" ) );
+    
+    selectionBackground = selectionGroup.addHValue( "background", QColor( 189, 255, 155, 255 ), QVariant::Color );
+    selectionBackground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Background" ) );
     selectionBackground.setGuiData( true );
-    selectionBackground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Selection background" ) );
     
-    selectionForeground = addHValue( "selectionForeground", QColor( 0, 0, 0, 255 ), QVariant::Color );
+    selectionForeground = selectionGroup.addHValue( "foreground", QColor( 0, 0, 0, 255 ), QVariant::Color );
+    selectionForeground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Foreground" ) );
     selectionForeground.setGuiData( true );
-    selectionForeground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Selection foreground" ) );
     
-    lineBackground = addHValue( "lineBackground", QColor( 170, 170, 255, 150 ), QVariant::Color );
+    lineBackground = caretLineGroup.addHValue( "background", QColor( 170, 170, 255, 150 ), QVariant::Color );
+    lineBackground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Background" ) );
     lineBackground.setGuiData( true );
-    lineBackground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Line background" ) );
     
-    lineForeground = addHValue( "lineForeground", QColor( 0, 0, 0, 255 ), QVariant::Color );
+    lineForeground = caretLineGroup.addHValue( "foreground", QColor( 0, 0, 0, 255 ), QVariant::Color );
+    lineForeground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Foreground" ) );
     lineForeground.setGuiData( true );
-    lineForeground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Line foreground" ) );
 }
 
 EditorSettings::EditorSettings()
@@ -101,6 +119,24 @@ EditorSettings::EditorSettings()
     setName( "editor" );
     setGuiContent( QT_TRANSLATE_NOOP( "ApplicationSettings", "Editor" ), QIcon::fromTheme( "story-editor" ) );
     setHelp( QT_TRANSLATE_NOOP( "ApplicationSettings", "Editor help" ) );
+    
+    SettingsNode uponOpenGroup = addVGroup( QT_TRANSLATE_NOOP( "ApplicationSettings", "Upon open" ), "uponOpen" );
+    
+    detectEol = uponOpenGroup.addHValue( "detectEol", true, QVariant::Bool );
+    detectEol.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Try to detect end of line" ) );
+    detectEol.setHelp( QT_TRANSLATE_NOOP( "ApplicationSettings", "Try to detect end of line of the document" ) );
+    
+    detectIndentation = uponOpenGroup.addHValue( "detectIndentation", true, QVariant::Bool );
+    detectIndentation.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Try to detect indentation" ) );
+    detectIndentation.setHelp( QT_TRANSLATE_NOOP( "ApplicationSettings", "Try to detect indentation of the document" ) );
+    
+    convertEol = uponOpenGroup.addHValue( "convertEol", false, QVariant::Bool );
+    convertEol.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Force setted end of line" ) );
+    convertEol.setHelp( QT_TRANSLATE_NOOP( "ApplicationSettings", "Convert the end of line of the document according to the setted end of line" ) );
+    
+    convertIndentation = uponOpenGroup.addHValue( "convertIndentation", false, QVariant::Bool );
+    convertIndentation.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Force setted indentation" ) );
+    convertIndentation.setHelp( QT_TRANSLATE_NOOP( "ApplicationSettings", "Convert the indentation of the document according to the setted indentation" ) );
     
     addChild( margins );
     addChild( documents );
@@ -118,8 +154,8 @@ EditorSettings::EditorSettings()
 
 // ApplicationSettings
 
-ApplicationSettings::ApplicationSettings()
-    : SettingsNode( SettingsNode::Root )
+ApplicationSettings::ApplicationSettings( QObject* parent )
+    : QObject( parent ), SettingsNode( SettingsNode::Root )
 {
     setGuiContent( QT_TRANSLATE_NOOP( "ApplicationSettings", "Preferences" ), QIcon::fromTheme( "preferences-other" ) );
     
