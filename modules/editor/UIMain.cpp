@@ -6,6 +6,8 @@
 #include "main.h"
 #include "StackedDocumentCloseQuery.h"
 #include "SettingsNodeDialogBuilder.h"
+#include "ApplicationSettingsDelegate.h"
+#include "Abstractors.h"
 
 #include <FreshGui/pQueuedMessageToolBar>
 #include <FreshGui/pActionsMenuBar>
@@ -61,7 +63,6 @@ UIMain::UIMain( QWidget* parent )
     QAction* aPaste = model->addAction( MENU_EDIT_PASTE, tr( "Paste" ), QIcon::fromTheme( "edit-paste" ) );
     QAction* aPreferences = model->addAction( MENU_EDIT_PREFERENCES, tr( "Preferences" ), QIcon::fromTheme( "preferences-other" ) );
     
-    
     model->setDefaultShortcut( aNewPlainText, QKeySequence::New );
     //model->setDefaultShortcut( aOpen, QKeySequence::AddTab );
     model->setDefaultShortcut( aOpenPlainText, QKeySequence::Open );
@@ -93,6 +94,8 @@ UIMain::UIMain( QWidget* parent )
         model->setDefaultShortcut( aSaveAs, QKeySequence( shortcut ) );
     }
     
+    connect( this, &UIMain::preferencesChanged, ui->sdDocuments, &StackedDocument::applyPreferences );
+    
     connect( aUndo, &QAction::triggered, this, &UIMain::documentActionTriggered );
     connect( aRedo, &QAction::triggered, this, &UIMain::documentActionTriggered );
     connect( aCopy, &QAction::triggered, this, &UIMain::documentActionTriggered );
@@ -117,11 +120,6 @@ UIMain::UIMain( QWidget* parent )
 UIMain::~UIMain()
 {
     delete ui;
-}
-
-ApplicationSettings UIMain::applicationSettings() const
-{
-    return mApplicationSettings;
 }
 
 QIcon UIMain::currentWindowIcon() const
@@ -150,12 +148,12 @@ void UIMain::retranslateUi()
 void UIMain::saveState()
 {
     pMainWindow::saveState();
-    mApplicationSettings.save( settings() );
+    Abstractors::applicationSettings().save( settings() );
 }
 
 void UIMain::restoreState()
 {
-    mApplicationSettings.load( settings() );
+    Abstractors::applicationSettings().load( settings() );
     pMainWindow::restoreState();
 }
 
@@ -337,13 +335,13 @@ void UIMain::showDocumentError( Document* document )
 
 pFileDialogResult UIMain::requestUserOpenFileNames( const QString& text, const QString& path, const QString& filters, const QString& encoding )
 {
-    const QString textCodec = encoding.isEmpty() ? "UTF-8" : encoding; // to be updated to use application general settings
+    const QString textCodec = encoding.isEmpty() ? Abstractors::applicationSettings().editor.documents.codec.value().toString() : encoding;
     return pFileDialog::getOpenFileNames( this, text, path, filters, true, true, textCodec );
 }
 
 pFileDialogResult UIMain::requestUserSaveFileName( const QString& text, const QString& path, const QString& filters, const QString& encoding )
 {
-    const QString textCodec = encoding.isEmpty() ? "UTF-8" : encoding; // to be updated to use application general settings
+    const QString textCodec = encoding.isEmpty() ? Abstractors::applicationSettings().editor.documents.codec.value().toString() : encoding;
     return pFileDialog::getSaveFileName( this, text, path, filters, true, textCodec );
 }
 
@@ -612,12 +610,17 @@ bool UIMain::actionQuitTriggered()
 
 void UIMain::actionPreferencesTriggered()
 {
+    ApplicationSettingsDelegate delegate;
     SettingsNodeDialogBuilder dlg( this );
     
-    if ( !dlg.build( mApplicationSettings ) ) {
+    dlg.setDelegate( &delegate );
+    
+    if ( !dlg.build( Abstractors::applicationSettings() ) ) {
         showError( tr( "Can't build the preferences dialog." ), this );
         return;
     }
     
-    dlg.exec();
+    if ( dlg.exec() == QDialog::Accepted ) {
+        emit preferencesChanged();
+    }
 }

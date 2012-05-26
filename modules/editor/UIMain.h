@@ -1,8 +1,6 @@
 #ifndef UIMAIN_H
 #define UIMAIN_H
 
-#include "ApplicationSettings.h"
-
 #include <FreshGui/pMainWindow>
 
 class Ui_UIMain;
@@ -20,7 +18,6 @@ public:
     UIMain( QWidget* parent = 0 );
     virtual ~UIMain();
     
-    ApplicationSettings applicationSettings() const;
     QIcon currentWindowIcon() const;
     QString currentWindowTitle() const;
 
@@ -35,7 +32,6 @@ public slots:
     
 protected:
     Ui_UIMain* ui;
-    ApplicationSettings mApplicationSettings;
     
     virtual void closeEvent( QCloseEvent* event );
     virtual void changeEvent( QEvent* event );
@@ -67,6 +63,9 @@ protected slots:
     bool actionQuitTriggered();
     
     void actionPreferencesTriggered();
+
+signals:
+    void preferencesChanged();
 };
 
 #endif // UIMAIN_H
