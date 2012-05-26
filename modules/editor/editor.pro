@@ -38,6 +38,10 @@ HEADERS *=  \
     settings/SettingsNodeDialogBuilder.h \
     settings/SettingsNodeDialogBuilderDelegate.h \
     settings/ApplicationSettings.h \
+    settings/ApplicationSettingsDelegate.h \
+    settings/RadioGroup.h \
+    settings/EolRadioGroup.h \
+    settings/IndentationRadioGroup.h \
     UIMain.h \
     document/Document.h \
     document/DocumentLanguageModel.h \
@@ -64,6 +68,10 @@ SOURCES *= main.cpp \
     settings/SettingsNodeDialogBuilder.cpp \
     settings/SettingsNodeDialogBuilderDelegate.cpp \
     settings/ApplicationSettings.cpp \
+    settings/ApplicationSettingsDelegate.cpp \
+    settings/RadioGroup.cpp \
+    settings/EolRadioGroup.cpp \
+    settings/IndentationRadioGroup.cpp \
     UIMain.cpp \
     document/Document.cpp \
     document/DocumentLanguageModel.cpp \
