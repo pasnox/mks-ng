@@ -40,6 +40,8 @@ public:
         SettingsNode indentWidth;
         SettingsNode tabWidth;
         SettingsNode eol;
+        SettingsNode ruler;
+        SettingsNode wrap;
     };
     
     class Colors : public SettingsNode {
@@ -50,8 +52,8 @@ public:
         SettingsNode pen;
         SettingsNode selectionBackground;
         SettingsNode selectionForeground;
-        SettingsNode lineBackground;
-        SettingsNode lineForeground;
+        SettingsNode caretLineBackground;
+        SettingsNode caretLineForeground;
     };
     
     SettingsNode detectEol;
@@ -68,6 +70,11 @@ class ApplicationSettings : public QObject, public SettingsNode
 {
 public:
     ApplicationSettings( QObject* parent = 0 );
+    
+    virtual void save( QSettings* settings );
+    virtual void load( QSettings* settings );
+    
+    void syncDocumentPropertiesDiscover() const;
 
     GeneralSettings general;
     EditorSettings editor;

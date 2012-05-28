@@ -2,6 +2,8 @@
 #include "ApplicationSettingsDelegate.h"
 #include "Document.h"
 
+#include <DocumentPropertiesDiscover.h>
+
 #include <FreshCore/pCoreUtils>
 
 // General Settings
@@ -64,6 +66,8 @@ EditorSettings::Documents::Documents()
     
     SettingsNode indentationGroup = addVGroup( QT_TRANSLATE_NOOP( "ApplicationSettings", "Indentation" ), "indentation" );
     SettingsNode eolGroup = addHGroup( QT_TRANSLATE_NOOP( "ApplicationSettings", "End of line" ), "eol" );
+    SettingsNode rulerGroup = addHGroup( QT_TRANSLATE_NOOP( "ApplicationSettings", "Ruler" ), "ruler" );
+    SettingsNode wrapGroup = addHGroup( QT_TRANSLATE_NOOP( "ApplicationSettings", "Line wrap" ), "wrap" );
     
     indentType = indentationGroup.addHValue( "type", Document::Spaces, ApplicationSettingsDelegate::Indent );
     
@@ -76,6 +80,8 @@ EditorSettings::Documents::Documents()
     tabWidth.setGuiData( PairInt( qMakePair( 0, 16 ) ) );
     
     eol = eolGroup.addHValue( "type", Document::Unix, ApplicationSettingsDelegate::Eol );
+    ruler = rulerGroup.addHValue( "type", Document::Line, ApplicationSettingsDelegate::Ruler );
+    wrap = wrapGroup.addHValue( "type", Document::NoWrap, ApplicationSettingsDelegate::Wrap );
 }
 
 EditorSettings::Colors::Colors()
@@ -104,13 +110,13 @@ EditorSettings::Colors::Colors()
     selectionForeground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Foreground" ) );
     selectionForeground.setGuiData( true );
     
-    lineBackground = caretLineGroup.addHValue( "background", QColor( 170, 170, 255, 150 ), QVariant::Color );
-    lineBackground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Background" ) );
-    lineBackground.setGuiData( true );
+    caretLineBackground = caretLineGroup.addHValue( "background", QColor( 170, 170, 255, 150 ), QVariant::Color );
+    caretLineBackground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Background" ) );
+    caretLineBackground.setGuiData( true );
     
-    lineForeground = caretLineGroup.addHValue( "foreground", QColor( 0, 0, 0, 255 ), QVariant::Color );
-    lineForeground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Foreground" ) );
-    lineForeground.setGuiData( true );
+    caretLineForeground = caretLineGroup.addHValue( "foreground", QColor( 0, 0, 0, 255 ), QVariant::Color );
+    caretLineForeground.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Foreground" ) );
+    caretLineForeground.setGuiData( true );
 }
 
 EditorSettings::EditorSettings()
@@ -141,15 +147,6 @@ EditorSettings::EditorSettings()
     addChild( margins );
     addChild( documents );
     addChild( colors );
-    
-    /*addHChildValue( ApplicationSettings::Eol, QT_TRANSLATE_NOOP( "ApplicationSettings", "End of line mode" ), Document::Unix );
-    addHChildValue( ApplicationSettings::Indent, QT_TRANSLATE_NOOP( "ApplicationSettings", "Indent mode" ), Document::Spaces );*/
-    
-    /*addHChildValue( ApplicationSettings::Ruler, QT_TRANSLATE_NOOP( "ApplicationSettings", "End of line style" ), Document::NoRuler );
-    addHChildValue( ApplicationSettings::TextEncoding, QT_TRANSLATE_NOOP( "ApplicationSettings", "Text codec" ), "UTF-8" );
-    addHChildValue( ApplicationSettings::LineWrap, QT_TRANSLATE_NOOP( "ApplicationSettings", "Line wrap mode" ), Document::NoWrap );*/
-    
-    
 }
 
 // ApplicationSettings
@@ -161,4 +158,23 @@ ApplicationSettings::ApplicationSettings( QObject* parent )
     
     addChild( general );
     addChild( editor );
+}
+
+void ApplicationSettings::save( QSettings* settings )
+{
+    SettingsNode::save( settings );
+}
+
+void ApplicationSettings::load( QSettings* settings )
+{
+    SettingsNode::load( settings );
+    syncDocumentPropertiesDiscover();
+}
+
+void ApplicationSettings::syncDocumentPropertiesDiscover() const
+{
+    DocumentPropertiesDiscover::setDefaultEol( DocumentPropertiesDiscover::Eol( editor.documents.eol.value().toInt() ) );
+    DocumentPropertiesDiscover::setDefaultIndent( DocumentPropertiesDiscover::Indent( editor.documents.indentType.value().toInt() ) );
+    DocumentPropertiesDiscover::setDefaultIndentWidth( editor.documents.indentWidth.value().toInt() );
+    DocumentPropertiesDiscover::setDefaultTabWidth( editor.documents.tabWidth.value().toInt() );
 }
