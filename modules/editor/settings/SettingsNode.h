@@ -80,8 +80,8 @@ public:
     void addChild( const SettingsNode& child );
     void removeChild( const SettingsNode& child );
     
-    void save( QSettings* settings );
-    void load( QSettings* settings );
+    virtual void save( QSettings* settings );
+    virtual void load( QSettings* settings );
     
     // helpers
     void setTypes( int type, int guiType = -1 );
