@@ -75,6 +75,9 @@ void DocumentIndentation::propertiesChanged()
         case Document::Tabs:
             setText( tr( "%1 Tabs (%2)" ).arg( mIndentWidth ).arg( mTabWidth ) );
             break;
+        case Document::TabsAndSpaces:
+            setText( tr( "%1 Mixed (%2)" ).arg( mIndentWidth ).arg( mTabWidth ) );
+            break;
     }
 }
 
