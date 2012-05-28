@@ -146,7 +146,21 @@ bool Document::open( const QString& filePath, const QString& encoding, bool read
     QString transformedContent = content;
     
     if ( settings.editor.detectEol.value().toBool() || settings.editor.detectIndentation.value().toBool() ) {
-        properties = DocumentPropertiesDiscover::guessContentProperties( content );
+        const DocumentPropertiesDiscover::GuessedProperties p = DocumentPropertiesDiscover::guessContentProperties( content );
+        
+        if ( settings.editor.detectEol.value().toBool() ) {
+            if ( settings.editor.detectIndentation.value().toBool() ) {
+                properties = p;
+            }
+            else {
+                properties.eol = p.eol;
+            }
+        }
+        else if ( settings.editor.detectIndentation.value().toBool() ) {
+            const int eol = properties.eol;
+            properties = p;
+            properties.eol = eol;
+        }
     }
     
     applyApplicationSettings( properties );
