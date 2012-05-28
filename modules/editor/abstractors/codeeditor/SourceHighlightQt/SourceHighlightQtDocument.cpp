@@ -93,6 +93,14 @@ QVariant SourceHighlightQtDocument::property( int property ) const
         case Document::Style:
             return mHighlighter->getFormattingStyle();
         
+        case Document::Font:
+        case Document::Paper:
+        case Document::Pen:
+        case Document::SelectionBackground:
+        case Document::SelectionForeground:
+        case Document::CaretLineBackground:
+        case Document::CaretLineForeground:
+        
         case Document::Decoration:
         case Document::Title:
         case Document::FilePath:
@@ -110,7 +118,11 @@ QVariant SourceHighlightQtDocument::property( int property ) const
         case Document::SymbolMargin:
         case Document::ChangeMargin:
         default: {
-            return mProperties.value( property, Document::property( property ) );
+            if ( mProperties.contains( property ) ) {
+                return mProperties.value( property );
+            }
+            
+            return Document::property( property );
         }
     }
 }
@@ -211,6 +223,14 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
         case Document::Indent:
         case Document::IndentWidth:
         case Document::Ruler:
+        
+        case Document::Font:
+        case Document::Paper:
+        case Document::Pen:
+        case Document::SelectionBackground:
+        case Document::SelectionForeground:
+        case Document::CaretLineBackground:
+        case Document::CaretLineForeground:
         
         case Document::Decoration:
         case Document::Title:
