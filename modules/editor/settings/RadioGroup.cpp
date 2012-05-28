@@ -33,6 +33,7 @@ int RadioGroup::checkedId() const
 
 void RadioGroup::addButton( QAbstractButton* button, int id )
 {
+    button->setCheckable( true );
     mLayout->addWidget( button );
     mGroup->addButton( button, id );
 }
