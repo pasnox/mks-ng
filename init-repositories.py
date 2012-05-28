@@ -20,6 +20,7 @@ class RepositoryInitializer:
     modules = {
         'git':
             {
+                'document-properties-discover': 'git://github.com/pasnox/document-properties-discover.git',
                 'source-highlight': 'git://git.savannah.gnu.org/src-highlite.git',
                 'source-highlight-qt': 'git://srchiliteqt.git.sourceforge.net/gitroot/srchiliteqt/srchiliteqt',
                 'fresh': 'git://github.com/pasnox/fresh.git',
