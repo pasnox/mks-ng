@@ -14,6 +14,8 @@
 #include <QHash>
 #include <QStringList>
 
+#include <DocumentPropertiesDiscover.h>
+
 class QEvent;
 class QMetaObject;
 class QTextCodec;
@@ -37,14 +39,15 @@ public:
     Q_DECLARE_FLAGS( StateHints, StateHint )
     
     enum EolHint {
-        Unix = 0,
-        DOS = 1,
-        MacOS = 2
+        Unix = DocumentPropertiesDiscover::UnixEol,
+        DOS = DocumentPropertiesDiscover::DOSEol,
+        MacOS = DocumentPropertiesDiscover::MacOSEol
     };
     
     enum IndentHint {
-        Spaces = 0,
-        Tabs = 1
+        Spaces = DocumentPropertiesDiscover::SpacesIndent,
+        Tabs = DocumentPropertiesDiscover::TabsIndent,
+        TabsAndSpaces = DocumentPropertiesDiscover::MixedIndent
     };
     
     enum RulerHint {
@@ -92,6 +95,13 @@ public:
         FoldMargin = 31, // bool
         SymbolMargin = 32, // bool
         ChangeMargin = 33, // bool
+        Font = 34, // QFont
+        Paper = 35, // QColor
+        Pen = 36, // QColor
+        SelectionBackground = 37, // QColor
+        SelectionForeground = 38, // QColor
+        CaretLineBackground = 39, // QColor
+        CaretLineForeground = 40, // QColor
         //
         UserProperty = 1000 // first user usable extension
     };
@@ -108,7 +118,7 @@ public:
     virtual ~Document();
     
     virtual QVariant property( int property ) const;
-    virtual void updateSharedProperties();
+    virtual void applyApplicationSettings( const DocumentPropertiesDiscover::GuessedProperties& properties = DocumentPropertiesDiscover::GuessedProperties() );
     
     // the api don't care about unsaved content or already opened content
     // it's the caller responsability to check that before
@@ -135,7 +145,9 @@ protected:
     QIcon iconForFileName( const QString& fileName ) const;
     QIcon iconForLanguage( const QString& language ) const;
     QIcon iconForContent( const QString& content ) const;
-
+    
+    bool fileContent( QString& content, const QString& filePath, const QString& encoding = QString::null );
+    
 signals:
     void propertyChanged( int property );
     void propertiesChanged();

@@ -45,8 +45,6 @@ void Document::changeEvent( QEvent* event )
 
 QVariant Document::property( int property ) const
 {
-    const ApplicationSettings& settings = Abstractors::applicationSettings();
-    
     // handle default properties
     switch ( property ) {
         case Document::Decoration: {
@@ -82,29 +80,8 @@ QVariant Document::property( int property ) const
             const QString filePath = this->property( Document::FilePath ).toString();
             return filePath.isEmpty() ? QString::null : QFileInfo( filePath ).fileName();
         }
-        case Document::Eol:
-            return settings.editor.documents.eol;
-        case Document::Indent: //
-            return Document::Spaces;
-        case Document::TabWidth:
-            return settings.editor.documents.tabWidth;
-        case Document::IndentWidth:
-            return settings.editor.documents.indentWidth;
-        case Document::Ruler: //
-            return Document::NoRuler;
-        case Document::TextEncoding:
-            return settings.editor.documents.codec;
-        case Document::LineWrap: //
-            return Document::NoWrap;
-        case Document::LineNumberMargin:
-            return settings.editor.margins.lineNumber;
-        case Document::FoldMargin:
-            return settings.editor.margins.fold;
-        case Document::SymbolMargin:
-            return settings.editor.margins.symbol;
-        case Document::ChangeMargin:
-            return settings.editor.margins.lineState;
         default:
+            qFatal( "%s: Unhandled property %i", Q_FUNC_INFO, property );
             return QVariant();
     }
 }
@@ -126,21 +103,28 @@ void Document::setProperty( int property, const QVariant& value )
     Q_UNUSED( value );
 }
 
-void Document::updateSharedProperties()
+void Document::applyApplicationSettings( const DocumentPropertiesDiscover::GuessedProperties& properties )
 {
-    const bool locked = blockSignals( true );
-    setProperty( Document::Eol, Document::property( Document::Eol ) );
-    setProperty( Document::Indent, Document::property( Document::Indent ) );
-    setProperty( Document::TabWidth, Document::property( Document::TabWidth ) );
-    setProperty( Document::IndentWidth, Document::property( Document::IndentWidth ) );
-    setProperty( Document::Ruler, Document::property( Document::Ruler ) );
-    setProperty( Document::LineWrap, Document::property( Document::LineWrap ) );
-    //setProperty( Document::TextEncoding, Document::property( Document::TextEncoding ) );
-    setProperty( Document::LineNumberMargin, Document::property( Document::LineNumberMargin ) );
-    setProperty( Document::FoldMargin, Document::property( Document::FoldMargin ) );
-    setProperty( Document::SymbolMargin, Document::property( Document::SymbolMargin ) );
-    setProperty( Document::ChangeMargin, Document::property( Document::ChangeMargin ) );
-    blockSignals( locked );
+    const ApplicationSettings& settings = Abstractors::applicationSettings();
+    
+    setProperty( Document::Eol, properties.eol );
+    setProperty( Document::Indent, properties.indent );
+    setProperty( Document::IndentWidth, properties.indentWidth );
+    setProperty( Document::TabWidth, properties.tabWidth );
+    setProperty( Document::Ruler, settings.editor.documents.ruler );
+    setProperty( Document::LineWrap, settings.editor.documents.wrap );
+    setProperty( Document::TextEncoding, settings.editor.documents.codec );
+    setProperty( Document::LineNumberMargin, settings.editor.margins.lineNumber );
+    setProperty( Document::FoldMargin, settings.editor.margins.fold );
+    setProperty( Document::SymbolMargin, settings.editor.margins.symbol );
+    setProperty( Document::ChangeMargin, settings.editor.margins.lineState );
+    setProperty( Document::Font, settings.editor.documents.font );
+    setProperty( Document::Paper, settings.editor.colors.paper );
+    setProperty( Document::Pen, settings.editor.colors.pen );
+    setProperty( Document::SelectionBackground, settings.editor.colors.selectionBackground );
+    setProperty( Document::SelectionForeground, settings.editor.colors.selectionForeground );
+    setProperty( Document::CaretLineBackground, settings.editor.colors.caretLineBackground );
+    setProperty( Document::CaretLineForeground, settings.editor.colors.caretLineForeground );
 }
 
 bool Document::open( const QString& filePath, const QString& encoding, bool readOnly )
@@ -150,14 +134,25 @@ bool Document::open( const QString& filePath, const QString& encoding, bool read
         return false;
     }
     
-    QFile file( filePath );
+    QString content;
     
-    if ( !file.open( QIODevice::ReadOnly | QIODevice::Text ) ) {
-        setProperty( Document::LastError, tr( "Can't open file '%1' (%2)" ).arg( filePath ).arg( file.errorString() ) );
+    if ( !fileContent( content, filePath, encoding ) ) {
         return false;
     }
     
-    QTextCodec* codec = textCodec( encoding );
+    const ApplicationSettings& settings = Abstractors::applicationSettings();
+    DocumentPropertiesDiscover::GuessedProperties properties;
+    
+    QString transformedContent = content;
+    
+    if ( settings.editor.detectEol.value().toBool() || settings.editor.detectIndentation.value().toBool() ) {
+        properties = DocumentPropertiesDiscover::guessContentProperties( content );
+    }
+    
+    applyApplicationSettings( properties );
+    
+    if ( settings.editor.convertEol.value().toBool() || settings.editor.convertIndentation.value().toBool() ) {
+    }
     
     if ( mCodeEditorAbstractor ) {
         //if ( property( Document::Language ).toString().isEmpty() ) {
@@ -167,10 +162,14 @@ bool Document::open( const QString& filePath, const QString& encoding, bool read
     
     setProperty( Document::NewFile, false );
     setProperty( Document::FilePath, QDir::cleanPath( filePath ) );
-    setProperty( Document::TextEncoding, codec->name() );
+    setProperty( Document::TextEncoding, textCodec( encoding )->name() );
     setProperty( Document::ReadOnly, readOnly );
-    setProperty( Document::InitialText, codec->toUnicode( file.readAll() ) );
+    setProperty( Document::InitialText, content );
     setProperty( Document::State, Document::Unmodified );
+    
+    if ( transformedContent != content ) {
+        setProperty( Document::Text, transformedContent );
+    }
     
     return true;
 }
@@ -269,7 +268,7 @@ void Document::close()
 
 void Document::initialize()
 {
-    updateSharedProperties();
+    applyApplicationSettings();
     
     setProperty( Document::NewFile, true );
     setProperty( Document::Title, tr( "New file #%1" ).arg( ++Document::mDocumentCount ) );
@@ -305,4 +304,25 @@ QIcon Document::iconForLanguage( const QString& language ) const
 QIcon Document::iconForContent( const QString& content ) const
 {
     return mCodeEditorAbstractor ? mCodeEditorAbstractor->iconForContent( content ) : QIcon();
+}
+
+bool Document::fileContent( QString& content, const QString& filePath, const QString& encoding )
+{
+    if ( filePath.isEmpty() ) {
+        setProperty( Document::LastError, tr( "No given file path to get the document." ) );
+        return false;
+    }
+    
+    QFile file( filePath );
+    
+    if ( !file.open( QIODevice::ReadOnly ) ) {
+        setProperty( Document::LastError, tr( "Can't open file '%1' (%2)" ).arg( filePath ).arg( file.errorString() ) );
+        return false;
+    }
+    
+    const QByteArray data = file.readAll();
+    QTextCodec* codec = textCodec( encoding );
+    content = codec->toUnicode( data );
+    
+    return true;
 }
