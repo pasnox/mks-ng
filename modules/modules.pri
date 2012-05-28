@@ -19,6 +19,7 @@ include( $$PWD/config.pri )
 QT *= widgets network xml
 
 INCLUDEPATH = \
+    $$PWD/../3rdparty/document-properties-discover.git/src \
     $$PWD/../3rdparty/source-highlight.git/lib \
     $$PWD/../3rdparty/source-highlight-qt.git/lib \
     $$getFolders( $$PWD/../3rdparty/fresh.git/src ) \
