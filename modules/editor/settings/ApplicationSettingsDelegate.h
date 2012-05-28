@@ -11,9 +11,8 @@ public:
     enum ExtendedVariantType {
         Eol = QVariant::UserType,
         Indent,
-        
-        LineWrap,
-        Ruler
+        Ruler,
+        Wrap
     };
     
     virtual bool editorNeedLabel( const SettingsNode& node ) const;

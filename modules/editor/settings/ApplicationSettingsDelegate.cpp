@@ -2,6 +2,8 @@
 #include "SettingsNode.h"
 #include "EolRadioGroup.h"
 #include "IndentationRadioGroup.h"
+#include "RulerRadioGroup.h"
+#include "WrapRadioGroup.h"
 
 #include <QDebug>
 
@@ -14,6 +16,8 @@ bool ApplicationSettingsDelegate::editorNeedLabel( const SettingsNode& node ) co
     switch ( node.guiType() ) {
         case ApplicationSettingsDelegate::Eol:
         case ApplicationSettingsDelegate::Indent:
+        case ApplicationSettingsDelegate::Ruler:
+        case ApplicationSettingsDelegate::Wrap:
             return false;
         default:
             qWarning() << Q_FUNC_INFO << "Unhandled type" << node.name() << node.value() << node.guiType() << QVariant::typeToName( QVariant::Type( node.guiType() ) );
@@ -32,6 +36,10 @@ QWidget* ApplicationSettingsDelegate::createEditor( const SettingsNode& node, QW
             return new EolRadioGroup( parent );
         case ApplicationSettingsDelegate::Indent:
             return new IndentationRadioGroup( parent );
+        case ApplicationSettingsDelegate::Ruler:
+            return new RulerRadioGroup( parent );
+        case ApplicationSettingsDelegate::Wrap:
+            return new WrapRadioGroup( parent );
         default:
             qWarning() << Q_FUNC_INFO << "Unhandled type" << node.name() << node.value() << node.guiType() << QVariant::typeToName( QVariant::Type( node.guiType() ) );
             break;
@@ -51,16 +59,13 @@ void ApplicationSettingsDelegate::setEditorData( QWidget* editor, const Settings
     editor->setToolTip( node.help() );
     
     switch ( node.guiType() ) {
-        case ApplicationSettingsDelegate::Eol: {
-            EolRadioGroup* erg = qobject_cast<EolRadioGroup*>( editor );
-            Q_ASSERT( erg );
-            erg->setCheckedId( value.toInt() );
-            break;
-        }
-        case ApplicationSettingsDelegate::Indent: {
-            IndentationRadioGroup* irg = qobject_cast<IndentationRadioGroup*>( editor );
-            Q_ASSERT( irg );
-            irg->setCheckedId( value.toInt() );
+        case ApplicationSettingsDelegate::Eol:
+        case ApplicationSettingsDelegate::Indent:
+        case ApplicationSettingsDelegate::Ruler:
+        case ApplicationSettingsDelegate::Wrap: {
+            RadioGroup* rg = qobject_cast<RadioGroup*>( editor );
+            Q_ASSERT( rg );
+            rg->setCheckedId( value.toInt() );
             break;
         }
         default:
@@ -77,16 +82,13 @@ void ApplicationSettingsDelegate::setNodeData( QWidget* editor, SettingsNode& no
     }
     
     switch ( node.guiType() ) {
-        case ApplicationSettingsDelegate::Eol: {
-            EolRadioGroup* erg = qobject_cast<EolRadioGroup*>( editor );
-            Q_ASSERT( erg );
-            node.setValue( erg->checkedId() );
-            break;
-        }
-        case ApplicationSettingsDelegate::Indent: {
-            IndentationRadioGroup* irg = qobject_cast<IndentationRadioGroup*>( editor );
-            Q_ASSERT( irg );
-            node.setValue( irg->checkedId() );
+        case ApplicationSettingsDelegate::Eol:
+        case ApplicationSettingsDelegate::Indent:
+        case ApplicationSettingsDelegate::Ruler:
+        case ApplicationSettingsDelegate::Wrap: {
+            RadioGroup* rg = qobject_cast<RadioGroup*>( editor );
+            Q_ASSERT( rg );
+            node.setValue( rg->checkedId() );
             break;
         }
         default:
