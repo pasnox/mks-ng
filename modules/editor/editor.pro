@@ -33,6 +33,7 @@ FORMS *=  \
     document/StackedDocumentCloseQuery.ui
 
 HEADERS *=  \
+    ../../3rdparty/document-properties-discover.git/src/DocumentPropertiesDiscover.h \
     Menu.h \
     settings/SettingsNode.h \
     settings/SettingsNodeDialogBuilder.h \
@@ -42,6 +43,8 @@ HEADERS *=  \
     settings/RadioGroup.h \
     settings/EolRadioGroup.h \
     settings/IndentationRadioGroup.h \
+    settings/RulerRadioGroup.h \
+    settings/WrapRadioGroup.h \
     UIMain.h \
     document/Document.h \
     document/DocumentLanguageModel.h \
@@ -64,6 +67,7 @@ HEADERS *=  \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.h
 
 SOURCES *= main.cpp \
+    ../../3rdparty/document-properties-discover.git/src/DocumentPropertiesDiscover.cpp \
     settings/SettingsNode.cpp \
     settings/SettingsNodeDialogBuilder.cpp \
     settings/SettingsNodeDialogBuilderDelegate.cpp \
@@ -72,6 +76,8 @@ SOURCES *= main.cpp \
     settings/RadioGroup.cpp \
     settings/EolRadioGroup.cpp \
     settings/IndentationRadioGroup.cpp \
+    settings/RulerRadioGroup.cpp \
+    settings/WrapRadioGroup.cpp \
     UIMain.cpp \
     document/Document.cpp \
     document/DocumentLanguageModel.cpp \
