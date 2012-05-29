@@ -7,8 +7,8 @@
 #include <QTextCodec>
 #include <QVariant>
 #include <QFile>
+#include <QFileInfo>
 #include <QIcon>
-#include <QDir>
 #include <QDateTime>
 #include <QMimeDatabase>
 #include <QDebug>
@@ -81,7 +81,7 @@ QVariant Document::property( int property ) const
             return filePath.isEmpty() ? QString::null : QFileInfo( filePath ).fileName();
         }
         default:
-            qFatal( "%s: Unhandled property %i", Q_FUNC_INFO, property );
+            qWarning( "%s: Unhandled property %i", Q_FUNC_INFO, property );
             return QVariant();
     }
 }
@@ -136,53 +136,64 @@ bool Document::open( const QString& filePath, const QString& encoding, bool read
     
     QString content;
     
+    // get file content propertly decoded
     if ( !fileContent( content, filePath, encoding ) ) {
         return false;
     }
     
     const ApplicationSettings& settings = Abstractors::applicationSettings();
+    const bool detectEol = settings.editor.detectEol.value().toBool();
+    const bool detectIndent = settings.editor.detectIndentation.value().toBool();
+    const bool convertEol = settings.editor.convertEol.value().toBool();
+    const bool convertIndent = settings.editor.convertIndentation.value().toBool();
+    
     DocumentPropertiesDiscover::GuessedProperties properties;
+    QString convertedContent = content;
     
-    QString transformedContent = content;
+    // guess the content properties if needed
+    if ( detectEol || detectIndent ) {
+        properties = DocumentPropertiesDiscover::guessContentProperties( content, detectEol, detectIndent );
+    }
     
-    if ( settings.editor.detectEol.value().toBool() || settings.editor.detectIndentation.value().toBool() ) {
-        const DocumentPropertiesDiscover::GuessedProperties p = DocumentPropertiesDiscover::guessContentProperties( content );
+    // convert the content if needed
+    if ( convertEol || convertIndent ) {
+        const DocumentPropertiesDiscover::GuessedProperties from = detectEol && detectIndent ? properties : DocumentPropertiesDiscover::guessContentProperties( content, true, true );
+        const DocumentPropertiesDiscover::GuessedProperties to;
         
-        if ( settings.editor.detectEol.value().toBool() ) {
-            if ( settings.editor.detectIndentation.value().toBool() ) {
-                properties = p;
-            }
-            else {
-                properties.eol = p.eol;
-            }
+        DocumentPropertiesDiscover::convertContent( convertedContent, from, to, convertEol, convertIndent );
+        
+        if ( convertEol ) {
+            properties.eol = to.eol;
         }
-        else if ( settings.editor.detectIndentation.value().toBool() ) {
-            const int eol = properties.eol;
-            properties = p;
-            properties.eol = eol;
+        
+        if ( convertIndent ) {
+            properties.indent = to.indent;
+            properties.indentWidth = to.indentWidth;
+            properties.tabWidth = to.tabWidth;
         }
     }
     
+    // apply application properties to the document
     applyApplicationSettings( properties );
     
-    if ( settings.editor.convertEol.value().toBool() || settings.editor.convertIndentation.value().toBool() ) {
-    }
-    
+    // set content language
     if ( mCodeEditorAbstractor ) {
         //if ( property( Document::Language ).toString().isEmpty() ) {
             setProperty( Document::Language, mCodeEditorAbstractor->languageForFileName( filePath ) );
         //}
     }
     
+    // finalyze document
     setProperty( Document::NewFile, false );
-    setProperty( Document::FilePath, QDir::cleanPath( filePath ) );
+    setProperty( Document::FilePath, filePath );
     setProperty( Document::TextEncoding, textCodec( encoding )->name() );
     setProperty( Document::ReadOnly, readOnly );
     setProperty( Document::InitialText, content );
     setProperty( Document::State, Document::Unmodified );
     
-    if ( transformedContent != content ) {
-        setProperty( Document::Text, transformedContent );
+    // set transformed content
+    if ( convertedContent != content ) {
+        setProperty( Document::Text, convertedContent );
     }
     
     return true;
@@ -197,7 +208,7 @@ bool Document::save( const QString& filePath, const QString& encoding )
         return false;
     }
     
-    const QString backupFn = QString( "%1.%2" ).arg( fn ).arg( QDateTime::currentDateTime().toString( "" ) );
+    const QString backupFn = QString( "%1.%2" ).arg( fn ).arg( QDateTime::currentDateTime().toString( "yyyy-MM-dd-hh-mm-ss" ) );
     
     if ( QFile::exists( fn ) ) {
         if ( !QFile::rename( fn, backupFn ) ) {
@@ -209,44 +220,66 @@ bool Document::save( const QString& filePath, const QString& encoding )
     QFile file( fn );
     
     if ( !file.open( QIODevice::WriteOnly ) ) {
+        // restore original content
+        if ( QFile::exists( backupFn ) ) {
+            if ( !QFile::rename( backupFn, fn ) ) {
+                setProperty( Document::LastError, tr( "Can't rename '%1' for doing atomic save." ).arg( backupFn ) );
+                return false;
+            }
+        }
+        
         setProperty( Document::LastError, tr( "Can't save file '%1' (%2)" ).arg( filePath ).arg( file.errorString() ) );
         return false;
     }
     
     if ( !file.resize( 0 ) ) {
+        // close / delete
+        file.close();
+        file.remove();
+        
+        // restore original content
+        if ( QFile::exists( backupFn ) ) {
+            if ( !QFile::rename( backupFn, fn ) ) {
+                setProperty( Document::LastError, tr( "Can't rename '%1' for doing atomic save." ).arg( backupFn ) );
+                return false;
+            }
+        }
+        
         setProperty( Document::LastError, tr( "Can't truncate '%1' for doing atomic save." ).arg( filePath ) );
         return false;
     }
     
-    const Document::EolHint eol = Document::EolHint( property( Document::Eol ).toInt() );
+    const int eol = property( Document::Eol ).toInt();
+    const int indent = property( Document::Indent ).toInt();
+    const int indentWidth = property( Document::IndentWidth ).toInt();
+    const int tabWidth = property( Document::TabWidth ).toInt();
+    const DocumentPropertiesDiscover::GuessedProperties from( eol, indent, indentWidth, tabWidth );
+    const DocumentPropertiesDiscover::GuessedProperties to( from );
     QTextCodec* codec = textCodec( encoding );
-    QString text = property( Document::Text ).toString();
+    QString content = property( Document::Text ).toString();
     
-    // fix possible bad eol when pasting
-    text.replace( "\r\n", "\n" );
-    text.replace( "\n\r", "\n" );
-    text.replace( "\r", "\n" );
+    // convert eol if needed, may be not necessary when implementing  auto convertion of pasted text
+    DocumentPropertiesDiscover::convertContent( content, from, to, true, false );
     
-    // use correct eol
-    switch ( eol ) {
-        case Document::Unix:
-            // nothing to do
-            break;
-        case Document::DOS:
-            text.replace( "\n", "\r\n" );
-            break;
-        case Document::MacOS:
-            text.replace( "\n", "\r" );
-            break;
-    }
-    
-    if ( file.write( codec->fromUnicode( text ) ) == -1 ) {
+    if ( file.write( codec->fromUnicode( content ) ) == -1 ) {
+        // close / delete
+        file.close();
+        file.remove();
+        
+        // restore original content
+        if ( QFile::exists( backupFn ) ) {
+            if ( !QFile::rename( backupFn, fn ) ) {
+                setProperty( Document::LastError, tr( "Can't rename '%1' for doing atomic save." ).arg( backupFn ) );
+                return false;
+            }
+        }
+        
         setProperty( Document::LastError, file.errorString() );
         return false;
     }
     
     setProperty( Document::NewFile, false );
-    setProperty( Document::FilePath, QDir::cleanPath( fn ) );
+    setProperty( Document::FilePath, fn );
     setProperty( Document::TextEncoding, codec->name() );
     setProperty( Document::State, Document::Unmodified );
     
@@ -294,7 +327,7 @@ QTextCodec* Document::textCodec( const QString& encoding ) const
     QString name = encoding.isEmpty() ? property( Document::TextEncoding ).toString() : encoding;
     
     if ( name.isEmpty() ) {
-        name = Document::property( Document::TextEncoding ).toString();
+        name = Abstractors::applicationSettings().editor.documents.eol.value().toString();
     }
     
     return QTextCodec::codecForName( name.toLocal8Bit() );
