@@ -176,13 +176,6 @@ bool Document::open( const QString& filePath, const QString& encoding, bool read
     // apply application properties to the document
     applyApplicationSettings( properties );
     
-    // set content language
-    if ( mCodeEditorAbstractor ) {
-        //if ( property( Document::Language ).toString().isEmpty() ) {
-            setProperty( Document::Language, mCodeEditorAbstractor->languageForFileName( filePath ) );
-        //}
-    }
-    
     // finalyze document
     setProperty( Document::NewFile, false );
     setProperty( Document::FilePath, filePath );
@@ -194,6 +187,13 @@ bool Document::open( const QString& filePath, const QString& encoding, bool read
     // set transformed content
     if ( convertedContent != content ) {
         setProperty( Document::Text, convertedContent );
+    }
+    
+    // set content language
+    if ( mCodeEditorAbstractor ) {
+        //if ( property( Document::Language ).toString().isEmpty() ) {
+            setProperty( Document::Language, mCodeEditorAbstractor->languageForFileName( filePath ) );
+        //}
     }
     
     return true;
