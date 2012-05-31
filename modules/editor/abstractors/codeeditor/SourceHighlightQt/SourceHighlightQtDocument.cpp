@@ -15,11 +15,13 @@
 SourceHighlightQtDocument::SourceHighlightQtDocument( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent )
     : Document( codeEditorAbstractor, parent ),
         mEditor( new QPlainTextEdit( this ) ),
-        mHighlighter( new srchiliteqt::Qt4SyntaxHighlighter( mEditor->document() ) )
+        mHighlighter( 0/*new srchiliteqt::Qt4SyntaxHighlighter( mEditor->document() )*/ )
 {
     Document::initialize();
     
-    mHighlighter->init( "default.lang", "default.style" );
+    if ( mHighlighter ) {
+        mHighlighter->init( "default.lang", "default.style" );
+    }
     
     QBoxLayout* bLayout = new QBoxLayout( QBoxLayout::LeftToRight );
     bLayout->setMargin( 0 );
@@ -89,9 +91,9 @@ QVariant SourceHighlightQtDocument::property( int property ) const
             return int( state );
         }
         case Document::Language:
-            return mHighlighter->getLangFile();
+            return mHighlighter ? mHighlighter->getLangFile() : QString::null;
         case Document::Style:
-            return mHighlighter->getFormattingStyle();
+            return mHighlighter ? mHighlighter->getFormattingStyle() : QString::null;
         
         case Document::Font:
         case Document::Paper:
@@ -203,8 +205,13 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
                 return;
             }
             
-            const QString style = this->property( Document::Style ).toString();
-            mHighlighter->deleteLater();
+            const QString style = mHighlighter ? this->property( Document::Style ).toString() : "default.style";
+            
+            if ( mHighlighter ) {
+                mHighlighter->deleteLater();
+                mHighlighter = 0;
+            }
+            
             mHighlighter = new srchiliteqt::Qt4SyntaxHighlighter( mEditor->document() );
             mHighlighter->init( value.toString(), style );
             break;
@@ -215,6 +222,24 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
             }
             
             break;
+        case Document::Font:
+            mEditor->document()->setDefaultFont( value.value<QFont>() );
+            break;
+        case Document::Paper:
+        case Document::Pen: {
+            QPalette pal = mEditor->viewport()->palette();
+            
+            if ( property == Document::Paper ) {
+                pal.setColor( mEditor->viewport()->backgroundRole(), value.value<QColor>() );
+            }
+            else if ( property == Document::Paper ) {
+                pal.setColor( mEditor->viewport()->foregroundRole(), value.value<QColor>() );
+            }
+            
+            mEditor->viewport()->setAutoFillBackground( true );
+            mEditor->viewport()->setPalette( pal );
+            break;
+        }
         
         case Document::TabWidth:
             mEditor->setTabStopWidth( value.toInt() *QFontMetrics( mEditor->font() ).averageCharWidth() );
@@ -223,10 +248,7 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
         case Document::Indent:
         case Document::IndentWidth:
         case Document::Ruler:
-        
-        case Document::Font:
-        case Document::Paper:
-        case Document::Pen:
+    
         case Document::SelectionBackground:
         case Document::SelectionForeground:
         case Document::CaretLineBackground:
@@ -249,6 +271,8 @@ void SourceHighlightQtDocument::setProperty( int property, const QVariant& value
             break;
         }
     }
+    
+    // mEditor->setCursorWidth ( int width )
     
     if ( cursor != mEditor->textCursor() && property != Document::InitialText ) {
         mEditor->setTextCursor( cursor );
