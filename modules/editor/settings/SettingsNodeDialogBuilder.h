@@ -27,6 +27,9 @@ public:
 
 private:
     class SettingsNodeDialogBuilderPrivate* d;
+
+signals:
+    void applyClicked();
 };
 
 #endif // SETTINGSNODEDIALOGBUILDER_H

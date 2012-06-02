@@ -385,6 +385,8 @@ void SettingsNodeDialogBuilderPrivate::dbbButtons_clicked( QAbstractButton* butt
                 delete delegate;
             }
             
+            emit mBuilder->applyClicked();
+            
             break;
         }
         case QDialogButtonBox::Cancel:
