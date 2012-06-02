@@ -3,12 +3,50 @@
 
 #include "Document.h"
 
+#include <QPlainTextEdit>
+
 class QEvent;
-class QPlainTextEdit;
 
 namespace srchiliteqt {
     class Qt4SyntaxHighlighter;
-}
+};
+
+class PlainTextEditor : public QPlainTextEdit
+{
+    Q_OBJECT
+
+public:
+    enum Ruler {
+        NoRuler = 0x0,
+        LineRuler = 0x1,
+        BackgroundRuler = 0x2
+    };
+    
+    PlainTextEditor( QWidget* parent = 0 );
+    
+    PlainTextEditor::Ruler rulerMode() const;
+    int rulerWidth() const;
+
+public slots:
+    void setRulerMode( PlainTextEditor::Ruler mode );
+    void setRulerWidth( int width );
+
+protected:
+    QPalette mOriginalPalette;
+    QRect mLastCaretLineRect;
+    PlainTextEditor::Ruler mRulerMode;
+    int mRulerWidth;
+    
+    virtual bool event( QEvent* event );
+    virtual void paintEvent( QPaintEvent* event );
+    virtual void scrollContentsBy( int dx, int dy );
+    
+    void paintFrame();
+    QRect caretLineRect() const;
+
+protected slots:
+    void updateLine();
+};
 
 class SourceHighlightQtDocument : public Document
 {
@@ -26,19 +64,22 @@ public slots:
     virtual void clearProperties();
     
 protected:
-    QPlainTextEdit* mEditor;
+    PlainTextEditor* mEditor;
     srchiliteqt::Qt4SyntaxHighlighter* mHighlighter;
     QHash<int, QVariant> mProperties;
+    
+    QPalette::ColorRole propertyColorRole( const int& property ) const;
+    QVariant propertyHelper( int property, const QVariant* value );
 
 protected slots:
     void editor_blockCountChanged( int newBlockCount );
     void editor_copyAvailable( bool yes );
     void editor_cursorPositionChanged();
     void editor_modificationChanged( bool changed );
+    void editor_undoAvailable( bool available );
     void editor_redoAvailable( bool available );
     void editor_selectionChanged();
     void editor_textChanged();
-    void editor_undoAvailable( bool available );
 };
 
 #endif // SOURCEHIGHLIGHTQTDOCUMENT_H

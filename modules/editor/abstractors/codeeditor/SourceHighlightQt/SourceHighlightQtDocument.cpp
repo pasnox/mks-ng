@@ -5,23 +5,174 @@
 
 #include <QEvent>
 #include <QBoxLayout>
-#include <QPlainTextEdit>
 #include <QIcon>
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
 #include <QDebug>
 
+#include <QStyleOptionFrameV3>
+#include <QPainter>
+
+PlainTextEditor::PlainTextEditor( QWidget* parent )
+    : QPlainTextEdit( parent ),
+        mOriginalPalette( palette() ),
+        mRulerMode( PlainTextEditor::NoRuler ),
+        mRulerWidth( 80 )
+{
+    setAutoFillBackground( true );
+    
+    connect( this, &QPlainTextEdit::cursorPositionChanged, this, &PlainTextEditor::updateLine );
+}
+
+PlainTextEditor::Ruler PlainTextEditor::rulerMode() const
+{
+    return mRulerMode;
+}
+
+void PlainTextEditor::setRulerMode( PlainTextEditor::Ruler mode )
+{
+    mRulerMode = mode;
+    viewport()->update();
+}
+
+int PlainTextEditor::rulerWidth() const
+{
+    return mRulerWidth;
+}
+
+void PlainTextEditor::setRulerWidth( int width )
+{
+    mRulerWidth = width;
+    viewport()->update();
+}
+
+bool PlainTextEditor::event( QEvent* event )
+{
+    const QKeyEvent* ke = static_cast<QKeyEvent*>( event );
+    
+    switch ( event->type() ) {
+        case QEvent::QEvent::Paint:
+            paintFrame();
+            return true;
+        case QEvent::KeyPress: {
+            if ( ke->key() == Qt::Key_Up || ke->key() == Qt::Key_Down ) {
+                updateLine();
+            }
+            
+            break;
+        }
+        default:
+            break;
+    }
+    
+    const bool result = QPlainTextEdit::event( event );
+    
+    switch ( event->type() ) {
+        case QEvent::Resize:
+            updateLine();
+            break;
+        case QEvent::KeyPress:
+            if ( ke->key() == Qt::Key_Enter || ke->key() == Qt::Key_Return ) {
+                updateLine();
+            }
+            
+            break;
+        default:
+            break;
+    }
+    
+    return result;
+}
+
+void PlainTextEditor::paintEvent( QPaintEvent* event )
+{
+    QPainter painter( viewport() );
+    
+    // draw caret line
+    painter.fillRect( mLastCaretLineRect, palette().color( QPalette::Link ) );
+    
+    // draw ruler
+    /*{
+        const int rulerWidth = 80;
+        int x = rulerWidth *painter.fontMetrics().averageCharWidth();
+        painter.setPen( palette().color( QPalette::LinkVisited ) );
+        painter.drawLine( x, 0, x, viewport()->height() );
+    }*/
+    
+    painter.end();
+    
+    QPlainTextEdit::paintEvent( event );
+}
+
+void PlainTextEditor::scrollContentsBy( int dx, int dy )
+{
+    QPlainTextEdit::scrollContentsBy( dx, dy );
+    updateLine();
+}
+
+void PlainTextEditor::paintFrame()
+{
+    QPainter painter( this );
+    QStyleOptionFrameV3 option;
+    
+    option.initFrom( this );
+    option.palette = mOriginalPalette;
+    option.rect = frameRect();
+    option.frameShape = frameShape();
+    
+    switch ( option.frameShape ) {
+        case QFrame::Box:
+        case QFrame::HLine:
+        case QFrame::VLine:
+        case QFrame::StyledPanel:
+        case QFrame::Panel:
+            option.lineWidth = lineWidth();
+            option.midLineWidth = midLineWidth();
+            break;
+        default:
+            // most frame styles do not handle customized line and midline widths
+            // (see updateFrameWidth()).
+            option.lineWidth = frameWidth();
+            break;
+    }
+
+    if ( frameShadow() == QFrame::Sunken ) {
+        option.state |= QStyle::State_Sunken;
+    }
+    else if ( frameShadow() == QFrame::Raised ) {
+        option.state |= QStyle::State_Raised;
+    }
+
+    style()->drawControl( QStyle::CE_ShapedFrame, &option, &painter, this );
+}
+
+QRect PlainTextEditor::caretLineRect() const
+{
+    QRect rect = cursorRect().adjusted( 0, -1, 0, 2 );
+    rect.setX( 0 );
+    rect.setWidth( viewport()->width() );
+    return rect;
+}
+
+void PlainTextEditor::updateLine()
+{
+    // update last pos to remove artifact
+    if ( !mLastCaretLineRect.isNull() ) {
+        viewport()->update( mLastCaretLineRect );
+    }
+    
+    // update new cursor pos
+    mLastCaretLineRect = caretLineRect();
+    viewport()->update( mLastCaretLineRect );
+}
+
 SourceHighlightQtDocument::SourceHighlightQtDocument( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent )
     : Document( codeEditorAbstractor, parent ),
-        mEditor( new QPlainTextEdit( this ) ),
-        mHighlighter( 0/*new srchiliteqt::Qt4SyntaxHighlighter( mEditor->document() )*/ )
+        mEditor( new PlainTextEditor( this ) ),
+        mHighlighter( 0 )
 {
     Document::initialize();
-    
-    if ( mHighlighter ) {
-        mHighlighter->init( "default.lang", "default.style" );
-    }
     
     QBoxLayout* bLayout = new QBoxLayout( QBoxLayout::LeftToRight );
     bLayout->setMargin( 0 );
@@ -40,10 +191,10 @@ SourceHighlightQtDocument::SourceHighlightQtDocument( const CodeEditorAbstractor
     connect( mEditor, &QPlainTextEdit::copyAvailable, this, &SourceHighlightQtDocument::editor_copyAvailable );
     connect( mEditor, &QPlainTextEdit::cursorPositionChanged, this, &SourceHighlightQtDocument::editor_cursorPositionChanged );
     connect( mEditor, &QPlainTextEdit::modificationChanged, this, &SourceHighlightQtDocument::editor_modificationChanged );
+    connect( mEditor, &QPlainTextEdit::undoAvailable, this, &SourceHighlightQtDocument::editor_undoAvailable );
     connect( mEditor, &QPlainTextEdit::redoAvailable, this, &SourceHighlightQtDocument::editor_redoAvailable );
     connect( mEditor, &QPlainTextEdit::selectionChanged, this, &SourceHighlightQtDocument::editor_selectionChanged );
     connect( mEditor, &QPlainTextEdit::textChanged, this, &SourceHighlightQtDocument::editor_textChanged );
-    connect( mEditor, &QPlainTextEdit::undoAvailable, this, &SourceHighlightQtDocument::editor_undoAvailable );
 }
 
 SourceHighlightQtDocument::~SourceHighlightQtDocument()
@@ -52,236 +203,12 @@ SourceHighlightQtDocument::~SourceHighlightQtDocument()
 
 QVariant SourceHighlightQtDocument::property( int property ) const
 {
-    const QTextCursor cursor = mEditor->textCursor();
-    const QTextDocument* document = mEditor->document();
-    
-    switch ( property ) {
-        case Document::CopyAvailable:
-            return cursor.hasSelection();
-        case Document::CutAvailable:
-            return cursor.hasSelection();
-        case Document::PasteAvailable:
-            //return mEditor->canPaste(); // should use this one but it's so slow call !!!!
-            return QApplication::clipboard()->mimeData()->hasText();
-        case Document::UndoAvailable:
-            return document->isUndoAvailable();
-        case Document::RedoAvailable:
-            return document->isRedoAvailable();
-        case Document::CursorPosition:
-            return cursor.isNull() ? QPoint() : QPoint( cursor.positionInBlock(), cursor.blockNumber() );
-        case Document::SelectionStart:
-            return cursor.selectionStart();
-        case Document::SelectionEnd:
-            return cursor.selectionEnd();
-        case Document::SelectionLength:
-            return cursor.selectionEnd() -cursor.selectionStart();
-        case Document::SelectedText:
-            return cursor.selectedText();
-        case Document::Text:
-            return mEditor->toPlainText();
-        case Document::ReadOnly:
-            return mEditor->isReadOnly();
-        case Document::LineCount:
-            return mEditor->blockCount();
-        case Document::State: {
-            Document::StateHints state = Document::Unmodified;
-            if ( document->isModified() ) {
-                state |= Document::Modified;
-            }
-            return int( state );
-        }
-        case Document::Language:
-            return mHighlighter ? mHighlighter->getLangFile() : QString::null;
-        case Document::Style:
-            return mHighlighter ? mHighlighter->getFormattingStyle() : QString::null;
-        
-        case Document::Font:
-        case Document::Paper:
-        case Document::Pen:
-        case Document::SelectionBackground:
-        case Document::SelectionForeground:
-        case Document::CaretLineBackground:
-        case Document::CaretLineForeground:
-        
-        case Document::Decoration:
-        case Document::Title:
-        case Document::FilePath:
-        case Document::Eol:
-        case Document::Indent:
-        case Document::TabWidth:
-        case Document::IndentWidth:
-        case Document::Ruler:
-        case Document::NewFile:
-        case Document::LastError:
-        case Document::TextEncoding:
-        case Document::InitialText:
-        case Document::LineNumberMargin:
-        case Document::FoldMargin:
-        case Document::SymbolMargin:
-        case Document::ChangeMargin:
-        default: {
-            if ( mProperties.contains( property ) ) {
-                return mProperties.value( property );
-            }
-            
-            return Document::property( property );
-        }
-    }
+    return const_cast<SourceHighlightQtDocument*>( this )->propertyHelper( property, 0 );
 }
 
 void SourceHighlightQtDocument::setProperty( int property, const QVariant& value )
 {
-    QTextCursor cursor = mEditor->textCursor();
-    QTextDocument* document = mEditor->document();
-    
-    switch ( property ) {
-        case Document::LineCount:
-        case Document::CopyAvailable:
-        case Document::CutAvailable:
-        case Document::PasteAvailable:
-        case Document::UndoAvailable:
-        case Document::RedoAvailable:
-            return;
-        case Document::CursorPosition: {
-            const QPoint pos = value.toPoint();
-            QTextBlock block = document->findBlockByLineNumber( pos.y() );
-            int position = block.position();
-            
-            if ( pos.x() < block.length() ) {
-                position += pos.x();
-            }
-            
-            cursor.setPosition( position, QTextCursor::MoveAnchor );
-            break;
-        }
-        case Document::SelectionStart:
-            // todo
-            break;
-        case Document::SelectionEnd:
-            // todo
-            break;
-        case Document::SelectionLength:
-            // todo
-            break;
-        case Document::SelectedText:
-            // todo
-            break;
-        case Document::Text:
-            cursor.beginEditBlock();
-            cursor.select( QTextCursor::Document );
-            cursor.insertText( value.toString() );
-            cursor.movePosition( QTextCursor::Start, QTextCursor::MoveAnchor );
-            cursor.endEditBlock();
-            break;
-        case Document::InitialText:
-            mEditor->setPlainText( value.toString() );
-            break;
-        case Document::ReadOnly:
-            mEditor->setReadOnly( value.toBool() );
-            
-            if ( mHighlighter ) {
-                mHighlighter->setReadOnly( value.toBool() );
-            }
-            
-            break;
-        case Document::State: {
-            const Document::StateHints state = Document::StateHints( value.toInt() );
-            document->setModified( state & Document::Modified );
-            break;
-        }
-        case Document::LineWrap:
-            mEditor->setLineWrapMode( value.toInt() == Document::NoWrap ? QPlainTextEdit::NoWrap : QPlainTextEdit::WidgetWidth );
-            break;
-        case Document::LineNumberMargin:
-            break;
-        case Document::FoldMargin:
-            break;
-        case Document::SymbolMargin:
-            break;
-        case Document::ChangeMargin:
-            break;
-        case Document::Language: {
-            if ( mHighlighter && mHighlighter->getLangFile() == value.toString() ) {
-                return;
-            }
-            
-            const QString style = mHighlighter ? this->property( Document::Style ).toString() : "default.style";
-            
-            if ( mHighlighter ) {
-                mHighlighter->deleteLater();
-                mHighlighter = 0;
-            }
-            
-            mHighlighter = new srchiliteqt::Qt4SyntaxHighlighter( mEditor->document() );
-            mHighlighter->init( value.toString(), style );
-            break;
-        }
-        case Document::Style:
-            if ( mHighlighter ) {
-                mHighlighter->setFormattingStyle( value.toString() );
-            }
-            
-            break;
-        case Document::Font:
-            mEditor->document()->setDefaultFont( value.value<QFont>() );
-            break;
-        case Document::Paper:
-        case Document::Pen: {
-            QPalette pal = mEditor->viewport()->palette();
-            
-            if ( property == Document::Paper ) {
-                pal.setColor( mEditor->viewport()->backgroundRole(), value.value<QColor>() );
-            }
-            else if ( property == Document::Paper ) {
-                pal.setColor( mEditor->viewport()->foregroundRole(), value.value<QColor>() );
-            }
-            
-            mEditor->viewport()->setAutoFillBackground( true );
-            mEditor->viewport()->setPalette( pal );
-            break;
-        }
-        
-        case Document::TabWidth:
-            mEditor->setTabStopWidth( value.toInt() *QFontMetrics( mEditor->font() ).averageCharWidth() );
-        case Document::Eol:
-            //document->setModified( true );
-        case Document::Indent:
-        case Document::IndentWidth:
-        case Document::Ruler:
-    
-        case Document::SelectionBackground:
-        case Document::SelectionForeground:
-        case Document::CaretLineBackground:
-        case Document::CaretLineForeground:
-        
-        case Document::Decoration:
-        case Document::Title:
-        case Document::FilePath:
-        case Document::NewFile:
-        case Document::LastError:
-        case Document::TextEncoding:
-        default: {
-            if ( value.isNull() ) {
-                mProperties.remove( property );
-            }
-            else {
-                mProperties[ property ] = value;
-            }
-            
-            break;
-        }
-    }
-    
-    // mEditor->setCursorWidth ( int width )
-    
-    if ( cursor != mEditor->textCursor() && property != Document::InitialText ) {
-        mEditor->setTextCursor( cursor );
-    }
-    
-    Document::setProperty( property, value );
-    
-    emit propertyChanged( property );
-    emit propertiesChanged();
+    propertyHelper( property, &value );
 }
 
 void SourceHighlightQtDocument::triggerAction( int action )
@@ -312,6 +239,374 @@ void SourceHighlightQtDocument::clearProperties()
     emit propertiesChanged();
 }
 
+QPalette::ColorRole SourceHighlightQtDocument::propertyColorRole( const int& property ) const
+{
+    switch ( property ) {
+        case Document::Paper:
+            return mEditor->viewport()->backgroundRole();
+        case Document::Pen:
+            return mEditor->viewport()->foregroundRole();
+        case Document::SelectionBackground:
+            return QPalette::Highlight;
+        case Document::SelectionForeground:
+            return QPalette::HighlightedText;
+        case Document::CaretLineBackground:
+            return QPalette::Link;
+        case Document::CaretLineForeground:
+            return QPalette::LinkVisited;
+        default:
+            return QPalette::NoRole;
+    }
+}
+
+// to avoid to forget some properties in both property() / setProperty() we use one member for both.
+// This may change in the futur / api stabilization
+QVariant SourceHighlightQtDocument::propertyHelper( int property, const QVariant* value )
+{
+    QTextCursor cursor = mEditor->textCursor();
+    QTextDocument* document = mEditor->document();
+    bool write = false;
+    
+    switch ( property ) {
+        case Document::CopyAvailable:
+        case Document::CutAvailable: {
+            if ( !value ) {
+                return cursor.hasSelection();
+            }
+            
+            break;
+        }
+        
+        case Document::PasteAvailable: {
+            if ( !value ) {
+                //return mEditor->canPaste(); // should use this one but it's so slow call !!!!
+                return QApplication::clipboard()->mimeData()->hasText();
+            }
+            
+            break;
+        }
+        
+        case Document::UndoAvailable: {
+            if ( !value ) {
+                return document->isUndoAvailable();
+            }
+            
+            break;
+        }
+        
+        case Document::RedoAvailable: {
+            if ( !value ) {
+                return document->isRedoAvailable();
+            }
+            
+            break;
+        }
+        
+        case Document::CursorPosition: {
+            if ( value ) {
+                const QPoint pos = value->toPoint();
+                const QTextBlock block = document->findBlockByLineNumber( pos.y() );
+                const int position = block.position() +( pos.x() < block.length() ? pos.x() : 0 );
+                cursor.setPosition( position, QTextCursor::MoveAnchor );
+            }
+            else {
+                return cursor.isNull() ? QPoint() : QPoint( cursor.positionInBlock(), cursor.blockNumber() );
+            }
+            
+            break;
+        }
+        
+        case Document::SelectionStart: {
+            if ( !value ) {
+                return cursor.selectionStart();
+            }
+            
+            break;
+        }
+        
+        case Document::SelectionEnd: {
+            if ( !value ) {
+                return cursor.selectionEnd();
+            }
+            
+            break;
+        }
+        
+        case Document::SelectionLength: {
+            if ( !value ) {
+                return cursor.selectionEnd() -cursor.selectionStart();
+            }
+            
+            break;
+        }
+        
+        case Document::SelectedText: {
+            if ( !value ) {
+                return cursor.selectedText();
+            }
+            
+            break;
+        }
+        
+        case Document::Text: {
+            if ( value ) {
+                cursor.beginEditBlock();
+                cursor.select( QTextCursor::Document );
+                cursor.insertText( value->toString() );
+                cursor.movePosition( QTextCursor::Start, QTextCursor::MoveAnchor );
+                cursor.endEditBlock();
+            }
+            else {
+                return mEditor->toPlainText();
+            }
+            
+            break;
+        }
+        
+        case Document::InitialText: {
+            if ( value ) {
+                mEditor->setPlainText( value->toString() );
+            }
+            
+            break;
+        }
+        
+        case Document::ReadOnly: {
+            if ( value ) {
+                mEditor->setReadOnly( value->toBool() );
+                
+                if ( mHighlighter ) {
+                    mHighlighter->setReadOnly( mEditor->isReadOnly() );
+                }
+            }
+            else {
+                return mEditor->isReadOnly();
+            }
+            
+            break;
+        }
+        
+        case Document::LineCount: {
+            if ( !value ) {
+                return mEditor->blockCount();
+            }
+            
+            break;
+        }
+        
+        case Document::State: {
+            if ( value ) {
+                const Document::StateHints state = Document::StateHints( value->toInt() );
+                document->setModified( state & Document::Modified );
+            }
+            else {
+                Document::StateHints state = Document::Unmodified;
+                
+                if ( document->isModified() ) {
+                    state |= Document::Modified;
+                }
+                
+                return int( state );
+            }
+            
+            break;
+        }
+        
+        case Document::Language: {
+            if ( value ) {
+                if ( mHighlighter && mHighlighter->getLangFile() == value->toString() ) {
+                    break;
+                }
+                
+                const QString style = mHighlighter ? this->property( Document::Style ).toString() : "default.style";
+                
+                if ( mHighlighter ) {
+                    delete mHighlighter;
+                    mHighlighter = 0;
+                }
+                
+                mHighlighter = new srchiliteqt::Qt4SyntaxHighlighter( document );
+                mHighlighter->setReadOnly( mEditor->isReadOnly() );
+                mHighlighter->init( value->toString(), style );
+                
+                emit propertyChanged( Document::Style );
+            }
+            else {
+                return mHighlighter ? mHighlighter->getLangFile() : QString::null;
+            }
+            
+            break;
+        }
+        
+        case Document::Style: {
+            if ( value ) {
+                if ( mHighlighter ) {
+                    mHighlighter->setFormattingStyle( value->toString() );
+                }
+            }
+            else {
+                return mHighlighter ? mHighlighter->getFormattingStyle() : QString::null;
+            }
+            
+            break;
+        }
+        
+        case Document::Font: {
+            if ( value ) {
+                document->setDefaultFont( value->value<QFont>() );
+            }
+            else {
+                return document->defaultFont();
+            }
+            
+            break;
+        }
+        
+        case Document::Paper:
+        case Document::Pen:
+        case Document::SelectionBackground:
+        case Document::SelectionForeground:
+        case Document::CaretLineBackground:
+        case Document::CaretLineForeground: {
+            if ( value ) {
+                QPalette pal = mEditor->palette();
+                pal.setColor( propertyColorRole( property ), value->value<QColor>() );
+                mEditor->setPalette( pal );
+            }
+            else {
+                return mEditor->palette().color( propertyColorRole( property ) );
+            }
+            
+            break;
+        }
+        
+        case Document::LineWrap: {
+            if ( value ) {
+                mEditor->setLineWrapMode( value->toInt() == Document::NoWrap ? QPlainTextEdit::NoWrap : QPlainTextEdit::WidgetWidth );
+            }
+            else {
+                return mEditor->lineWrapMode() == QPlainTextEdit::NoWrap ? Document::NoWrap : Document::WidthWrap;
+            }
+            
+            break;
+        }
+        
+        case Document::IndentWidth: {
+            if ( value ) {
+                document->setIndentWidth( value->toInt() *QFontMetrics( mEditor->font() ).averageCharWidth() );
+            }
+            else {
+                return document->indentWidth() /QFontMetrics( mEditor->font() ).averageCharWidth();
+            }
+            
+            break;
+        }
+        
+        case Document::TabWidth: {
+            if ( value ) {
+                mEditor->setTabStopWidth( value->toInt() *QFontMetrics( mEditor->font() ).averageCharWidth() );
+            }
+            else {
+                return mEditor->tabStopWidth() /QFontMetrics( mEditor->font() ).averageCharWidth();
+            }
+            
+            break;
+        }
+        
+        case Document::Ruler: {
+            if ( value ) {
+                switch ( value->toInt() ) {
+                    case Document::NoRuler:
+                        mEditor->setRulerMode( PlainTextEditor::NoRuler );
+                        break;
+                    case Document::Line:
+                        mEditor->setRulerMode( PlainTextEditor::LineRuler );
+                        break;
+                    case Document::Background:
+                        mEditor->setRulerMode( PlainTextEditor::BackgroundRuler );
+                        break;
+                }
+            }
+            else {
+                switch ( mEditor->rulerMode() ) {
+                    case PlainTextEditor::NoRuler:
+                        return Document::NoRuler;
+                    case PlainTextEditor::LineRuler:
+                        return Document::Line;
+                    case PlainTextEditor::BackgroundRuler:
+                        return Document::Background;
+                }
+            }
+            
+            break;
+        }
+        
+        case Document::LineNumberMargin:
+        case Document::FoldMargin:
+        case Document::SymbolMargin:
+        case Document::ChangeMargin: {
+            if ( value ) {
+                //propertyMargin( property )->setVisible( value->toBool() );
+            }
+            else {
+                //return propertyMargin( property )->isVisible();
+                return false;
+            }
+            
+            break;
+        }
+        
+        case Document::Eol:
+        case Document::Decoration:
+        case Document::FilePath:
+        case Document::Title:
+        case Document::NewFile:
+        case Document::Indent:
+        case Document::TextEncoding:
+        case Document::LastError:
+        default: {
+            if ( value ) {
+                write = true;
+            }
+            else {
+                if ( mProperties.contains( property ) ) {
+                    return mProperties.value( property );
+                }
+                
+                return Document::property( property );
+            }
+            
+            break;
+        }
+    }
+    
+    // mEditor->setCursorWidth ( int width )
+    
+    if ( !value ) {
+        return QVariant();
+    }
+    
+    if ( write ) {
+        if ( value->isNull() ) {
+            mProperties.remove( property );
+        }
+        else {
+            mProperties[ property ] = *value;
+        }
+    }
+    
+    if ( cursor != mEditor->textCursor() && property != Document::InitialText ) {
+        mEditor->setTextCursor( cursor );
+    }
+    
+    Document::setProperty( property, *value );
+    
+    emit propertyChanged( property );
+    emit propertiesChanged();
+    
+    return QVariant();
+}
+
 void SourceHighlightQtDocument::editor_blockCountChanged( int newBlockCount )
 {
     Q_UNUSED( newBlockCount );
@@ -340,6 +635,13 @@ void SourceHighlightQtDocument::editor_modificationChanged( bool changed )
     emit propertiesChanged();
 }
 
+void SourceHighlightQtDocument::editor_undoAvailable( bool available )
+{
+    Q_UNUSED( available );
+    emit propertyChanged( Document::UndoAvailable );
+    emit propertiesChanged();
+}
+
 void SourceHighlightQtDocument::editor_redoAvailable( bool available )
 {
     Q_UNUSED( available );
@@ -355,13 +657,7 @@ void SourceHighlightQtDocument::editor_selectionChanged()
 
 void SourceHighlightQtDocument::editor_textChanged()
 {
+    emit propertyChanged( Document::Text );
     emit propertyChanged( Document::State );
-    emit propertiesChanged();
-}
-
-void SourceHighlightQtDocument::editor_undoAvailable( bool available )
-{
-    Q_UNUSED( available );
-    emit propertyChanged( Document::UndoAvailable );
     emit propertiesChanged();
 }
