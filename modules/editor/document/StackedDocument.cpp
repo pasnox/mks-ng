@@ -105,6 +105,10 @@ void StackedDocument::setCurrentDocument( Document* document )
 void StackedDocument::applyPreferences()
 {
     Abstractors::applicationSettings().syncDocumentPropertiesDiscover();
+    
+    for ( int i = 0; i < count(); i++ ) {
+        document( i )->applyApplicationSettings();
+    }
 }
 
 void StackedDocument::changeEvent( QEvent* event )
