@@ -97,23 +97,25 @@ void Document::setProperty( int property, const QVariant& value )
         
         if ( this->property( Document::Language ).isNull() && !value.toString().isEmpty() ) {
             emit propertyChanged( Document::Language );
+            emit propertiesChanged();
         }
     }
-    
-    Q_UNUSED( value );
 }
 
 void Document::applyApplicationSettings( const DocumentPropertiesDiscover::GuessedProperties& properties )
 {
     const ApplicationSettings& settings = Abstractors::applicationSettings();
     
-    setProperty( Document::Eol, properties.eol );
-    setProperty( Document::Indent, properties.indent );
-    setProperty( Document::IndentWidth, properties.indentWidth );
-    setProperty( Document::TabWidth, properties.tabWidth );
+    if ( properties != DocumentPropertiesDiscover::GuessedProperties::null ) {
+        setProperty( Document::Eol, properties.eol );
+        setProperty( Document::Indent, properties.indent );
+        setProperty( Document::IndentWidth, properties.indentWidth );
+        setProperty( Document::TabWidth, properties.tabWidth );
+        setProperty( Document::TextEncoding, settings.editor.documents.codec );
+    }
+    
     setProperty( Document::Ruler, settings.editor.documents.ruler );
     setProperty( Document::LineWrap, settings.editor.documents.wrap );
-    setProperty( Document::TextEncoding, settings.editor.documents.codec );
     setProperty( Document::LineNumberMargin, settings.editor.margins.lineNumber );
     setProperty( Document::FoldMargin, settings.editor.margins.fold );
     setProperty( Document::SymbolMargin, settings.editor.margins.symbol );
@@ -315,7 +317,7 @@ void Document::close()
 
 void Document::initialize()
 {
-    applyApplicationSettings();
+    applyApplicationSettings( DocumentPropertiesDiscover::GuessedProperties() );
     
     setProperty( Document::NewFile, true );
     setProperty( Document::Title, tr( "New file #%1" ).arg( ++Document::mDocumentCount ) );

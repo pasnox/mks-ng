@@ -118,7 +118,7 @@ public:
     virtual ~Document();
     
     virtual QVariant property( int property ) const;
-    virtual void applyApplicationSettings( const DocumentPropertiesDiscover::GuessedProperties& properties = DocumentPropertiesDiscover::GuessedProperties() );
+    virtual void applyApplicationSettings( const DocumentPropertiesDiscover::GuessedProperties& properties = DocumentPropertiesDiscover::GuessedProperties::null );
     
     // the api don't care about unsaved content or already opened content
     // it's the caller responsability to check that before
