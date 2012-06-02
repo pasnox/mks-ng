@@ -252,7 +252,7 @@ bool UIMain::closeDocument( Document* document )
     }
     
     ui->sdDocuments->removeDocument( document );
-    document->deleteLater();
+    delete document;
     return true;
 }
 
@@ -620,7 +620,7 @@ void UIMain::actionPreferencesTriggered()
         return;
     }
     
-    if ( dlg.exec() == QDialog::Accepted ) {
-        emit preferencesChanged();
-    }
+    connect( &dlg, &SettingsNodeDialogBuilder::applyClicked, this, &UIMain::preferencesChanged );
+    
+    dlg.exec();
 }
