@@ -16,7 +16,8 @@
 
 include( $$PWD/config.pri )
 
-QT *= widgets network xml
+QT *= network xml
+greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets
 
 INCLUDEPATH = \
     $$PWD/../3rdparty/document-properties-discover.git/src \
@@ -29,8 +30,8 @@ DEPENDPATH = $${INCLUDEPATH}
 
 LIBS *= -L$${BUILD_TARGET_PATH}
 LIBS *= \
-    -l$$targetForMode( fresh ) \
-    -l$$targetForMode( source-highlight-qt ) \
-    -l$$targetForMode( source-highlight ) \
+    -l$$targetForMode( fresh, $${BUILD_MODE} ) \
+    -l$$targetForMode( source-highlight-qt, $${BUILD_MODE} ) \
+    -l$$targetForMode( source-highlight, $${BUILD_MODE} ) \
     -lboost_regex
     

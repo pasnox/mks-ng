@@ -20,7 +20,8 @@ include( ../3rdparty/fresh.git/defines.pri )
 TARGET_NAME = fresh
 initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, shared )
 
-QT *= widgets network xml
+QT *= network xml
+greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets
 
 INCLUDEPATH = $$getFolders( ../3rdparty/fresh.git/src )
 

@@ -21,7 +21,7 @@ TARGET_NAME = source-highlight-qt
 initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, shared )
 
 #CONFIG += create_prl
-QT *= widgets
+greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets
 
 INCLUDEPATH = \
     ../3rdparty/source-highlight.git/lib \
