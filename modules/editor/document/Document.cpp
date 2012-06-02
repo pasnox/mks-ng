@@ -10,7 +10,6 @@
 #include <QFileInfo>
 #include <QIcon>
 #include <QDateTime>
-#include <QMimeDatabase>
 #include <QDebug>
 
 int Document::mDocumentCount = 0;

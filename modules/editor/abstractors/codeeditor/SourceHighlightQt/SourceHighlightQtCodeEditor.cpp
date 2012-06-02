@@ -2,13 +2,19 @@
 #include "SourceHighlightQtDocument.h"
 
 #include <QStringList>
+#if defined( HAS_QT_5 )
 #include <QMimeType>
+#endif
 #include <QDebug>
 
 SourceHighlightQtCodeEditor::SourceHighlightQtCodeEditor( QObject* parent )
     : CodeEditorAbstractor( parent ), mDataWatcher( new SourceHighlightQtDataWatcher( this ) )
 {
+#if defined( HAS_QT_5 )
     connect( mDataWatcher, &SourceHighlightQtDataWatcher::filesChanged, this, &SourceHighlightQtCodeEditor::dataWatcher_filesChanged );
+#else
+    connect( mDataWatcher, SIGNAL( filesChanged( SourceHighlightQtDataWatcher::Type ) ), this, SLOT( dataWatcher_filesChanged( SourceHighlightQtDataWatcher::Type ) ) );
+#endif
 }
 
 SourceHighlightQtCodeEditor::~SourceHighlightQtCodeEditor()
@@ -30,6 +36,7 @@ Document* SourceHighlightQtCodeEditor::createDocument( QWidget* parent ) const
     return new SourceHighlightQtDocument( this, parent );
 }
 
+#if defined( HAS_QT_5 )
 QMimeType SourceHighlightQtCodeEditor::mimeTypeForLanguage( const QString& language ) const
 {
     const QString name = language.section( '.', 0, 0 );
@@ -95,6 +102,7 @@ QString SourceHighlightQtCodeEditor::languageForMimeType( const QMimeType& type 
     
     return "default.lang";
 }
+#endif
 
 void SourceHighlightQtCodeEditor::dataWatcher_filesChanged( SourceHighlightQtDataWatcher::Type type )
 {

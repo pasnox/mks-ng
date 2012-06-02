@@ -52,8 +52,13 @@ SettingsNodeDialogBuilderPrivate::SettingsNodeDialogBuilderPrivate( SettingsNode
 {
     ui->setupUi( builder );
     
+#if defined( HAS_QT_5 )
     connect( ui->twPages, &QTreeWidget::itemSelectionChanged, this, &SettingsNodeDialogBuilderPrivate::twPages_itemSelectionChanged );
     connect( ui->dbbButtons, &QDialogButtonBox::clicked, this, &SettingsNodeDialogBuilderPrivate::dbbButtons_clicked );
+#else
+    connect( ui->twPages, SIGNAL( itemSelectionChanged() ), this, SLOT( twPages_itemSelectionChanged() ) );
+    connect( ui->dbbButtons, SIGNAL( clicked( QAbstractButton* ) ), this, SLOT( dbbButtons_clicked( QAbstractButton* ) ) );
+#endif
 }
 
 SettingsNodeDialogBuilderPrivate::~SettingsNodeDialogBuilderPrivate()

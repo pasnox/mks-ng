@@ -33,16 +33,26 @@ void StackedDocumentTreeView::setStackedDocument( StackedDocument* stackedDocume
     }
     
     if ( mStacker ) {
+#if defined( HAS_QT_5 )
         disconnect( mStacker, &StackedDocument::currentDocumentIndexChanged, this, &StackedDocumentTreeView::_q_currentDocumentIndexChanged );
         disconnect( selectionModel(), &QItemSelectionModel::selectionChanged, this, &StackedDocumentTreeView::_q_selectionChanged );
+#else
+        disconnect( mStacker, SIGNAL( currentDocumentIndexChanged( int ) ), this, SLOT( _q_currentDocumentIndexChanged( int ) ) );
+        disconnect( selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( _q_selectionChanged() ) );
+#endif
     }
     
     mStacker = stackedDocument;
     setModel( mStacker ? mStacker->model() : 0 );
     
     if ( mStacker ) {
+#if defined( HAS_QT_5 )
         connect( mStacker, &StackedDocument::currentDocumentIndexChanged, this, &StackedDocumentTreeView::_q_currentDocumentIndexChanged );
         connect( selectionModel(), &QItemSelectionModel::selectionChanged, this, &StackedDocumentTreeView::_q_selectionChanged );
+#else
+        connect( mStacker, SIGNAL( currentDocumentIndexChanged( int ) ), this, SLOT( _q_currentDocumentIndexChanged( int ) ) );
+        connect( selectionModel(), SIGNAL( selectionChanged( const QItemSelection&, const QItemSelection& ) ), this, SLOT( _q_selectionChanged() ) );
+#endif
         
         _q_currentDocumentIndexChanged( mStacker->currentIndex() );
     }

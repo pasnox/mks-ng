@@ -13,7 +13,11 @@ DocumentPosition::DocumentPosition( QWidget* parent )
     setToolTip( tr( "Cursor position. Click to change." ) );
     setPosition( QPoint(), 1 );
     
+#if defined( HAS_QT_5 )
     connect( this, &QToolButton::clicked, this, &DocumentPosition::showPopup );
+#else
+    connect( this, SIGNAL( clicked() ), this, SLOT( showPopup() ) );
+#endif
 }
 
 DocumentPosition::~DocumentPosition()
@@ -57,7 +61,11 @@ void DocumentPosition::showPopup()
     popup->move( r.topLeft() );
     popup->show();
     
+#if defined( HAS_QT_5 )
     connect( popup, &DocumentPositionPopup::lineChanged, this, &DocumentPosition::popup_lineChanged );
+#else
+    connect( popup, SIGNAL( lineChanged( int ) ), this, SLOT( popup_lineChanged( int ) ) );
+#endif
 }
 
 void DocumentPosition::changeEvent( QEvent* event )

@@ -1,5 +1,6 @@
 #include "SourceHighlightQtDocument.h"
 #include "SourceHighlightQtDataWatcher.h"
+#include "CodeEditorAbstractor.h"
 
 #include <srchiliteqt/Qt4SyntaxHighlighter.h>
 
@@ -22,7 +23,11 @@ PlainTextEditor::PlainTextEditor( QWidget* parent )
 {
     setAutoFillBackground( true );
     
+#if defined( HAS_QT_5 )
     connect( this, &QPlainTextEdit::cursorPositionChanged, this, &PlainTextEditor::updateLine );
+#else
+    connect( this, SIGNAL( cursorPositionChanged() ), this, SLOT( updateLine() ) );
+#endif
 }
 
 PlainTextEditor::Ruler PlainTextEditor::rulerMode() const
@@ -187,6 +192,7 @@ SourceHighlightQtDocument::SourceHighlightQtDocument( const CodeEditorAbstractor
     setLayout( bLayout );
 #endif
 
+#if defined( HAS_QT_5 )
     connect( mEditor, &QPlainTextEdit::blockCountChanged, this, &SourceHighlightQtDocument::editor_blockCountChanged );
     connect( mEditor, &QPlainTextEdit::copyAvailable, this, &SourceHighlightQtDocument::editor_copyAvailable );
     connect( mEditor, &QPlainTextEdit::cursorPositionChanged, this, &SourceHighlightQtDocument::editor_cursorPositionChanged );
@@ -195,6 +201,16 @@ SourceHighlightQtDocument::SourceHighlightQtDocument( const CodeEditorAbstractor
     connect( mEditor, &QPlainTextEdit::redoAvailable, this, &SourceHighlightQtDocument::editor_redoAvailable );
     connect( mEditor, &QPlainTextEdit::selectionChanged, this, &SourceHighlightQtDocument::editor_selectionChanged );
     connect( mEditor, &QPlainTextEdit::textChanged, this, &SourceHighlightQtDocument::editor_textChanged );
+#else
+    connect( mEditor, SIGNAL( blockCountChanged( int ) ), this, SLOT( editor_blockCountChanged( int ) ) );
+    connect( mEditor, SIGNAL( copyAvailable( bool ) ), this, SLOT( editor_copyAvailable( bool ) ) );
+    connect( mEditor, SIGNAL( cursorPositionChanged() ), this, SLOT( editor_cursorPositionChanged() ) );
+    connect( mEditor, SIGNAL( modificationChanged( bool ) ), this, SLOT( editor_modificationChanged( bool ) ) );
+    connect( mEditor, SIGNAL( undoAvailable( bool ) ), this, SLOT( editor_undoAvailable( bool ) ) );
+    connect( mEditor, SIGNAL( redoAvailable( bool ) ), this, SLOT( editor_redoAvailable( bool ) ) );
+    connect( mEditor, SIGNAL( selectionChanged() ), this, SLOT( editor_selectionChanged() ) );
+    connect( mEditor, SIGNAL( textChanged() ), this, SLOT( editor_textChanged() ) );
+#endif
 }
 
 SourceHighlightQtDocument::~SourceHighlightQtDocument()
@@ -260,7 +276,7 @@ QPalette::ColorRole SourceHighlightQtDocument::propertyColorRole( const int& pro
 }
 
 // to avoid to forget some properties in both property() / setProperty() we use one member for both.
-// This may change in the futur / api stabilization
+// This may change in the futur api stabilization
 QVariant SourceHighlightQtDocument::propertyHelper( int property, const QVariant* value )
 {
     QTextCursor cursor = mEditor->textCursor();
@@ -418,18 +434,20 @@ QVariant SourceHighlightQtDocument::propertyHelper( int property, const QVariant
                     break;
                 }
                 
-                const QString style = mHighlighter ? this->property( Document::Style ).toString() : "default.style";
-                
-                if ( mHighlighter ) {
-                    delete mHighlighter;
-                    mHighlighter = 0;
+                if ( !value->toString().isEmpty() && mCodeEditorAbstractor->supportedLanguages().contains( value->toString() ) ) {
+                    const QString style = mHighlighter ? this->property( Document::Style ).toString() : "default.style";
+                    
+                    if ( mHighlighter ) {
+                        delete mHighlighter;
+                        mHighlighter = 0;
+                    }
+                    
+                    mHighlighter = new srchiliteqt::Qt4SyntaxHighlighter( document );
+                    mHighlighter->setReadOnly( mEditor->isReadOnly() );
+                    mHighlighter->init( value->toString(), style );
+                    
+                    emit propertyChanged( Document::Style );
                 }
-                
-                mHighlighter = new srchiliteqt::Qt4SyntaxHighlighter( document );
-                mHighlighter->setReadOnly( mEditor->isReadOnly() );
-                mHighlighter->init( value->toString(), style );
-                
-                emit propertyChanged( Document::Style );
             }
             else {
                 return mHighlighter ? mHighlighter->getLangFile() : QString::null;

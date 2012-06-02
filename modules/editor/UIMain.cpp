@@ -94,6 +94,7 @@ UIMain::UIMain( QWidget* parent )
         model->setDefaultShortcut( aSaveAs, QKeySequence( shortcut ) );
     }
     
+#if defined( HAS_QT_5 )
     connect( this, &UIMain::preferencesChanged, ui->sdDocuments, &StackedDocument::applyPreferences );
     
     connect( aUndo, &QAction::triggered, this, &UIMain::documentActionTriggered );
@@ -113,6 +114,27 @@ UIMain::UIMain( QWidget* parent )
     connect( aClose, &QAction::triggered, this, &UIMain::actionCloseTriggered );
     connect( aCloseAll, &QAction::triggered, this, &UIMain::actionCloseAllTriggered );
     connect( aQuit, &QAction::triggered, this, &UIMain::actionQuitTriggered );
+#else
+    connect( this, SIGNAL( preferencesChanged() ), ui->sdDocuments, SLOT( applyPreferences() ) );
+    
+    connect( aUndo, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
+    connect( aRedo, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
+    connect( aCopy, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
+    connect( aCut, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
+    connect( aPaste, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
+    connect( aPreferences, SIGNAL( triggered() ), this, SLOT( actionPreferencesTriggered() ) );
+    
+    connect( aNewPlainText, SIGNAL( triggered() ), this, SLOT( actionNewPlainTextTriggered() ) );
+    connect( aOpen, SIGNAL( triggered() ), this, SLOT( actionOpenTriggered() ) );
+    connect( aOpenPlainText, SIGNAL( triggered() ), this, SLOT( actionOpenPlainTextTriggered() ) );
+    connect( aReload, SIGNAL( triggered() ), this, SLOT( actionReloadTriggered() ) );
+    connect( aSave, SIGNAL( triggered() ), this, SLOT( actionSaveTriggered() ) );
+    connect( aSaveAs, SIGNAL( triggered() ), this, SLOT( actionSaveAsTriggered() ) );
+    connect( aSaveAll, SIGNAL( triggered() ), this, SLOT( actionSaveAllTriggered() ) );
+    connect( aClose, SIGNAL( triggered() ), this, SLOT( actionCloseTriggered() ) );
+    connect( aCloseAll, SIGNAL( triggered() ), this, SLOT( actionCloseAllTriggered() ) );
+    connect( aQuit, SIGNAL( triggered() ), this, SLOT( actionQuitTriggered() ) );
+#endif
     
     on_sdDocuments_currentDocumentChanged( 0 );
 }
@@ -620,7 +642,11 @@ void UIMain::actionPreferencesTriggered()
         return;
     }
     
+#if defined( HAS_QT_5 )
     connect( &dlg, &SettingsNodeDialogBuilder::applyClicked, this, &UIMain::preferencesChanged );
+#else
+    connect( &dlg, SIGNAL( applyClicked() ), this, SIGNAL( preferencesChanged() ) );
+#endif
     
     dlg.exec();
 }

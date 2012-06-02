@@ -9,7 +9,9 @@
 class QMetaObject;
 class QString;
 class QStringList;
+#if defined( HAS_QT_5 )
 class QMimeDatabase;
+#endif
 
 namespace Abstractors
 {
@@ -25,7 +27,9 @@ namespace Abstractors
     BaseAbstractor* create( Abstractors::Type type, QObject* parent = 0 );
     template <class T> T castedCreate( Abstractors::Type type, QObject* parent = 0 );
     
+#if defined( HAS_QT_5 )
     const QMimeDatabase& mimeDatabase();
+#endif
     ApplicationSettings& applicationSettings();
 };
 

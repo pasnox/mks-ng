@@ -26,7 +26,11 @@ DocumentEol::DocumentEol( QWidget* parent )
     
     setMode( Document::Unix );
     
+#if defined( HAS_QT_5 )
     connect( mGroup, &QActionGroup::triggered, this, &DocumentEol::group_triggered );
+#else
+    connect( mGroup, SIGNAL( triggered( QAction* ) ), this, SLOT( group_triggered( QAction* ) ) );
+#endif
 }
 
 DocumentEol::~DocumentEol()

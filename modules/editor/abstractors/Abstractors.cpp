@@ -2,13 +2,17 @@
 
 #include <QHash>
 #include <QStringList>
+#if defined( HAS_QT_5 )
 #include <QMimeDatabase>
+#endif
 #include <QApplication>
 
 namespace Abstractors {
     static QHash<Abstractors::Type, QHash<QString, const QMetaObject*> > mAbstractors;
     static QHash<Abstractors::Type, QString> mCurrentAbstractors;
+#if defined( HAS_QT_5 )
     static QMimeDatabase mMimeDb;
+#endif
     static ApplicationSettings* mApplicationSettings = 0;
 }
 
@@ -55,10 +59,12 @@ BaseAbstractor* Abstractors::create( Abstractors::Type type, QObject* parent )
     return qobject_cast<BaseAbstractor*>( meta->newInstance( Q_ARG( QObject*, parent ) ) );
 }
 
+#if defined( HAS_QT_5 )
 const QMimeDatabase& Abstractors::mimeDatabase()
 {
     return Abstractors::mMimeDb;
 }
+#endif
 
 ApplicationSettings& Abstractors::applicationSettings()
 {

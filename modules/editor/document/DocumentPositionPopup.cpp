@@ -9,7 +9,11 @@ DocumentPositionPopup::DocumentPositionPopup( QWidget* parent )
 {
     ui->setupUi( this );
     
+#if defined( HAS_QT_5 )
     connect( ui->sLine, &QSlider::valueChanged, this, &DocumentPositionPopup::lineChanged );
+#else
+    connect( ui->sLine, SIGNAL( valueChanged( int ) ), this, SIGNAL( lineChanged( int ) ) );
+#endif
 }
 
 DocumentPositionPopup::~DocumentPositionPopup()

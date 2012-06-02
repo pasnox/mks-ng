@@ -22,7 +22,11 @@ SourceHighlightQtDataWatcher::SourceHighlightQtDataWatcher( QObject* parent )
     
     setFilePath( QString( "%1/../../data/source-highlight" ).arg( qApp->applicationDirPath() ) );
     
+#if defined( HAS_QT_5 )
     connect( this, &QFileSystemWatcher::directoryChanged, this, &SourceHighlightQtDataWatcher::_q_directoryChanged );
+#else
+    connect( this, SIGNAL( directoryChanged( const QString& ) ), this, SLOT( _q_directoryChanged( const QString& ) ) );
+#endif
 }
 
 SourceHighlightQtDataWatcher::~SourceHighlightQtDataWatcher()

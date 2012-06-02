@@ -68,6 +68,7 @@ void StackedDocumentToolBar::setStackedDocument( StackedDocument* stacker )
         addWidget( dpCursor );
         
         // connections
+#if defined( HAS_QT_5 )
         typedef void (QComboBox::*QComboBoxActivatedQString)(const QString&);
         QComboBoxActivatedQString ptr = &QComboBox::activated;
         
@@ -80,6 +81,17 @@ void StackedDocumentToolBar::setStackedDocument( StackedDocument* stacker )
         connect( diMode, &DocumentIndentation::indentWidthChanged, this, &StackedDocumentToolBar::diMode_indentWidthChanged );
         connect( diMode, &DocumentIndentation::tabWidthChanged, this, &StackedDocumentToolBar::diMode_tabWidthChanged );
         connect( dpCursor, &DocumentPosition::positionChanged, this, &StackedDocumentToolBar::dpCursor_positionChanged );
+#else
+        connect( mStacker, SIGNAL( currentDocumentChanged( Document* ) ), this, SLOT( stacker_currentDocumentChanged( Document* ) ) );
+        connect( mStacker, SIGNAL( currentDocumentPropertyChanged( Document*, int ) ), this, SLOT( stacker_currentDocumentPropertyChanged( Document*, int ) ) );
+        connect( cbLanguages, SIGNAL( activated( const QString& ) ), this, SLOT( cbLanguages_activated( const QString& ) ) );
+        connect( cbStyles, SIGNAL( activated( const QString& ) ), this, SLOT( cbStyles_activated( const QString& ) ) );
+        connect( deMode, SIGNAL( modeChanged( Document::EolHint ) ), this, SLOT( deMode_modeChanged( Document::EolHint ) ) );
+        connect( diMode, SIGNAL( modeChanged( Document::IndentHint ) ), this, SLOT( diMode_modeChanged( Document::IndentHint ) ) );
+        connect( diMode, SIGNAL( indentWidthChanged( int ) ), this, SLOT( diMode_indentWidthChanged( int ) ) );
+        connect( diMode, SIGNAL( tabWidthChanged( int ) ), this, SLOT( diMode_tabWidthChanged( int ) ) );
+        connect( dpCursor, SIGNAL( positionChanged( const QPoint& ) ), this, SLOT( dpCursor_positionChanged( const QPoint& ) ) );
+#endif
     }
     
     stacker_currentDocumentChanged( mStacker ? mStacker->currentDocument() : 0 );

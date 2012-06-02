@@ -6,7 +6,9 @@
 #include "Abstractors.h"
 
 #include <QIcon>
+#if defined( HAS_QT_5 )
 #include <QMimeDatabase>
+#endif
 #include <QDebug>
 
 class QStringList;
@@ -35,6 +37,7 @@ public:
     }
 
     QIcon iconForFileName( const QString& fileName ) const {
+#if defined( HAS_QT_5 )
         const QList<QMimeType> types = Abstractors::mimeDatabase().mimeTypesForFileName( fileName );
         
         foreach ( const QMimeType& type, types ) {
@@ -44,23 +47,41 @@ public:
                 return icon;
             }
         }
-        
+#else
+        Q_UNUSED( fileName );
+#endif
+
         return iconFromTheme( defaultMimeTypeIconName() );
     }
 
     QIcon iconForLanguage( const QString& language ) const {
+#if defined( HAS_QT_5 )
         const QMimeType type = mimeTypeForLanguage( language );
         return iconFromTheme( mimeTypeIconName( type ) );
+#else
+        Q_UNUSED( language );
+        return QIcon();
+#endif
     }
 
     QIcon iconForContent( const QString& content ) const {
+#if defined( HAS_QT_5 )
         const QMimeType type = Abstractors::mimeDatabase().mimeTypeForData( content.toLocal8Bit() );
         return iconFromTheme( mimeTypeIconName( type ) );
+#else
+        Q_UNUSED( content );
+        return QIcon();
+#endif
     }
     
     virtual QString languageForFileName( const QString& fileName ) const {
+#if defined( HAS_QT_5 )
         const QMimeType type = Abstractors::mimeDatabase().mimeTypesForFileName( fileName ).value( 0 );
         return languageForMimeType( type );
+#else
+        Q_UNUSED( fileName );
+        return QString::null;
+#endif
     }
     
     virtual QStringList supportedLanguages() const = 0;
@@ -72,6 +93,7 @@ protected:
         return "text-x-generic";
     }
     
+#if defined( HAS_QT_5 )
     QString mimeTypeIconName( const QMimeType& type ) const {
         QString name;
         
@@ -89,13 +111,16 @@ protected:
         
         return name;
     }
+#endif
     
     QIcon iconFromTheme( const QString& name ) const {
         return QIcon::hasThemeIcon( name ) ? QIcon::fromTheme( name ) : QIcon::fromTheme( defaultMimeTypeIconName() );
     }
     
+#if defined( HAS_QT_5 )
     virtual QMimeType mimeTypeForLanguage( const QString& language ) const = 0;
     virtual QString languageForMimeType( const QMimeType& type ) const = 0;
+#endif
 
 signals:
     void supportedLanguagesChanged( const QStringList& languages );

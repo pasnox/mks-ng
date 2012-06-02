@@ -14,8 +14,13 @@ StackedDocument::StackedDocument( QWidget* parent )
 {
     Q_ASSERT( mCodeEditorAbstractor );
     
+#if defined( HAS_QT_5 )
     connect( this, &QStackedWidget::currentChanged, this, &StackedDocument::_q_currentChanged );
     connect( this, &QStackedWidget::widgetRemoved, this, &StackedDocument::_q_widgetRemoved );
+#else
+    connect( this, SIGNAL( currentChanged( int ) ), this, SLOT( _q_currentChanged( int ) ) );
+    connect( this, SIGNAL( widgetRemoved( int ) ), this, SLOT( _q_widgetRemoved( int ) ) );
+#endif
 }
 
 StackedDocument::~StackedDocument()
@@ -122,14 +127,24 @@ void StackedDocument::changeEvent( QEvent* event )
 
 void StackedDocument::handleDocument( Document* document )
 {
+#if defined( HAS_QT_5 )
     connect( document, &Document::propertyChanged, this, &StackedDocument::_q_documentPropertyChanged );
     connect( document, &Document::propertiesChanged, this, &StackedDocument::_q_documentPropertiesChanged );
+#else
+    connect( document, SIGNAL( propertyChanged( int ) ), this, SLOT( _q_documentPropertyChanged( int ) ) );
+    connect( document, SIGNAL( propertiesChanged() ), this, SLOT( _q_documentPropertiesChanged() ) );
+#endif
 }
 
 void StackedDocument::unhandleDocument( Document* document )
 {
+#if defined( HAS_QT_5 )
     disconnect( document, &Document::propertyChanged, this, &StackedDocument::_q_documentPropertyChanged );
     disconnect( document, &Document::propertiesChanged, this, &StackedDocument::_q_documentPropertiesChanged );
+#else
+    disconnect( document, SIGNAL( propertyChanged( int ) ), this, SLOT( _q_documentPropertyChanged( int ) ) );
+    disconnect( document, SIGNAL( propertiesChanged() ), this, SLOT( _q_documentPropertiesChanged() ) );
+#endif
 }
 
 void StackedDocument::_q_documentInserted( int index, Document* document )

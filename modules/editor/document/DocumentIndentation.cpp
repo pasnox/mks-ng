@@ -14,7 +14,11 @@ DocumentIndentation::DocumentIndentation( QWidget* parent )
     setToolTip( tr( "Indentation properties. Click to change." ) );
     setMode( Document::Spaces );
     
+#if defined( HAS_QT_5 )
     connect( this, &QToolButton::clicked, this, &DocumentIndentation::showPopup );
+#else
+    connect( this, SIGNAL( clicked() ), this, SLOT( showPopup() ) );
+#endif
 }
 
 DocumentIndentation::~DocumentIndentation()
@@ -48,10 +52,17 @@ void DocumentIndentation::showPopup()
     popup->move( r.topLeft() );
     popup->show();
     
+#if defined( HAS_QT_5 )
     connect( popup, &DocumentIndentationPopup::modeChanged, this, &DocumentIndentation::popup_modeChanged );
     connect( popup, &DocumentIndentationPopup::indentWidthChanged, this, &DocumentIndentation::popup_indentWidthChanged );
     connect( popup, &DocumentIndentationPopup::tabWidthChanged, this, &DocumentIndentation::popup_tabWidthChanged );
     connect( popup, &DocumentIndentationPopup::convertionRequested, this, &DocumentIndentation::popup_convertionRequested );
+#else
+    connect( popup, SIGNAL( modeChanged( int ) ), this, SLOT( popup_modeChanged( int ) ) );
+    connect( popup, SIGNAL( indentWidthChanged( int ) ), this, SLOT( popup_indentWidthChanged( int ) ) );
+    connect( popup, SIGNAL( tabWidthChanged( int ) ), this, SLOT( popup_tabWidthChanged( int ) ) );
+    connect( popup, SIGNAL( convertionRequested() ), this, SLOT( popup_convertionRequested() ) );
+#endif
 }
 
 void DocumentIndentation::changeEvent( QEvent* event )

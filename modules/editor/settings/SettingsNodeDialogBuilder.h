@@ -9,6 +9,9 @@ class SettingsNodeDialogBuilderDelegate;
 class SettingsNodeDialogBuilder : public QDialog
 {
     Q_OBJECT
+#if !defined( HAS_QT_5 )
+    friend class SettingsNodeDialogBuilderPrivate;
+#endif
     
 public:
     SettingsNodeDialogBuilder( QWidget* parent = 0 );

@@ -19,8 +19,10 @@ public:
 protected:
     SourceHighlightQtDataWatcher* mDataWatcher;
     
+#if defined( HAS_QT_5 )
     virtual QMimeType mimeTypeForLanguage( const QString& language ) const;
     virtual QString languageForMimeType( const QMimeType& type ) const;
+#endif
 
 protected slots:
     void dataWatcher_filesChanged( SourceHighlightQtDataWatcher::Type type );
