@@ -424,6 +424,7 @@ void UIMain::on_sdDocuments_currentDocumentPropertyChanged( Document* document, 
             const int documentCount = ui->sdDocuments->count();
             const bool documentModified = document ? document->property( property ).toInt() & Document::Modified : false;
             setWindowModified( documentModified );
+            setWindowIcon( currentWindowIcon() );
             model->action( MENU_FILE_RELOAD )->setEnabled( document );
             model->action( MENU_FILE_SAVE )->setEnabled( documentModified );
             model->action( MENU_FILE_SAVE_AS )->setEnabled( document );
