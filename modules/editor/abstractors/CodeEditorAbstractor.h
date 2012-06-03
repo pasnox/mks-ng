@@ -18,7 +18,7 @@ class CodeEditorAbstractor : public BaseAbstractor
 public:
     CodeEditorAbstractor( QObject* parent = 0 )
         : BaseAbstractor( parent ),
-            mCodeEditorMimeType( this )
+            mCodeEditorMimeType( CodeEditorMimeType( this ) )
     {
     }
     
