@@ -59,6 +59,7 @@ HEADERS *=  \
     document/StackedDocumentToolBar.h \
     document/StackedDocumentCloseQueryModel.h \
     document/StackedDocumentCloseQuery.h \
+    abstractors/CodeEditorMimeType.h \
     abstractors/Abstractors.h \
     abstractors/BaseAbstractor.h \
     abstractors/CodeEditorAbstractor.h \
@@ -92,6 +93,7 @@ SOURCES *= main.cpp \
     document/StackedDocumentToolBar.cpp \
     document/StackedDocumentCloseQueryModel.cpp \
     document/StackedDocumentCloseQuery.cpp \
+    abstractors/CodeEditorMimeType.cpp \
     abstractors/Abstractors.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.cpp \
