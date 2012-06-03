@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
+#include <QFileInfo>
 #include <QDebug>
 
 #include <QStyleOptionFrameV3>
@@ -430,27 +431,29 @@ QVariant SourceHighlightQtDocument::propertyHelper( int property, const QVariant
         
         case Document::Language: {
             if ( value ) {
-                if ( mHighlighter && mHighlighter->getLangFile() == value->toString() ) {
+                const QString language = QString( "%1.lang" ).arg( value->toString() );
+                
+                if ( mHighlighter && mHighlighter->getLangFile() == language ) {
                     break;
                 }
                 
-                if ( !value->toString().isEmpty() && mCodeEditorAbstractor->supportedLanguages().contains( value->toString() ) ) {
-                    const QString style = mHighlighter ? this->property( Document::Style ).toString() : "default.style";
+                if ( !language.isEmpty() && mCodeEditorAbstractor->supportedLanguages().contains( value->toString() ) ) {
+                    const QString style = mHighlighter ? mHighlighter->getFormattingStyle() : "default.style";
                     
                     if ( mHighlighter ) {
-                        delete mHighlighter;
+                        mHighlighter->deleteLater();
                         mHighlighter = 0;
                     }
                     
                     mHighlighter = new srchiliteqt::Qt4SyntaxHighlighter( document );
                     mHighlighter->setReadOnly( mEditor->isReadOnly() );
-                    mHighlighter->init( value->toString(), style );
+                    mHighlighter->init( language, style );
                     
                     emit propertyChanged( Document::Style );
                 }
             }
             else {
-                return mHighlighter ? mHighlighter->getLangFile() : QString::null;
+                return mHighlighter ? QFileInfo( mHighlighter->getLangFile() ).baseName() : QString::null;
             }
             
             break;
@@ -459,11 +462,11 @@ QVariant SourceHighlightQtDocument::propertyHelper( int property, const QVariant
         case Document::Style: {
             if ( value ) {
                 if ( mHighlighter ) {
-                    mHighlighter->setFormattingStyle( value->toString() );
+                    mHighlighter->setFormattingStyle( QString( "%1.style" ).arg( value->toString() ) );
                 }
             }
             else {
-                return mHighlighter ? mHighlighter->getFormattingStyle() : QString::null;
+                return mHighlighter ? QFileInfo( mHighlighter->getFormattingStyle() ).baseName() : QString::null;
             }
             
             break;
@@ -581,6 +584,7 @@ QVariant SourceHighlightQtDocument::propertyHelper( int property, const QVariant
         case Document::NewFile:
         case Document::Indent:
         case Document::TextEncoding:
+        case Document::MimeType:
         case Document::LastError:
         default: {
             if ( value ) {

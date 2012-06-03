@@ -12,17 +12,15 @@ public:
     Q_INVOKABLE SourceHighlightQtCodeEditor( QObject* parent = 0 );
     virtual ~SourceHighlightQtCodeEditor();
     
+    virtual QIcon iconForLanguage( const QString& language ) const;;
+    virtual QString languageForMimeType( const QString& type ) const;
     virtual QStringList supportedLanguages() const;
     virtual QStringList supportedStyles() const;
     virtual Document* createDocument( QWidget* parent = 0 ) const;
 
 protected:
     SourceHighlightQtDataWatcher* mDataWatcher;
-    
-#if defined( HAS_QT_5 )
-    virtual QMimeType mimeTypeForLanguage( const QString& language ) const;
-    virtual QString languageForMimeType( const QMimeType& type ) const;
-#endif
+    mutable QHash<QString, QString> mLanguageMimeTypeCache;
 
 protected slots:
     void dataWatcher_filesChanged( SourceHighlightQtDataWatcher::Type type );

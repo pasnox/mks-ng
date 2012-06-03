@@ -17,7 +17,7 @@ SourceHighlightQtDataWatcher::SourceHighlightQtDataWatcher( QObject* parent )
     ;
     mSuffixes[ SourceHighlightQtDataWatcher::Styles ]
         << "*.style"
-        << "*.css"
+        //<< "*.css"
     ;
     
     setFilePath( QString( "%1/../../data/source-highlight" ).arg( qApp->applicationDirPath() ) );
@@ -76,9 +76,24 @@ void SourceHighlightQtDataWatcher::update()
     }
     
     // get files
-    const QStringList lang = dir.entryList( mSuffixes[ SourceHighlightQtDataWatcher::Languages ], QDir::Files, sortFlags );
-    const QStringList outLang = dir.entryList( mSuffixes[ SourceHighlightQtDataWatcher::OutputLanguages ], QDir::Files, sortFlags );
-    const QStringList styles = dir.entryList( mSuffixes[ SourceHighlightQtDataWatcher::Styles ], QDir::Files, sortFlags );
+    QStringList lang = dir.entryList( mSuffixes[ SourceHighlightQtDataWatcher::Languages ], QDir::Files, sortFlags );
+    QStringList outLang = dir.entryList( mSuffixes[ SourceHighlightQtDataWatcher::OutputLanguages ], QDir::Files, sortFlags );
+    QStringList styles = dir.entryList( mSuffixes[ SourceHighlightQtDataWatcher::Styles ], QDir::Files, sortFlags );
+    
+    for ( int i = 0; i < lang.count(); i++ ) {
+        QString& file = lang[ i ];
+        file = QFileInfo( file ).baseName();
+    }
+    
+    for ( int i = 0; i < outLang.count(); i++ ) {
+        QString& file = outLang[ i ];
+        file = QFileInfo( file ).baseName();
+    }
+    
+    for ( int i = 0; i < styles.count(); i++ ) {
+        QString& file = styles[ i ];
+        file = QFileInfo( file ).baseName();
+    }
     
     // tell about changes
     if ( lang != mFiles.value( SourceHighlightQtDataWatcher::Languages ) ) {
