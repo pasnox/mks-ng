@@ -30,9 +30,10 @@ class RepositoryInitializer:
             {
                 'ctags': 'https://ctags.svn.sourceforge.net/svnroot/ctags/trunk'
             },
-        'tar.gz':
+        'tar':
             {
-                'qscintilla2': 'http://www.riverbankcomputing.co.uk/static/Downloads/QScintilla2/QScintilla-gpl-2.6.1.tar.gz'
+                'qscintilla2': 'http://www.riverbankcomputing.co.uk/static/Downloads/QScintilla2/QScintilla-gpl-2.6.1.tar.gz',
+                'qfreedesktopmime': 'http://qt-apps.org/CONTENT/content-files/86454-qfreedesktopmime-1.0.1.tar.bz2'
             }
     }
 
@@ -100,7 +101,7 @@ class RepositoryInitializer:
             else:
                 if not self.execute( 'svn co -q "%s"' % ( uri ) ):
                     return RepositoryInitializer.EC_CANT_EXPORT
-        elif cvs == 'tar.gz':
+        elif cvs == 'tar':
             pathName = os.path.dirname( folder )
             fileName = os.path.basename( uri )
             baseName = os.path.splitext( os.path.splitext( fileName )[ 0 ] )[ 0 ]
@@ -111,6 +112,11 @@ class RepositoryInitializer:
                 output.write( tarGzData.read() )
                 output.close()
                 tar = tarfile.open( fileName )
+                # check baseName exist in archive else fix extractedPathName
+                for name in tar.getnames():
+                    if not name.startswith( baseName ):
+                        extractedPathName = '%s/%s' % ( pathName, os.path.dirname( name +'/' ) )
+                    break
                 tar.extractall( pathName )
                 tar.close()
                 os.remove( fileName )
@@ -160,4 +166,6 @@ def main(argv=None):
     return initializer.run()
 
 if __name__ == "__main__":
-    sys.exit( main() )
+    result = main()
+    print 'Exit Code: %i' % ( result )
+    sys.exit( result )
