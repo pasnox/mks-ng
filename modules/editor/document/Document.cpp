@@ -18,6 +18,8 @@ Document::Document( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* p
     : BaseWidget( parent ),
         mCodeEditorAbstractor( codeEditorAbstractor )
 {
+    Q_ASSERT( mCodeEditorAbstractor );
+    
 #if USE_MDI_AREA == 1
     setWindowFlags( Qt::FramelessWindowHint );
 #else
@@ -26,6 +28,16 @@ Document::Document( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* p
 
 Document::~Document()
 {
+}
+
+const CodeEditorMimeType& Document::mimeTypeDB() const
+{
+    return mCodeEditorAbstractor->mimeTypeDB();
+}
+
+QString Document::mimeType() const
+{
+    return property( Document::MimeType ).toString();
 }
 
 void Document::retranslateUi()
@@ -50,30 +62,31 @@ QVariant Document::property( int property ) const
             const Document::StateHints state = Document::StateHints( this->property( Document::State ).toInt() );
             
             if ( state != Document::Unmodified ) {
-                return iconForState( state );
+                return mimeTypeDB().iconForState( state );
             }
             
             const QString filePath = this->property( Document::FilePath ).toString();
             
             if ( !filePath.isEmpty() ) {
-                return iconForFileName( filePath );
+                return mimeTypeDB().iconForFileName( filePath );
             }
             
             const QString language = this->property( Document::Language ).toString();
             
             if ( !language.isEmpty() ) {
-                return iconForLanguage( language );
+                return mimeTypeDB().iconForLanguage( language );
             }
             
             const QString text = this->property( Document::Text ).toString();
             
             if ( !text.isEmpty() ) {
-                return iconForContent( filePath );
+                return mimeTypeDB().iconForContent( textCodec()->fromUnicode( text ) );
             }
             
             const bool newFile = this->property( Document::NewFile ).toBool();
+            const QString type = mimeType();
             
-            return QIcon::fromTheme( newFile ? "document-new" : "text-x-generic" );
+            return QIcon::fromTheme( newFile ? "document-new" : mimeTypeDB().defaultMimeTypeIconName( type ) );
         }
         case Document::Title: {
             const QString filePath = this->property( Document::FilePath ).toString();
@@ -191,10 +204,10 @@ bool Document::open( const QString& filePath, const QString& encoding, bool read
     }
     
     // set content language
-    if ( mCodeEditorAbstractor ) {
-        //if ( property( Document::Language ).toString().isEmpty() ) {
-            setProperty( Document::Language, mCodeEditorAbstractor->languageForFileName( filePath ) );
-        //}
+    const QString language = mimeTypeDB().languageForFileName( filePath );
+    
+    if ( property( Document::Language ).toString() != language ) {
+        setProperty( Document::Language, language );
     }
     
     return true;
@@ -284,6 +297,13 @@ bool Document::save( const QString& filePath, const QString& encoding )
     setProperty( Document::TextEncoding, codec->name() );
     setProperty( Document::State, Document::Unmodified );
     
+    // set content language
+    const QString language = mimeTypeDB().languageForFileName( fn );
+    
+    if ( property( Document::Language ).toString() != language ) {
+        setProperty( Document::Language, language );
+    }
+    
     if ( QFile::exists( backupFn ) ) {
         if ( !QFile::remove( backupFn ) ) {
             setProperty( Document::LastError, tr( "Can't remove '%1' backup for finishing atomic save." ).arg( backupFn ) );
@@ -332,26 +352,6 @@ QTextCodec* Document::textCodec( const QString& encoding ) const
     }
     
     return QTextCodec::codecForName( name.toLocal8Bit() );
-}
-
-QIcon Document::iconForState( Document::StateHints state ) const
-{
-    return mCodeEditorAbstractor ? mCodeEditorAbstractor->iconForState( state ) : QIcon();
-}
-
-QIcon Document::iconForFileName( const QString& fileName ) const
-{
-    return mCodeEditorAbstractor ? mCodeEditorAbstractor->iconForFileName( fileName ) : QIcon();
-}
-
-QIcon Document::iconForLanguage( const QString& language ) const
-{
-    return mCodeEditorAbstractor ? mCodeEditorAbstractor->iconForLanguage( language ) : QIcon();
-}
-
-QIcon Document::iconForContent( const QString& content ) const
-{
-    return mCodeEditorAbstractor ? mCodeEditorAbstractor->iconForContent( content ) : QIcon();
 }
 
 bool Document::fileContent( QString& content, const QString& filePath, const QString& encoding )

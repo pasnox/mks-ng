@@ -19,9 +19,9 @@
 class QEvent;
 class QMetaObject;
 class QTextCodec;
-class QMimeType;
 
 class CodeEditorAbstractor;
+class CodeEditorMimeType;
 
 class Document : public BaseWidget
 {
@@ -102,6 +102,7 @@ public:
         SelectionForeground = 38, // QColor
         CaretLineBackground = 39, // QColor
         CaretLineForeground = 40, // QColor
+        MimeType = 41, // QString
         //
         UserProperty = 1000 // first user usable extension
     };
@@ -116,6 +117,9 @@ public:
     
     Document( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent = 0 );
     virtual ~Document();
+    
+    const CodeEditorMimeType& mimeTypeDB() const;
+    QString mimeType() const;
     
     virtual QVariant property( int property ) const;
     virtual void applyApplicationSettings( const DocumentPropertiesDiscover::GuessedProperties& properties = DocumentPropertiesDiscover::GuessedProperties::null );
@@ -140,12 +144,8 @@ protected:
     virtual void changeEvent( QEvent* event );
     
     virtual void initialize();
-    QTextCodec* textCodec( const QString& encoding ) const;
-    QIcon iconForState( Document::StateHints state ) const;
-    QIcon iconForFileName( const QString& fileName ) const;
-    QIcon iconForLanguage( const QString& language ) const;
-    QIcon iconForContent( const QString& content ) const;
     
+    QTextCodec* textCodec( const QString& encoding = QString::null ) const;
     bool fileContent( QString& content, const QString& filePath, const QString& encoding = QString::null );
     
 signals:

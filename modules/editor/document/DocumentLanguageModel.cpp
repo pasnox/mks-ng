@@ -31,7 +31,7 @@ QVariant DocumentLanguageModel::data( const QModelIndex& index, int role ) const
     if ( index.isValid() && role == Qt::DecorationRole ) {
         if ( mAbstractor ) {
             const QString language = QStringListModel::data( index, Qt::DisplayRole ).toString();
-            return mAbstractor->iconForLanguage( language );
+            return mAbstractor->mimeTypeDB().iconForLanguage( language );
         }
     }
     
