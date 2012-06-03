@@ -11,7 +11,7 @@ BUILD_TARGET_PATH = $$PWD/../bin/$${Q_TARGET}
 BUILD_MODE = debug
 BUILD_TYPE = shared
 
-greaterThan(QT_MAJOR_VERSION, 4):DEFINE *= HAS_QT_5
+greaterThan(QT_MAJOR_VERSION, 4):DEFINES *= HAS_QT_5
 
 # Initialize a project
 # $$1 = template (app or lib)
