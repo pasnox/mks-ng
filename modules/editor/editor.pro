@@ -98,3 +98,9 @@ SOURCES *= main.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.cpp
+
+!greaterThan(QT_MAJOR_VERSION, 4) {
+    RESOURCES *= ../../3rdparty/qfreedesktopmime.tar/freedesktopmime.qrc
+    HEADERS *= ../../3rdparty/qfreedesktopmime.tar/src/freedesktopmime.h
+    SOURCES *= ../../3rdparty/qfreedesktopmime.tar/src/freedesktopmime.cpp
+}
