@@ -1,21 +1,31 @@
 #include "CodeEditorMimeType.h"
 #include "CodeEditorAbstractor.h"
 
-#include <QFileIconProvider>
+#include <QFileInfo>
+
 #if defined( HAS_QT_5 )
 #include <QMimeDatabase>
 static QMimeDatabase mMimeDB;
+#else
+#include <freedesktopmime.h>
+static QFreeDesktopMime* mMimeDB = 0;
 #endif
-static QFileIconProvider mIconDB;
 
 CodeEditorMimeType::CodeEditorMimeType( const CodeEditorAbstractor* codeEditorAbstractor )
     : mCodeEditorAbstractor( codeEditorAbstractor )
 {
     Q_ASSERT( mCodeEditorAbstractor );
+#if !defined( HAS_QT_5 )
+    mMimeDB = new QFreeDesktopMime();
+#endif
 }
 
 CodeEditorMimeType::~CodeEditorMimeType()
 {
+#if !defined( HAS_QT_5 )
+    delete mMimeDB;
+    mMimeDB = 0;
+#endif
 }
 
 QString CodeEditorMimeType::mimeTypeForFileName( const QString& fileName ) const
@@ -27,7 +37,7 @@ QString CodeEditorMimeType::mimeTypeForFileName( const QString& fileName ) const
         types << type.name();
     }
 #else
-    types << mIconDB.type( QFileInfo( fileName ) );
+    types << mMimeDB->fromFileName( fileName );
 #endif
 
     #warning fix me, if many types, try to detect the best
@@ -85,8 +95,8 @@ QString CodeEditorMimeType::mimeTypeIconName( const QString& type ) const
 #if defined( HAS_QT_5 )
     const QStringList types = QStringList( type ) << mMimeDB.mimeTypeForName( type ).parentMimeTypes();
     
-    foreach ( const QString& type, types ) {
-        const QMimeType mimeType = mMimeDB.mimeTypeForName( type );
+    foreach ( const QString& _type, types ) {
+        const QMimeType mimeType = mMimeDB.mimeTypeForName( _type );
         
         if ( mimeType.isValid() ) {
             name = mimeType.iconName();
@@ -101,10 +111,22 @@ QString CodeEditorMimeType::mimeTypeIconName( const QString& type ) const
         }
     }
 #else
-    name = QString( type ).replace( "/", "-" );
+    const QStringList types = QStringList( type ) << mMimeDB->subClassOf( type );
     
-    if ( !QIcon::hasThemeIcon( name ) ) {
-        name.clear();
+    foreach ( const QString& _type, types ) {
+        name = QString( _type ).replace( "/", "-" );
+        
+        if ( !QIcon::hasThemeIcon( name ) ) {
+            name = mMimeDB->genericIconName( _type );
+            
+            if ( !QIcon::hasThemeIcon( name ) ) {
+                name.clear();
+            }
+        }
+        
+        if ( !name.isEmpty() ) {
+            break;
+        }
     }
 #endif
 
@@ -143,12 +165,7 @@ QIcon CodeEditorMimeType::iconForLanguage( const QString& language ) const
 QIcon CodeEditorMimeType::iconForFileName( const QString& fileName ) const
 {
     const QString type = mimeTypeForFileName( fileName );
-#if defined( HAS_QT_5 )
     return QIcon::fromTheme( mimeTypeIconName( type ) );
-#else
-    QIcon icon = mIconDB.icon( QFileInfo( fileName ) );
-    return icon.isNull() ? iconFromTheme( defaultMimeTypeIconName( type ), type ) : icon;
-#endif
 }
 
 QIcon CodeEditorMimeType::iconForContent( const QByteArray& content ) const
