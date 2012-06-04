@@ -100,7 +100,7 @@ SOURCES *= main.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.cpp
 
 !greaterThan(QT_MAJOR_VERSION, 4) {
-    RESOURCES *= ../../3rdparty/qfreedesktopmime.tar/freedesktopmime.qrc
-    HEADERS *= ../../3rdparty/qfreedesktopmime.tar/src/freedesktopmime.h
-    SOURCES *= ../../3rdparty/qfreedesktopmime.tar/src/freedesktopmime.cpp
+    RESOURCES *= ../../3rdparty/qfreedesktopmime.git/freedesktopmime.qrc
+    HEADERS *= ../../3rdparty/qfreedesktopmime.git/src/freedesktopmime.h
+    SOURCES *= ../../3rdparty/qfreedesktopmime.git/src/freedesktopmime.cpp
 }

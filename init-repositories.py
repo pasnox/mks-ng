@@ -21,6 +21,7 @@ class RepositoryInitializer:
         'git':
             {
                 'document-properties-discover': 'git://github.com/pasnox/document-properties-discover.git',
+                'qfreedesktopmime': 'git://github.com/pasnox/qfreedesktopmime.git',
                 'source-highlight': 'git://git.savannah.gnu.org/src-highlite.git',
                 'source-highlight-qt': 'git://srchiliteqt.git.sourceforge.net/gitroot/srchiliteqt/srchiliteqt',
                 'fresh': 'git://github.com/pasnox/fresh.git',
@@ -32,8 +33,7 @@ class RepositoryInitializer:
             },
         'tar':
             {
-                'qscintilla2': 'http://www.riverbankcomputing.co.uk/static/Downloads/QScintilla2/QScintilla-gpl-2.6.1.tar.gz',
-                'qfreedesktopmime': 'http://qt-apps.org/CONTENT/content-files/86454-qfreedesktopmime-1.0.1.tar.bz2'
+                'qscintilla2': 'http://www.riverbankcomputing.co.uk/static/Downloads/QScintilla2/QScintilla-gpl-2.6.1.tar.gz'
             }
     }
 
