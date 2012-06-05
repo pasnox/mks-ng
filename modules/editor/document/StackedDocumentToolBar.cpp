@@ -8,12 +8,37 @@
 
 #include <QEvent>
 #include <QComboBox>
+#include <QLayout>
+#include <QApplication>
 #include <QDebug>
+
+// simple model to override Qt::ForegroundRole badly overwrited by some style menu bar css.
+
+class DocumentStyleModel : public QStringListModel
+{
+public:
+    DocumentStyleModel( QObject* parent = 0 )
+        : QStringListModel( parent ) {
+    }
+    
+    virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const {
+        switch ( role ) {
+            // fix stupid styles that force css styles in menubar without doing proper matching
+            case Qt::ForegroundRole:
+                return QApplication::style()->standardPalette().brush( QPalette::Text );
+            default:
+                return QStringListModel::data( index, role );
+        }
+    }
+};
+
+// StackedDocumentToolBar
 
 StackedDocumentToolBar::StackedDocumentToolBar( QWidget* parent )
     : QToolBar( parent ),
         mStacker( 0 ),
         dlmLanguages( new DocumentLanguageModel( this ) ),
+        dsmStyles( new DocumentStyleModel( this ) ),
         cbLanguages( 0 ),
         cbStyles( 0 ),
         deMode( 0 ),
@@ -21,6 +46,8 @@ StackedDocumentToolBar::StackedDocumentToolBar( QWidget* parent )
         dpCursor( 0 )
 {
     setMovable( false );
+    setFixedHeight( 18 );
+    layout()->setMargin( 0 );
 }
 
 StackedDocumentToolBar::~StackedDocumentToolBar()
@@ -51,11 +78,13 @@ void StackedDocumentToolBar::setStackedDocument( StackedDocument* stacker )
         dlmLanguages->setCodeEditorAbstractor( cea );
         dlmLanguages->setStringList( cea->supportedLanguages() );
         
+        dsmStyles->setStringList( cea->supportedStyles() );
+        
         spacer->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );
         cbLanguages->setMaximumHeight( 21 );
         cbLanguages->setModel( dlmLanguages );
         cbStyles->setMaximumHeight( 21 );
-        cbStyles->addItems( cea->supportedStyles() );
+        cbStyles->setModel( dsmStyles );
         deMode->setMaximumHeight( 21 );
         diMode->setMaximumHeight( 21 );
         dpCursor->setMaximumHeight( 21 );

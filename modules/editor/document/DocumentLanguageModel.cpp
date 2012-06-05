@@ -1,6 +1,8 @@
 #include "DocumentLanguageModel.h"
 #include "CodeEditorAbstractor.h"
 
+#include <QApplication>
+
 DocumentLanguageModel::DocumentLanguageModel( QObject* parent )
     : QStringListModel( parent ), mAbstractor( 0 )
 {
@@ -28,10 +30,18 @@ CodeEditorAbstractor* DocumentLanguageModel::codeEditorAbstractor() const
 
 QVariant DocumentLanguageModel::data( const QModelIndex& index, int role ) const
 {
-    if ( index.isValid() && role == Qt::DecorationRole ) {
-        if ( mAbstractor ) {
-            const QString language = QStringListModel::data( index, Qt::DisplayRole ).toString();
-            return mAbstractor->mimeTypeDB().iconForLanguage( language );
+    Q_ASSERT( mAbstractor );
+    
+    if ( index.isValid() ) {
+        switch ( role ) {
+            case Qt::DecorationRole: {
+                const QString language = QStringListModel::data( index, Qt::DisplayRole ).toString();
+                return mAbstractor->mimeTypeDB().iconForLanguage( language );
+            }
+            
+            // fix stupid styles that force css styles in menubar without doing proper matching
+            case Qt::ForegroundRole:
+                return QApplication::style()->standardPalette().brush( QPalette::Text );
         }
     }
     
