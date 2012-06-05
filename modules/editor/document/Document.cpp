@@ -194,6 +194,7 @@ bool Document::open( const QString& filePath, const QString& encoding, bool read
     setProperty( Document::NewFile, false );
     setProperty( Document::FilePath, filePath );
     setProperty( Document::TextEncoding, textCodec( encoding )->name() );
+    setProperty( Document::MimeType, mimeTypeDB().mimeTypeForFileName( filePath ) );
     setProperty( Document::ReadOnly, readOnly );
     setProperty( Document::InitialText, content );
     setProperty( Document::State, Document::Unmodified );
@@ -295,6 +296,7 @@ bool Document::save( const QString& filePath, const QString& encoding )
     setProperty( Document::NewFile, false );
     setProperty( Document::FilePath, fn );
     setProperty( Document::TextEncoding, codec->name() );
+    setProperty( Document::MimeType, mimeTypeDB().mimeTypeForFileName( fn ) );
     setProperty( Document::State, Document::Unmodified );
     
     // set content language
