@@ -1,8 +1,6 @@
 #include "CodeEditorMimeType.h"
 #include "CodeEditorAbstractor.h"
 
-#include <QFileInfo>
-
 #if defined( HAS_QT_5 )
 #include <QMimeDatabase>
 static QMimeDatabase mMimeDB;
