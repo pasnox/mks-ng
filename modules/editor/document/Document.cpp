@@ -100,17 +100,25 @@ QVariant Document::property( int property ) const
 
 void Document::setProperty( int property, const QVariant& value )
 {
+    Q_UNUSED( value );
+    
     if ( property != Document::LastError ) {
         setProperty( Document::LastError, QVariant() );
     }
     
+    // update document decoration if the state of the document change
+    if ( property == Document::State ) {
+        setProperty( Document::Decoration, Document::property( Document::Decoration ) );
+    }
+    
+    // update document title / if the filepath of the document change
     if ( property == Document::FilePath ) {
-        setProperty( Document::Title, QVariant() );
+        setProperty( Document::Title, Document::property( Document::Title ) );
         
-        if ( this->property( Document::Language ).isNull() && !value.toString().isEmpty() ) {
+        /*if ( this->property( Document::Language ).isNull() && !value.toString().isEmpty() ) {
             emit propertyChanged( Document::Language );
             emit propertiesChanged();
-        }
+        }*/
     }
 }
 
