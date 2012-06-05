@@ -621,10 +621,25 @@ QVariant SourceHighlightQtDocument::propertyHelper( int property, const QVariant
         mEditor->setTextCursor( cursor );
     }
     
-    Document::setProperty( property, *value );
-    
-    emit propertyChanged( property );
-    emit propertiesChanged();
+    switch ( property ) {
+        // special case, they are emited by their internal signals
+        case Document::LineCount:
+        case Document::CopyAvailable:
+        case Document::CutAvailable:
+        case Document::CursorPosition:
+        case Document::State:
+        case Document::UndoAvailable:
+        case Document::RedoAvailable:
+        case Document::SelectedText:
+        case Document::Text:
+            break;
+        // let inform about change
+        default:
+            emit propertyChanged( property );
+            emit propertiesChanged();
+            Document::setProperty( property, *value );
+            break;
+    }
     
     return QVariant();
 }
@@ -634,6 +649,7 @@ void SourceHighlightQtDocument::editor_blockCountChanged( int newBlockCount )
     Q_UNUSED( newBlockCount );
     emit propertyChanged( Document::LineCount );
     emit propertiesChanged();
+    Document::setProperty( Document::LineCount, QVariant() );
 }
 
 void SourceHighlightQtDocument::editor_copyAvailable( bool yes )
@@ -642,12 +658,15 @@ void SourceHighlightQtDocument::editor_copyAvailable( bool yes )
     emit propertyChanged( Document::CopyAvailable );
     emit propertyChanged( Document::CutAvailable );
     emit propertiesChanged();
+    Document::setProperty( Document::CopyAvailable, QVariant() );
+    Document::setProperty( Document::CutAvailable, QVariant() );
 }
 
 void SourceHighlightQtDocument::editor_cursorPositionChanged()
 {
     emit propertyChanged( Document::CursorPosition );
     emit propertiesChanged();
+    Document::setProperty( Document::CursorPosition, QVariant() );
 }
 
 void SourceHighlightQtDocument::editor_modificationChanged( bool changed )
@@ -655,6 +674,7 @@ void SourceHighlightQtDocument::editor_modificationChanged( bool changed )
     Q_UNUSED( changed );
     emit propertyChanged( Document::State );
     emit propertiesChanged();
+    Document::setProperty( Document::State, QVariant() );
 }
 
 void SourceHighlightQtDocument::editor_undoAvailable( bool available )
@@ -662,6 +682,7 @@ void SourceHighlightQtDocument::editor_undoAvailable( bool available )
     Q_UNUSED( available );
     emit propertyChanged( Document::UndoAvailable );
     emit propertiesChanged();
+    Document::setProperty( Document::UndoAvailable, QVariant() );
 }
 
 void SourceHighlightQtDocument::editor_redoAvailable( bool available )
@@ -669,17 +690,19 @@ void SourceHighlightQtDocument::editor_redoAvailable( bool available )
     Q_UNUSED( available );
     emit propertyChanged( Document::RedoAvailable );
     emit propertiesChanged();
+    Document::setProperty( Document::RedoAvailable, QVariant() );
 }
 
 void SourceHighlightQtDocument::editor_selectionChanged()
 {
     emit propertyChanged( Document::SelectedText );
     emit propertiesChanged();
+    Document::setProperty( Document::SelectedText, QVariant() );
 }
 
 void SourceHighlightQtDocument::editor_textChanged()
 {
     emit propertyChanged( Document::Text );
-    emit propertyChanged( Document::State );
     emit propertiesChanged();
+    Document::setProperty( Document::Text, QVariant() );
 }
