@@ -22,7 +22,6 @@ public:
     QString defaultMimeTypeIconName( const QString& type ) const;
     QString mimeTypeIconName( const QString& type ) const;
     
-    QIcon iconFromTheme( const QString& name, const QString& type ) const;
     QIcon iconForState( Document::StateHints state ) const;
     QIcon iconForLanguage( const QString& language ) const;
     QIcon iconForFileName( const QString& fileName ) const;
