@@ -1,7 +1,8 @@
 <RCC>
   <qresource prefix="icons">
-    <file alias="linux.png">icons/linux.png</file>
-    <file alias="macos.png">icons/macos.png</file>
-    <file alias="windows.png">icons/windows.png</file>
+    <file alias="linux.png">icons/16x16/linux.png</file>
+    <file alias="macos.png">icons/16x16/macos.png</file>
+    <file alias="windows.png">icons/16x16/windows.png</file>
+    <file alias="mks-ng.png">icons/128x128/mks-ng.png</file>
   </qresource>
 </RCC>
