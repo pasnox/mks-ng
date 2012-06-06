@@ -35,4 +35,5 @@ LIBS *= \
     -l$$targetForMode( source-highlight-qt, $${BUILD_MODE} ) \
     -l$$targetForMode( source-highlight, $${BUILD_MODE} ) \
     -lboost_regex
+macx:LIBS *= "-framework CoreFoundation"
     

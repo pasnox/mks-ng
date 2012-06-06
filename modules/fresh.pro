@@ -23,6 +23,8 @@ initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGE
 QT *= network xml
 greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets
 
+macx:LIBS *= "-framework CoreFoundation"
+
 INCLUDEPATH *= $$getFolders( ../3rdparty/fresh.git/src )
 
 DEPENDPATH *= $${INCLUDEPATH}
