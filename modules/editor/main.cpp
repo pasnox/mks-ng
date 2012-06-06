@@ -15,7 +15,7 @@ int main( int argc, char** argv )
     QApplication::setApplicationVersion( APPLICATION_VERSION );
     QApplication::setOrganizationDomain( APPLICATION_DOMAIN );
     QApplication::setOrganizationName( APPLICATION_ORGANIZATION );
-    QApplication::setWindowIcon( QIcon( ":/fresh/icons/info.png" ) );
+    QApplication::setWindowIcon( QIcon( ":/icons/mks-ng.png" ) );
     
     pSettings::setDefaultProperties( pSettings::Properties( APPLICATION_NAME, APPLICATION_VERSION, pSettings::Auto ) );
     
