@@ -33,12 +33,14 @@ public slots:
 protected:
     Ui_UIMain* ui;
     
+    typedef QHash<Document*, QString> HashedDocumentString;
+    
     virtual void closeEvent( QCloseEvent* event );
     virtual void changeEvent( QEvent* event );
     QString currentWorkingDirectory() const;
     QString cleanFilePath( const QString& filePath ) const;
-    QHash<Document*, QString> openedDocuments( bool modifiedOnly = false ) const;
-    Document* documentForFilePath( const QString& filePath, const QHash<Document*, QString>& openedDocuments = QHash<Document*, QString>() ) const;
+    UIMain::HashedDocumentString openedDocuments( bool modifiedOnly = false ) const;
+    Document* documentForFilePath( const QString& filePath, const UIMain::HashedDocumentString& openedDocuments = UIMain::HashedDocumentString() ) const;
     void showError( const QString& text, QObject* buddy = 0 );
     void showDocumentError( Document* document );
     pFileDialogResult requestUserOpenFileNames( const QString& text, const QString& path, const QString& filters, const QString& encoding = QString::null );

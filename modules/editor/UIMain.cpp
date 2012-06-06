@@ -191,7 +191,7 @@ bool UIMain::open( const QStringList& filePaths, const QString& encoding, bool r
 
 bool UIMain::openPlainText( const QStringList& filePaths, const QString& encoding, bool readOnly )
 {
-    const QHash<Document*, QString> documents = openedDocuments();
+    const UIMain::HashedDocumentString documents = openedDocuments();
     Document* lastDocument = 0;
     bool ok = true;
     
@@ -312,9 +312,9 @@ QString UIMain::cleanFilePath( const QString& filePath ) const
     return QDir::cleanPath( QDir::toNativeSeparators( filePath ) );
 }
 
-QHash<Document*, QString> UIMain::openedDocuments( bool modifiedOnly ) const
+UIMain::HashedDocumentString UIMain::openedDocuments( bool modifiedOnly ) const
 {
-    QHash<Document*, QString> documents;
+    UIMain::HashedDocumentString documents;
     
     for ( int i = 0; i < ui->sdDocuments->count(); i++ ) {
         Document* document = ui->sdDocuments->document( i );
@@ -329,9 +329,9 @@ QHash<Document*, QString> UIMain::openedDocuments( bool modifiedOnly ) const
     return documents;
 }
 
-Document* UIMain::documentForFilePath( const QString& filePath, const QHash<Document*, QString>& openedDocuments ) const
+Document* UIMain::documentForFilePath( const QString& filePath, const UIMain::HashedDocumentString& openedDocuments ) const
 {
-    QHash<Document*, QString> documents = openedDocuments;
+    UIMain::HashedDocumentString documents = openedDocuments;
     
     if ( documents.isEmpty() ) {
         documents = this->openedDocuments();
@@ -600,7 +600,7 @@ bool UIMain::actionCloseTriggered()
 
 bool UIMain::actionCloseAllTriggered()
 {
-    const QHash<Document*, QString> modifiedDocuments = openedDocuments( true );
+    const UIMain::HashedDocumentString modifiedDocuments = openedDocuments( true );
     
     if ( !modifiedDocuments.isEmpty() ) {
         StackedDocumentCloseQuery dlg( modifiedDocuments.keys(), this );
