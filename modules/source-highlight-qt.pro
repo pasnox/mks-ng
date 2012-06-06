@@ -20,14 +20,16 @@ include( ../3rdparty/source-highlight-qt.git/defines.pri )
 TARGET_NAME = source-highlight-qt
 initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, shared )
 
-#CONFIG += create_prl
+#CONFIG *= create_prl
 greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets
 
-INCLUDEPATH = \
+LIBS *= -L$${BUILD_TARGET_PATH} -l$$targetForMode( source-highlight, $${BUILD_MODE} )
+
+INCLUDEPATH *= \
     ../3rdparty/source-highlight.git/lib \
     ../3rdparty/source-highlight-qt.git/lib/srchiliteqt
 
-DEPENDPATH = $${INCLUDEPATH}
+DEPENDPATH *= $${INCLUDEPATH}
 
 FORMS *=  \
     ../3rdparty/source-highlight-qt.git/lib/srchiliteqt/LanguageElemColorForm.ui \

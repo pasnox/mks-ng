@@ -34,12 +34,14 @@ initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGE
 #autoGenerateFile( source-highlight-config.h.in, ../3rdparty/source-highlight.git/lib/srchilite/config.h )
 
 #DEFINES *= HAVE_CONFIG_H
-#CONFIG += create_prl
+#CONFIG *= create_prl
 
-INCLUDEPATH = \
+LIBS *= -lboost_regex
+
+INCLUDEPATH *= \
     ../3rdparty/source-highlight.git/lib/srchilite
 
-DEPENDPATH = $${INCLUDEPATH}
+DEPENDPATH *= $${INCLUDEPATH}
 
 HEADERS *= \
     ../3rdparty/source-highlight.git/lib/srchilite/formattermanager.h \

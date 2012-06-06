@@ -23,9 +23,9 @@ initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGE
 QT *= network xml
 greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets
 
-INCLUDEPATH = $$getFolders( ../3rdparty/fresh.git/src )
+INCLUDEPATH *= $$getFolders( ../3rdparty/fresh.git/src )
 
-DEPENDPATH = $${INCLUDEPATH}
+DEPENDPATH *= $${INCLUDEPATH}
 
 RESOURCES *= ../3rdparty/fresh.git/resources/fresh.qrc
 
