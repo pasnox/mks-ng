@@ -19,7 +19,7 @@ include( $$PWD/config.pri )
 QT *= network xml
 greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets
 
-INCLUDEPATH = \
+INCLUDEPATH *= \
     $$PWD/../3rdparty/document-properties-discover.git/src \
     $$PWD/../3rdparty/qfreedesktopmime.git/src \
     $$PWD/../3rdparty/source-highlight.git/lib \
@@ -27,7 +27,7 @@ INCLUDEPATH = \
     $$getFolders( $$PWD/../3rdparty/fresh.git/src ) \
     $$PWD/../3rdparty/fresh.git/include
 
-DEPENDPATH = $${INCLUDEPATH}
+DEPENDPATH *= $${INCLUDEPATH}
 
 LIBS *= -L$${BUILD_TARGET_PATH}
 LIBS *= \
