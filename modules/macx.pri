@@ -5,6 +5,9 @@ macx {
     isEmpty( SDK_PATH ):SDK_PATH = /Developer/SDKs
     CONFIG *= app_bundle
     
+    INCLUDEPATH *= /opt/local/include
+    LIBS *= -L/opt/local/lib
+    
     universal {
         QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.3
         QMAKE_MAC_SDK = $${SDK_PATH}/MacOSX10.6.sdk
