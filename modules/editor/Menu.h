@@ -25,4 +25,12 @@
 #define MENU_EDIT_PASTE "mEdit/aPaste"
 #define MENU_EDIT_PREFERENCES "mEdit/aPreferences"
 
+#define MENU_HELP "mHelp"
+#define MENU_HELP_CONTENTS "mHelp/aContents"
+#define MENU_HELP_FEEDBACK "mHelp/aFeedback"
+#define MENU_HELP_DONATE "mHelp/aDonate"
+#define MENU_HELP_SEPARATOR_1 "mHelp/aSeparator1"
+#define MENU_HELP_ABOUT "mHelp/aAbout"
+#define MENU_HELP_ABOUT_QT "mHelp/aAboutQt"
+
 #endif // MENU_H

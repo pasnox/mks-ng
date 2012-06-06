@@ -14,10 +14,13 @@
 #include <FreshGui/pActionsModel>
 #include <FreshGui/pFileDialog>
 #include <FreshCore/pSettings>
+#include <FreshGui/pPaypalButton>
 
 #include <QCloseEvent>
 #include <QDir>
 #include <QMessageBox>
+#include <QDesktopServices>
+#include <QUrl>
 #include <QDebug>
 
 UIMain::UIMain( QWidget* parent )
@@ -65,6 +68,19 @@ UIMain::UIMain( QWidget* parent )
     QAction* aPaste = model->addAction( MENU_EDIT_PASTE, tr( "Paste" ), QIcon::fromTheme( "edit-paste" ) );
     QAction* aPreferences = model->addAction( MENU_EDIT_PREFERENCES, tr( "Preferences" ), QIcon::fromTheme( "preferences-other" ) );
     
+    model->addMenu( MENU_HELP, tr( "Help" ) );
+    QAction* aManual = model->addAction( MENU_HELP_CONTENTS, tr( "Manual..." ), QIcon::fromTheme( "help-contents" ) );
+    QAction* aFeedback = model->addAction( MENU_HELP_FEEDBACK, tr( "Feedback..." ), QIcon::fromTheme( "help-feedback" ) );
+    QAction* aDonate = model->addAction( MENU_HELP_DONATE, tr( "Donate..." ), QIcon::fromTheme( "help-donate" ) );
+    model->addSeparator( MENU_HELP_SEPARATOR_1 );
+    QAction* aAbout = model->addAction( MENU_HELP_ABOUT, tr( "About..." ), QIcon::fromTheme( "help-about" ) );
+    QAction* aAboutQt = model->addAction( MENU_HELP_ABOUT_QT, tr( "About Qt..." ), QIcon::fromTheme( "help-about" ) );
+    
+    aQuit->setMenuRole( QAction::QuitRole );
+    aPreferences->setMenuRole( QAction::PreferencesRole );
+    aAbout->setMenuRole( QAction::AboutRole );
+    aAboutQt->setMenuRole( QAction::AboutQtRole );
+    
     model->setDefaultShortcut( aNewPlainText, QKeySequence::New );
     //model->setDefaultShortcut( aOpen, QKeySequence::AddTab );
     model->setDefaultShortcut( aOpenPlainText, QKeySequence::Open );
@@ -76,7 +92,11 @@ UIMain::UIMain( QWidget* parent )
     model->setDefaultShortcut( aClose, QKeySequence::Close );
     //model->setDefaultShortcut( aCloseAll, QKeySequence::CloseAll );
     model->setDefaultShortcut( aQuit, QKeySequence::Quit );
-    aQuit->setMenuRole( QAction::QuitRole );
+    
+    if ( model->defaultShortcut( aSaveAs ).isEmpty() ) {
+        const QString shortcut = QString( "Shift+%1" ).arg( model->defaultShortcut( aSave ).toString() );
+        model->setDefaultShortcut( aSaveAs, QKeySequence( shortcut ) );
+    }
     
     model->setDefaultShortcut( aUndo, QKeySequence::Undo );
     aUndo->setData( Document::Undo );
@@ -88,23 +108,20 @@ UIMain::UIMain( QWidget* parent )
     aCut->setData( Document::Cut );
     model->setDefaultShortcut( aPaste, QKeySequence::Paste );
     aPaste->setData( Document::Paste );
-    model->setDefaultShortcut( aPreferences, QKeySequence( "Ctrl+Shift+P" ) );
-    aPreferences->setMenuRole( QAction::PreferencesRole );
+    model->setDefaultShortcut( aPreferences, QKeySequence::Preferences );
     
-    if ( model->defaultShortcut( aSaveAs ).isEmpty() ) {
-        const QString shortcut = QString( "Shift+%1" ).arg( model->defaultShortcut( aSave ).toString() );
-        model->setDefaultShortcut( aSaveAs, QKeySequence( shortcut ) );
+    if ( model->defaultShortcut( aPreferences ).isEmpty() ) {
+        model->setDefaultShortcut( aPreferences, QKeySequence( "Ctrl+Shift+P" ) );
     }
+    
+    model->setDefaultShortcut( aManual, QKeySequence::HelpContents );
+    //model->setDefaultShortcut( aFeedback, QKeySequence::Feedback );
+    //model->setDefaultShortcut( aDonate, QKeySequence::Donate );
+    //model->setDefaultShortcut( aAbout, QKeySequence::About );
+    //model->setDefaultShortcut( aAboutQt, QKeySequence::AboutQt );
     
 #if defined( HAS_QT_5 )
     connect( this, &UIMain::preferencesChanged, ui->sdDocuments, &StackedDocument::applyPreferences );
-    
-    connect( aUndo, &QAction::triggered, this, &UIMain::documentActionTriggered );
-    connect( aRedo, &QAction::triggered, this, &UIMain::documentActionTriggered );
-    connect( aCopy, &QAction::triggered, this, &UIMain::documentActionTriggered );
-    connect( aCut, &QAction::triggered, this, &UIMain::documentActionTriggered );
-    connect( aPaste, &QAction::triggered, this, &UIMain::documentActionTriggered );
-    connect( aPreferences, &QAction::triggered, this, &UIMain::actionPreferencesTriggered );
     
     connect( aNewPlainText, &QAction::triggered, this, &UIMain::actionNewPlainTextTriggered );
     connect( aOpen, &QAction::triggered, this, &UIMain::actionOpenTriggered );
@@ -116,15 +133,21 @@ UIMain::UIMain( QWidget* parent )
     connect( aClose, &QAction::triggered, this, &UIMain::actionCloseTriggered );
     connect( aCloseAll, &QAction::triggered, this, &UIMain::actionCloseAllTriggered );
     connect( aQuit, &QAction::triggered, this, &UIMain::actionQuitTriggered );
+    
+    connect( aUndo, &QAction::triggered, this, &UIMain::documentActionTriggered );
+    connect( aRedo, &QAction::triggered, this, &UIMain::documentActionTriggered );
+    connect( aCopy, &QAction::triggered, this, &UIMain::documentActionTriggered );
+    connect( aCut, &QAction::triggered, this, &UIMain::documentActionTriggered );
+    connect( aPaste, &QAction::triggered, this, &UIMain::documentActionTriggered );
+    connect( aPreferences, &QAction::triggered, this, &UIMain::actionPreferencesTriggered );
+    
+    connect( aManual, &QAction::triggered, this, &UIMain::actionManualTriggered );
+    connect( aFeedback, &QAction::triggered, this, &UIMain::actionFeedbackTriggered );
+    connect( aDonate, &QAction::triggered, this, &UIMain::actionDonateTriggered );
+    connect( aAbout, &QAction::triggered, this, &UIMain::actionAboutTriggered );
+    connect( aAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt );
 #else
     connect( this, SIGNAL( preferencesChanged() ), ui->sdDocuments, SLOT( applyPreferences() ) );
-    
-    connect( aUndo, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
-    connect( aRedo, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
-    connect( aCopy, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
-    connect( aCut, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
-    connect( aPaste, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
-    connect( aPreferences, SIGNAL( triggered() ), this, SLOT( actionPreferencesTriggered() ) );
     
     connect( aNewPlainText, SIGNAL( triggered() ), this, SLOT( actionNewPlainTextTriggered() ) );
     connect( aOpen, SIGNAL( triggered() ), this, SLOT( actionOpenTriggered() ) );
@@ -136,6 +159,19 @@ UIMain::UIMain( QWidget* parent )
     connect( aClose, SIGNAL( triggered() ), this, SLOT( actionCloseTriggered() ) );
     connect( aCloseAll, SIGNAL( triggered() ), this, SLOT( actionCloseAllTriggered() ) );
     connect( aQuit, SIGNAL( triggered() ), this, SLOT( actionQuitTriggered() ) );
+    
+    connect( aUndo, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
+    connect( aRedo, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
+    connect( aCopy, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
+    connect( aCut, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
+    connect( aPaste, SIGNAL( triggered() ), this, SLOT( documentActionTriggered() ) );
+    connect( aPreferences, SIGNAL( triggered() ), this, SLOT( actionPreferencesTriggered() ) );
+    
+    connect( aManual, SIGNAL( triggered() ), this, SLOT( actionManualTriggered() ) );
+    connect( aFeedback, SIGNAL( triggered() ), this, SLOT( actionFeedbackTriggered() ) );
+    connect( aDonate, SIGNAL( triggered() ), this, SLOT( actionDonateTriggered() ) );
+    connect( aAbout, SIGNAL( triggered() ), this, SLOT( actionAboutTriggered() ) );
+    connect( aAboutQt, SIGNAL( triggered() ), qApp, SLOT( aboutQt() ) );
 #endif
     
     on_sdDocuments_currentDocumentChanged( 0 );
@@ -416,9 +452,11 @@ void UIMain::on_sdDocuments_currentDocumentPropertyChanged( Document* document, 
     const pActionsModel* model = menuBar()->model();
     
     switch ( property ) {
+#if defined( Q_OS_MAC )
         case Document::Decoration:
             setWindowIcon( currentWindowIcon() );
             return;
+#endif
         case Document::Title:
             setWindowTitle( currentWindowTitle() );
             return;
@@ -651,4 +689,36 @@ void UIMain::actionPreferencesTriggered()
 #endif
     
     dlg.exec();
+}
+
+void UIMain::actionManualTriggered()
+{
+    QDesktopServices::openUrl( QUrl( APPLICATION_MANUAL_URL ) );
+}
+
+void UIMain::actionFeedbackTriggered()
+{
+    QDesktopServices::openUrl( QUrl( APPLICATION_ISSUES_URL ) );
+}
+
+void UIMain::actionDonateTriggered()
+{
+    pPaypalButton paypal;
+    paypal.setBusinessId( "5R924WYXJ6BAW" );
+    paypal.setItemName( APPLICATION_NAME );
+    paypal.setItemId( "MKS-NG-DONATION" );
+    paypal.setCurrencyCode( "EUR" );
+    QDesktopServices::openUrl( paypal.url() );
+}
+
+void UIMain::actionAboutTriggered()
+{
+    QMessageBox box( this );
+    box.setIconPixmap( QPixmap( ":/icons/mks-ng.png" ) );
+    box.setWindowTitle( tr( "About: %1" ).arg( APPLICATION_NAME ) );
+    box.setInformativeText( tr( "This is informative text" ) );
+    box.setText( tr( "This is text" ) );
+    //box.setDetailedText( tr( "This is detailled text" ) );
+    box.setEscapeButton( QMessageBox::Ok );
+    box.exec();
 }

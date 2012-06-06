@@ -65,6 +65,11 @@ protected slots:
     bool actionQuitTriggered();
     
     void actionPreferencesTriggered();
+    
+    void actionManualTriggered();
+    void actionFeedbackTriggered();
+    void actionDonateTriggered();
+    void actionAboutTriggered();
 
 signals:
     void preferencesChanged();
