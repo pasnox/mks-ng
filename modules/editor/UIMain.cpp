@@ -28,14 +28,16 @@ UIMain::UIMain( QWidget* parent )
     ui->sdtbDocument->setStackedDocument( ui->sdDocuments );
     ui->sdtvDocuments->setStackedDocument( ui->sdDocuments );
     
+#if defined( Q_OS_MAC )
+    //ui->sdtbDocument->insertWidget( ui->sdtbDocument->actions().first(), menuBar() );
+    addToolBarBreak( Qt::TopToolBarArea );
+    ui->sdtbDocument->setFixedHeight( 35 );
+#else
     menuBar()->setCornerWidget( ui->sdtbDocument );
     menuBar()->setFixedHeight( 25 );
-    
-    addToolBar( queuedMessageToolBar() );
-    
-#ifndef Q_OS_MAC
-    //ui->sdtbDocument->insertWidget( ui->sdtbDocument->actions().first(), menuBar() );
 #endif
+    
+    addToolBar( Qt::TopToolBarArea, queuedMessageToolBar() );
 
     pActionsModel* model = menuBar()->model();
     
