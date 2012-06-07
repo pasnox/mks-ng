@@ -8,6 +8,7 @@
 #include "SettingsNodeDialogBuilder.h"
 #include "ApplicationSettingsDelegate.h"
 #include "Abstractors.h"
+#include "MkSUtils.h"
 
 #include <FreshGui/pQueuedMessageToolBar>
 #include <FreshGui/pActionsMenuBar>
@@ -716,9 +717,29 @@ void UIMain::actionAboutTriggered()
     QMessageBox box( this );
     box.setIconPixmap( QPixmap( ":/icons/mks-ng.png" ) );
     box.setWindowTitle( tr( "About: %1" ).arg( APPLICATION_NAME ) );
-    box.setInformativeText( tr( "This is informative text" ) );
-    box.setText( tr( "This is text" ) );
-    //box.setDetailedText( tr( "This is detailled text" ) );
+    box.setText( tr(
+        "%1"
+        "%2\n"
+        "Homepage: %3\n"
+        "Manual: %4\n"
+        "Issues Tracker: %5\n"
+        "Downloads: %6\n"
+        "Sources: %7"
+    )
+        .arg( QString( "<h1><center>%1</center></h1>" ).arg( APPLICATION_NAME ) )
+        .arg( "<h4><center>" +tr( "Version %2 (%3)" ).arg( APPLICATION_VERSION ).arg( APPLICATION_VERSION_LONG ) +"</center></h4>" )
+        .arg( MkSUtils::makeHTMLUrl( APPLICATION_DOMAIN, true ) )
+        .arg( MkSUtils::makeHTMLUrl( APPLICATION_MANUAL_URL, true ) )
+        .arg( MkSUtils::makeHTMLUrl( APPLICATION_ISSUES_URL, true ) )
+        .arg( MkSUtils::makeHTMLUrl( APPLICATION_DOWNLOADS_URL, true ) )
+        .arg( MkSUtils::makeHTMLUrl( APPLICATION_SOURCES_URL, true ) )
+        .replace( "\n", "<br />" )
+    );
+    box.setInformativeText( "<center><h4>" +tr(
+        "Copyright (C) 2012\nFilipe Azevedo & The Monkey Studio Team"
+    )
+        .replace( "\n", "<br />" ) +"</h4></center>"
+    );
     box.setEscapeButton( QMessageBox::Ok );
     box.exec();
 }
