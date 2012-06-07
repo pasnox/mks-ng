@@ -35,6 +35,7 @@ FORMS *=  \
 HEADERS *=  \
     ../../3rdparty/document-properties-discover.git/src/DocumentPropertiesDiscover.h \
     Menu.h \
+    MkSUtils.h \
     settings/SettingsNode.h \
     settings/SettingsNodeDialogBuilder.h \
     settings/SettingsNodeDialogBuilderDelegate.h \
@@ -69,6 +70,7 @@ HEADERS *=  \
 
 SOURCES *= main.cpp \
     ../../3rdparty/document-properties-discover.git/src/DocumentPropertiesDiscover.cpp \
+    MkSUtils.cpp \
     settings/SettingsNode.cpp \
     settings/SettingsNodeDialogBuilder.cpp \
     settings/SettingsNodeDialogBuilderDelegate.cpp \
