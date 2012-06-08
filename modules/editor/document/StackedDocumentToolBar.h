@@ -9,6 +9,8 @@ class QEvent;
 class QComboBox;
 class QStringListModel;
 
+class pQueuedMessage;
+
 class StackedDocument;
 class DocumentEol;
 class DocumentIndentation;
@@ -52,7 +54,11 @@ protected slots:
     void diMode_modeChanged( Document::IndentHint mode );
     void diMode_indentWidthChanged( int width );
     void diMode_tabWidthChanged( int width );
+    void diMode_convertionRequested( const DocumentPropertiesDiscover::GuessedProperties& properties, bool askUserconfirmation );
     void dpCursor_positionChanged( const QPoint& pos );
+
+signals:
+    void appendMessage( const pQueuedMessage& message );
 };
 
 #endif // STACKEDDOCUMENTTOOLBAR_H

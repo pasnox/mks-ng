@@ -6,6 +6,8 @@
 #include "DocumentPosition.h"
 #include "DocumentLanguageModel.h"
 
+#include <FreshGui/pQueuedMessageWidget>
+
 #include <QEvent>
 #include <QComboBox>
 #include <QLayout>
@@ -109,6 +111,7 @@ void StackedDocumentToolBar::setStackedDocument( StackedDocument* stacker )
         connect( diMode, &DocumentIndentation::modeChanged, this, &StackedDocumentToolBar::diMode_modeChanged );
         connect( diMode, &DocumentIndentation::indentWidthChanged, this, &StackedDocumentToolBar::diMode_indentWidthChanged );
         connect( diMode, &DocumentIndentation::tabWidthChanged, this, &StackedDocumentToolBar::diMode_tabWidthChanged );
+        connect( diMode, &DocumentIndentation::convertionRequested, this, &StackedDocumentToolBar::diMode_convertionRequested );
         connect( dpCursor, &DocumentPosition::positionChanged, this, &StackedDocumentToolBar::dpCursor_positionChanged );
 #else
         connect( mStacker, SIGNAL( currentDocumentChanged( Document* ) ), this, SLOT( stacker_currentDocumentChanged( Document* ) ) );
@@ -119,6 +122,7 @@ void StackedDocumentToolBar::setStackedDocument( StackedDocument* stacker )
         connect( diMode, SIGNAL( modeChanged( Document::IndentHint ) ), this, SLOT( diMode_modeChanged( Document::IndentHint ) ) );
         connect( diMode, SIGNAL( indentWidthChanged( int ) ), this, SLOT( diMode_indentWidthChanged( int ) ) );
         connect( diMode, SIGNAL( tabWidthChanged( int ) ), this, SLOT( diMode_tabWidthChanged( int ) ) );
+        connect( diMode, SIGNAL( convertionRequested( const DocumentPropertiesDiscover::GuessedProperties&, bool ) ), this, SLOT( diMode_convertionRequested( const DocumentPropertiesDiscover::GuessedProperties&, bool ) ) );
         connect( dpCursor, SIGNAL( positionChanged( const QPoint& ) ), this, SLOT( dpCursor_positionChanged( const QPoint& ) ) );
 #endif
     }
@@ -281,6 +285,29 @@ void StackedDocumentToolBar::diMode_tabWidthChanged( int width )
     
     if ( document ) {
         document->setProperty( Document::TabWidth, width );
+    }
+}
+
+void StackedDocumentToolBar::diMode_convertionRequested( const DocumentPropertiesDiscover::GuessedProperties& properties, bool askUserconfirmation )
+{
+    Q_ASSERT( mStacker );
+    Document* document = mStacker->currentDocument();
+    
+    if ( document ) {
+        if ( askUserconfirmation ) {
+            pQueuedMessage message;
+            message.message = tr( "The indentation properties have changed, apply them ?" );
+            message.buttons[ QDialogButtonBox::Yes ] = QString::null;
+            message.buttons[ QDialogButtonBox::No ] = QString::null;
+            message.object = document;
+            message.slot = "queuedMessageClicked";
+            message.userData = QVariant::fromValue( properties );
+            
+            emit appendMessage( message );
+        }
+        else {
+            document->convertTo( properties );
+        }
     }
 }
 
