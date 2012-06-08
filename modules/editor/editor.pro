@@ -66,7 +66,8 @@ HEADERS *=  \
     abstractors/CodeEditorAbstractor.h \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.h \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.h \
-    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.h
+    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.h \
+    abstractors/codeeditor/PlainTextEditor/PlainTextEditor.h
 
 SOURCES *= main.cpp \
     ../../3rdparty/document-properties-discover.git/src/DocumentPropertiesDiscover.cpp \
@@ -99,7 +100,8 @@ SOURCES *= main.cpp \
     abstractors/Abstractors.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.cpp \
-    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.cpp
+    abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.cpp \
+    abstractors/codeeditor/PlainTextEditor/PlainTextEditor.cpp
 
 !greaterThan(QT_MAJOR_VERSION, 4) {
     RESOURCES *= ../../3rdparty/qfreedesktopmime.git/freedesktopmime.qrc
