@@ -7,45 +7,10 @@
 
 class QEvent;
 
+class PlainTextEditor;
+
 namespace srchiliteqt {
     class Qt4SyntaxHighlighter;
-};
-
-class PlainTextEditor : public QPlainTextEdit
-{
-    Q_OBJECT
-
-public:
-    enum Ruler {
-        NoRuler = 0x0,
-        LineRuler = 0x1,
-        BackgroundRuler = 0x2
-    };
-    
-    PlainTextEditor( QWidget* parent = 0 );
-    
-    PlainTextEditor::Ruler rulerMode() const;
-    int rulerWidth() const;
-
-public slots:
-    void setRulerMode( PlainTextEditor::Ruler mode );
-    void setRulerWidth( int width );
-
-protected:
-    QPalette mOriginalPalette;
-    QRect mLastCaretLineRect;
-    PlainTextEditor::Ruler mRulerMode;
-    int mRulerWidth;
-    
-    virtual bool event( QEvent* event );
-    virtual void paintEvent( QPaintEvent* event );
-    virtual void scrollContentsBy( int dx, int dy );
-    
-    void paintFrame();
-    QRect caretLineRect() const;
-
-protected slots:
-    void updateLine();
 };
 
 class SourceHighlightQtDocument : public Document
