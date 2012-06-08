@@ -122,6 +122,8 @@ UIMain::UIMain( QWidget* parent )
     //model->setDefaultShortcut( aAboutQt, QKeySequence::AboutQt );
     
 #if defined( HAS_QT_5 )
+    connect( ui->sdtbDocument, &StackedDocumentToolBar::appendMessage, queuedMessageToolBar(), &pQueuedMessageToolBar::appendMessage );
+    
     connect( this, &UIMain::preferencesChanged, ui->sdDocuments, &StackedDocument::applyPreferences );
     
     connect( aNewPlainText, &QAction::triggered, this, &UIMain::actionNewPlainTextTriggered );
@@ -148,6 +150,8 @@ UIMain::UIMain( QWidget* parent )
     connect( aAbout, &QAction::triggered, this, &UIMain::actionAboutTriggered );
     connect( aAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt );
 #else
+    connect( ui->sdtbDocument, SIGNAL( appendMessage( const pQueuedMessage& ) ), queuedMessageToolBar(), SLOT( appendMessage( const pQueuedMessage& ) ) );
+    
     connect( this, SIGNAL( preferencesChanged() ), ui->sdDocuments, SLOT( applyPreferences() ) );
     
     connect( aNewPlainText, SIGNAL( triggered() ), this, SLOT( actionNewPlainTextTriggered() ) );
