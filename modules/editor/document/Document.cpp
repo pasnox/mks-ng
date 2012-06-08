@@ -12,6 +12,8 @@
 #include <QDateTime>
 #include <QDebug>
 
+#include <FreshGui/pQueuedMessageWidget>
+
 int Document::mDocumentCount = 0;
 
 Document::Document( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent )
@@ -119,6 +121,16 @@ void Document::setProperty( int property, const QVariant& value )
             emit propertyChanged( Document::Language );
             emit propertiesChanged();
         }*/
+    }
+}
+
+void Document::queuedMessageClicked( QDialogButtonBox::StandardButton button, const pQueuedMessage& message )
+{
+    if ( message.userData.canConvert<DocumentPropertiesDiscover::GuessedProperties>() ) {
+        if ( button == QDialogButtonBox::Yes ) {
+            const DocumentPropertiesDiscover::GuessedProperties properties = message.userData.value<DocumentPropertiesDiscover::GuessedProperties>();
+            convertTo( properties );
+        }
     }
 }
 
@@ -342,6 +354,41 @@ void Document::close()
 {
     clearProperties();
     initialize();
+}
+
+void Document::convertTo( const DocumentPropertiesDiscover::GuessedProperties& properties )
+{
+    const int eol = property( Document::Eol ).toInt();
+    const int indent = property( Document::Indent ).toInt();
+    const int indentWidth = property( Document::IndentWidth ).toInt();
+    const int tabWidth = property( Document::TabWidth ).toInt();
+    const DocumentPropertiesDiscover::GuessedProperties from( eol, indent, indentWidth, tabWidth );
+    DocumentPropertiesDiscover::GuessedProperties to( properties );
+    QString content = property( Document::Text ).toString();
+    
+    if ( to.eol == -1 ) {
+        to.eol = eol;
+    }
+    
+    if ( to.indent == -1 ) {
+        to.indent = indent;
+    }
+    
+    if ( to.indentWidth == -1 ) {
+        to.indentWidth = indentWidth;
+    }
+    
+    if ( to.tabWidth == -1 ) {
+        to.tabWidth = tabWidth;
+    }
+    
+    DocumentPropertiesDiscover::convertContent( content, from, to, true, true );
+    
+    setProperty( Document::Eol, to.eol );
+    setProperty( Document::Indent, to.indent );
+    setProperty( Document::IndentWidth, to.indentWidth );
+    setProperty( Document::TabWidth, to.tabWidth );
+    setProperty( Document::Text, content );
 }
 
 void Document::initialize()

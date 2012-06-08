@@ -13,8 +13,11 @@
 
 #include <QHash>
 #include <QStringList>
+#include <QDialogButtonBox>
 
 #include <DocumentPropertiesDiscover.h>
+
+class pQueuedMessage;
 
 class QEvent;
 class QMetaObject;
@@ -130,12 +133,14 @@ public:
     bool save( const QString& filePath = QString::null, const QString& encoding = QString::null );
     bool reload();
     void close();
+    void convertTo( const DocumentPropertiesDiscover::GuessedProperties& properties );
 
 public slots:
     virtual void retranslateUi();
     virtual void setProperty( int property, const QVariant& value );
     virtual void triggerAction( int action ) = 0;
     virtual void clearProperties() = 0;
+    virtual void queuedMessageClicked( QDialogButtonBox::StandardButton button, const pQueuedMessage& message );
     
 protected:
     const CodeEditorAbstractor* mCodeEditorAbstractor;
