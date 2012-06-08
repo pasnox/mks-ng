@@ -27,12 +27,18 @@ protected:
     Ui_DocumentIndentationPopup* ui;
     
     virtual void changeEvent( QEvent* event );
+    virtual void showEvent( QShowEvent* event );
+    virtual void closeEvent( QCloseEvent* event );
+
+protected slots:
+    void propertiesChanged();
+    void on_pbConvertDocument_clicked();
 
 signals:
     void modeChanged( int mode );
     void indentWidthChanged( int width );
     void tabWidthChanged( int width );
-    void convertionRequested();
+    void convertionRequested( const DocumentPropertiesDiscover::GuessedProperties& properties, bool askUserconfirmation );
 };
 
 #endif // DOCUMENTINDENTATIONPOPUP_H

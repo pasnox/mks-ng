@@ -56,12 +56,12 @@ void DocumentIndentation::showPopup()
     connect( popup, &DocumentIndentationPopup::modeChanged, this, &DocumentIndentation::popup_modeChanged );
     connect( popup, &DocumentIndentationPopup::indentWidthChanged, this, &DocumentIndentation::popup_indentWidthChanged );
     connect( popup, &DocumentIndentationPopup::tabWidthChanged, this, &DocumentIndentation::popup_tabWidthChanged );
-    connect( popup, &DocumentIndentationPopup::convertionRequested, this, &DocumentIndentation::popup_convertionRequested );
+    connect( popup, &DocumentIndentationPopup::convertionRequested, this, &DocumentIndentation::convertionRequested );
 #else
     connect( popup, SIGNAL( modeChanged( int ) ), this, SLOT( popup_modeChanged( int ) ) );
     connect( popup, SIGNAL( indentWidthChanged( int ) ), this, SLOT( popup_indentWidthChanged( int ) ) );
     connect( popup, SIGNAL( tabWidthChanged( int ) ), this, SLOT( popup_tabWidthChanged( int ) ) );
-    connect( popup, SIGNAL( convertionRequested() ), this, SLOT( popup_convertionRequested() ) );
+    connect( popup, SIGNAL( convertionRequested( const DocumentPropertiesDiscover::GuessedProperties&, bool ) ), this, SIGNAL( convertionRequested( const DocumentPropertiesDiscover::GuessedProperties&, bool ) ) );
 #endif
 }
 
@@ -109,10 +109,6 @@ void DocumentIndentation::popup_tabWidthChanged( int width )
 {
     setTabWidth( width );
     emit tabWidthChanged( width );
-}
-
-void DocumentIndentation::popup_convertionRequested()
-{
 }
 
 void DocumentIndentation::setMode( Document::IndentHint mode )

@@ -40,12 +40,12 @@ protected slots:
     void popup_modeChanged( int mode );
     void popup_indentWidthChanged( int width );
     void popup_tabWidthChanged( int width );
-    void popup_convertionRequested();
 
 signals:
     void modeChanged( Document::IndentHint mode );
     void indentWidthChanged( int width );
     void tabWidthChanged( int width );
+    void convertionRequested( const DocumentPropertiesDiscover::GuessedProperties& properties, bool askUserconfirmation );
 };
 
 #endif // DOCUMENTINDENTATION_H
