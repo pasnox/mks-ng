@@ -17,7 +17,7 @@
 include( ../modules.pri )
 
 TARGET_NAME = editor
-initializeProject( app, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, "" )
+initializeProject( app, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, "", "0.1.0" )
 
 INCLUDEPATH *= $$getFolders( . )
 
@@ -67,7 +67,10 @@ HEADERS *=  \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.h \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.h \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.h \
-    abstractors/codeeditor/PlainTextEditor/PlainTextEditor.h
+    abstractors/codeeditor/PlainTextEditor/PlainTextEditor.h \
+    abstractors/codeeditor/QodeEdit/QodeEditDocument.h \
+    abstractors/codeeditor/QodeEdit/QodeEditCodeEditor.h \
+    abstractors/codeeditor/QodeEdit/QodeEditDataWatcher.h
 
 SOURCES *= main.cpp \
     ../../3rdparty/document-properties-discover.git/src/DocumentPropertiesDiscover.cpp \
@@ -101,7 +104,10 @@ SOURCES *= main.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtCodeEditor.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDocument.cpp \
     abstractors/codeeditor/SourceHighlightQt/SourceHighlightQtDataWatcher.cpp \
-    abstractors/codeeditor/PlainTextEditor/PlainTextEditor.cpp
+    abstractors/codeeditor/PlainTextEditor/PlainTextEditor.cpp \
+    abstractors/codeeditor/QodeEdit/QodeEditDataWatcher.cpp \
+    abstractors/codeeditor/QodeEdit/QodeEditCodeEditor.cpp \
+    abstractors/codeeditor/QodeEdit/QodeEditDocument.cpp
 
 !greaterThan(QT_MAJOR_VERSION, 4) {
     RESOURCES *= ../../3rdparty/qfreedesktopmime.git/freedesktopmime.qrc
