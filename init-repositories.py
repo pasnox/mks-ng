@@ -20,6 +20,7 @@ class RepositoryInitializer:
     modules = {
         'git':
             {
+                'oxygen-icons-png': 'git://github.com/pasnox/oxygen-icons-png.git',
                 'document-properties-discover': 'git://github.com/pasnox/document-properties-discover.git',
                 'qfreedesktopmime': 'git://github.com/pasnox/qfreedesktopmime.git',
                 'source-highlight': 'git://git.savannah.gnu.org/src-highlite.git',
@@ -30,10 +31,13 @@ class RepositoryInitializer:
         'svn':
             {
                 'ctags': 'https://ctags.svn.sourceforge.net/svnroot/ctags/trunk'
+                #'oxygen-icons': 'svn://anonsvn.kde.org/home/kde/trunk/kdesupport/oxygen-icons'
             },
         'tar':
             {
                 'qscintilla2': 'http://www.riverbankcomputing.co.uk/static/Downloads/QScintilla2/QScintilla-gpl-2.6.1.tar.gz'
+                #'oxygen-icons': 'http://www.archlinux.org/packages/extra/any/oxygen-icons/download/'
+                #'oxygen-icons': 'http://mirror.us.leaseweb.net/archlinux/extra/os/i686/oxygen-icons-4.8.4-1-any.pkg.tar.xz'
             }
     }
 
