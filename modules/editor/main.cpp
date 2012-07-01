@@ -24,6 +24,10 @@ int main( int argc, char** argv )
     Abstractors::add( Abstractors::CodeEditor, &QodeEditCodeEditor::staticMetaObject );
     //Abstractors::add( Abstractors::CodeEditor, &QScintillaCodeEditor::staticMetaObject );
     
+    //Abstractors::setCurrent( Abstractors::CodeEditor, "SourceHighlightQtCodeEditor" );
+    Abstractors::setCurrent( Abstractors::CodeEditor, "QodeEditCodeEditor" );
+    //Abstractors::setCurrent( Abstractors::CodeEditor, "QScintillaCodeEditor" );
+    
     UIMain w;
     w.setWindowIcon( w.currentWindowIcon() );
     w.setWindowTitle( w.currentWindowTitle() );
