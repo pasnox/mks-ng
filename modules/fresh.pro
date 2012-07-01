@@ -140,6 +140,6 @@ win32 {
 }
 
 macx {
-    HEADERs *= ../3rdparty/fresh.git/src/core/pMacHelpers.h
+    HEADERS *= ../3rdparty/fresh.git/src/core/pMacHelpers.h
     OBJECTIVE_SOURCES *= ../3rdparty/fresh.git/src/core/pMacHelpers.mm
 }
