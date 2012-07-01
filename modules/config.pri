@@ -48,15 +48,21 @@ defineTest( initializeProject ) {
     isEmpty( q_target_path ) {
         q_target_path = $${BUILD_TARGET_PATH}
     }
+    
+    # version
+    q_version = $${7}
 
     CONFIG -= release debug debug_and_release warn_on warn_off ppc x86 x86_64
     CONFIG *= warn_on thread x11 windows qt $${q_mode} $${q_type}
     isEqual( q_mode, debug ):CONFIG *= console
     
+    VERSION = $${q_version}
+    
     QMAKE_RPATHDIR *= $${BUILD_TARGET_PATH}
     
     export( CONFIG )
     export( QMAKE_RPATHDIR )
+    export( VERSION )
     
     setTemplate( $${q_template} )
     setTarget( $${q_target}, $${q_mode} )
