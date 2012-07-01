@@ -20,6 +20,7 @@ QT *= network xml
 greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets
 
 INCLUDEPATH *= \
+    $$PWD/../3rdparty/qodeedit.git/src \
     $$PWD/../3rdparty/document-properties-discover.git/src \
     $$PWD/../3rdparty/qfreedesktopmime.git/src \
     $$PWD/../3rdparty/source-highlight.git/lib \
@@ -31,6 +32,7 @@ DEPENDPATH *= $${INCLUDEPATH}
 
 LIBS *= -L$${BUILD_TARGET_PATH}
 LIBS *= \
+    -l$$targetForMode( qodeedit, $${BUILD_MODE} ) \
     -l$$targetForMode( fresh, $${BUILD_MODE} ) \
     -l$$targetForMode( source-highlight-qt, $${BUILD_MODE} ) \
     -l$$targetForMode( source-highlight, $${BUILD_MODE} ) \

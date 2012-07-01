@@ -19,6 +19,7 @@ include( config.pri )
 TEMPLATE = subdirs
 CONFIG *= ordered
 SUBDIRS *= \
+    qodeedit.pro \
     source-highlight.pro \
     source-highlight-qt.pro \
     fresh.pro \

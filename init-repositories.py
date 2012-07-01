@@ -23,6 +23,7 @@ class RepositoryInitializer:
                 'oxygen-icons-png': 'git://github.com/pasnox/oxygen-icons-png.git',
                 'document-properties-discover': 'git://github.com/pasnox/document-properties-discover.git',
                 'qfreedesktopmime': 'git://github.com/pasnox/qfreedesktopmime.git',
+                'qodeedit': 'git://github.com/pasnox/qodeedit.git',
                 'source-highlight': 'git://git.savannah.gnu.org/src-highlite.git',
                 'source-highlight-qt': 'git://srchiliteqt.git.sourceforge.net/gitroot/srchiliteqt/srchiliteqt',
                 'fresh': 'git://github.com/pasnox/fresh.git',
