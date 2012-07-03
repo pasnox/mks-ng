@@ -12,7 +12,8 @@ public:
         Eol = QVariant::UserType,
         Indent,
         Ruler,
-        Wrap
+        Wrap,
+        CodeEditorAbstractor
     };
     
     virtual bool editorNeedLabel( const SettingsNode& node ) const;

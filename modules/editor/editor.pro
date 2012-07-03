@@ -46,9 +46,9 @@ HEADERS *=  \
     settings/IndentationRadioGroup.h \
     settings/RulerRadioGroup.h \
     settings/WrapRadioGroup.h \
+    settings/AbstractorComboBox.h \
     UIMain.h \
     document/Document.h \
-    document/DocumentLanguageModel.h \
     document/DocumentEol.h \
     document/DocumentIndentation.h \
     document/DocumentIndentationPopup.h \
@@ -85,9 +85,9 @@ SOURCES *= main.cpp \
     settings/IndentationRadioGroup.cpp \
     settings/RulerRadioGroup.cpp \
     settings/WrapRadioGroup.cpp \
+    settings/AbstractorComboBox.cpp \
     UIMain.cpp \
     document/Document.cpp \
-    document/DocumentLanguageModel.cpp \
     document/DocumentEol.cpp \
     document/DocumentIndentation.cpp \
     document/DocumentIndentationPopup.cpp \

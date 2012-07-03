@@ -149,6 +149,19 @@ EditorSettings::EditorSettings()
     addChild( colors );
 }
 
+// Abstractor Settings
+
+AbstractorSettings::AbstractorSettings()
+    : SettingsNode( SettingsNode::VerticalPage )
+{
+    setName( "abstractors" );
+    setGuiContent( QT_TRANSLATE_NOOP( "ApplicationSettings", "Abstractors" ), QIcon::fromTheme( "network-connect" ) );
+    setHelp( QT_TRANSLATE_NOOP( "ApplicationSettings", "Abstractors help" ) );
+    
+    codeEditor = addHValue( "codeEditor", "QodeEditCodeEditor", ApplicationSettingsDelegate::CodeEditorAbstractor );
+    codeEditor.setLabel( QT_TRANSLATE_NOOP( "ApplicationSettings", "Code editor backend" ) );
+}
+
 // ApplicationSettings
 
 ApplicationSettings::ApplicationSettings( QObject* parent )
@@ -158,6 +171,7 @@ ApplicationSettings::ApplicationSettings( QObject* parent )
     
     addChild( general );
     addChild( editor );
+    addChild( abstractors );
 }
 
 void ApplicationSettings::save( QSettings* settings )

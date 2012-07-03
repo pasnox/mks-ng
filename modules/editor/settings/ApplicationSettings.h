@@ -66,6 +66,14 @@ public:
     Colors colors;
 };
 
+class AbstractorSettings : public SettingsNode
+{
+public:
+    AbstractorSettings();
+
+    SettingsNode codeEditor;
+};
+
 class ApplicationSettings : public QObject, public SettingsNode
 {
 public:
@@ -78,6 +86,7 @@ public:
 
     GeneralSettings general;
     EditorSettings editor;
+    AbstractorSettings abstractors;
 };
 
 #endif // APPLICATIONSETTINGS_H
