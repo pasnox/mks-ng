@@ -1,4 +1,6 @@
 #include "Abstractors.h"
+#include "CodeEditorAbstractor.h"
+#include "ApplicationSettings.h"
 
 #include <QHash>
 #include <QStringList>
@@ -7,6 +9,7 @@
 namespace Abstractors {
     static QHash<Abstractors::Type, QHash<QString, const QMetaObject*> > mAbstractors;
     static QHash<Abstractors::Type, QString> mCurrentAbstractors;
+    static QHash<Abstractors::Type, BaseAbstractor*> mCurrentAbstractorsInstances;
     static ApplicationSettings* mApplicationSettings = 0;
 }
 
@@ -45,12 +48,24 @@ QString Abstractors::current( Abstractors::Type type )
     return entry;
 }
 
-BaseAbstractor* Abstractors::create( Abstractors::Type type, QObject* parent )
+BaseAbstractor* Abstractors::instance( Abstractors::Type type, QObject* parent )
 {
-    const QString entry = Abstractors::current( type );
-    const QMetaObject* meta = Abstractors::mAbstractors[ type ][ entry ];
-    Q_ASSERT( meta );
-    return qobject_cast<BaseAbstractor*>( meta->newInstance( Q_ARG( QObject*, parent ) ) );
+    BaseAbstractor* abstractor = mCurrentAbstractorsInstances.value( type );
+    
+    if ( !abstractor ) {
+        const QString entry = Abstractors::current( type );
+        const QMetaObject* meta = Abstractors::mAbstractors[ type ][ entry ];
+        Q_ASSERT( meta );
+        abstractor = qobject_cast<BaseAbstractor*>( meta->newInstance( Q_ARG( QObject*, parent ) ) );
+        mCurrentAbstractorsInstances[ type ] = abstractor;
+    }
+    
+    return abstractor;
+}
+
+CodeEditorAbstractor* Abstractors::codeEditor()
+{
+    return qobject_cast<CodeEditorAbstractor*>( Abstractors::instance( Abstractors::CodeEditor, QApplication::instance() ) );
 }
 
 ApplicationSettings& Abstractors::applicationSettings()
