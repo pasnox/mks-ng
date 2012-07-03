@@ -4,11 +4,11 @@
 #include "DocumentEol.h"
 #include "DocumentIndentation.h"
 #include "DocumentPosition.h"
-#include "DocumentLanguageModel.h"
 
 #include <FreshGui/pQueuedMessageWidget>
 
 #include <QEvent>
+#include <QStringListModel>
 #include <QComboBox>
 #include <QLayout>
 #include <QApplication>
@@ -16,12 +16,10 @@
 
 // simple model to override Qt::ForegroundRole badly overwrited by some style menu bar css.
 
-class DocumentStyleModel : public QStringListModel
-{
+class DocumentToolBarModel : public QStringListModel {
 public:
-    DocumentStyleModel( QObject* parent = 0 )
-        : QStringListModel( parent ) {
-    }
+    DocumentToolBarModel( QObject* parent = 0 )
+        : QStringListModel( parent ) {}
     
     virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const {
         switch ( role ) {
@@ -32,6 +30,35 @@ public:
                 return QStringListModel::data( index, role );
         }
     }
+};
+
+// Languages model
+
+class DocumentLanguageModel : public DocumentToolBarModel {
+public:
+    DocumentLanguageModel( QObject* parent = 0 )
+        : DocumentToolBarModel( parent ) {}
+    
+    virtual QVariant data( const QModelIndex& index, int role = Qt::DisplayRole ) const {
+        if ( index.isValid() ) {
+            switch ( role ) {
+                case Qt::DecorationRole: {
+                    const QString language = DocumentToolBarModel::data( index, Qt::DisplayRole ).toString();
+                    return Abstractors::codeEditor()->mimeTypeDB().iconForLanguage( language );
+                }
+            }
+        }
+        
+        return DocumentToolBarModel::data( index, role );
+    }
+};
+
+// Styles model
+
+class DocumentStyleModel : public DocumentToolBarModel {
+public:
+    DocumentStyleModel( QObject* parent = 0 )
+        : DocumentToolBarModel( parent ) {}
 };
 
 // StackedDocumentToolBar
@@ -69,7 +96,7 @@ void StackedDocumentToolBar::setStackedDocument( StackedDocument* stacker )
     mStacker = stacker;
     
     if ( mStacker ) {
-        CodeEditorAbstractor* cea = mStacker->codeEditorAbstractor();
+        CodeEditorAbstractor* cea = Abstractors::codeEditor();
         QWidget* spacer = new QWidget( this );
         cbLanguages = new QComboBox( this );
         cbStyles = new QComboBox( this );
@@ -77,9 +104,7 @@ void StackedDocumentToolBar::setStackedDocument( StackedDocument* stacker )
         diMode = new DocumentIndentation( this );
         dpCursor = new DocumentPosition( this );
         
-        dlmLanguages->setCodeEditorAbstractor( cea );
         dlmLanguages->setStringList( cea->supportedLanguages() );
-        
         dsmStyles->setStringList( cea->supportedStyles() );
         
         spacer->setSizePolicy( QSizePolicy::Expanding, QSizePolicy::Expanding );

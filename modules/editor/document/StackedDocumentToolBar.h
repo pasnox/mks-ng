@@ -15,8 +15,6 @@ class StackedDocument;
 class DocumentEol;
 class DocumentIndentation;
 class DocumentPosition;
-class DocumentLanguageModel;
-
 
 class StackedDocumentToolBar : public QToolBar
 {
@@ -33,7 +31,7 @@ public slots:
     
 protected:
     StackedDocument* mStacker;
-    DocumentLanguageModel* dlmLanguages;
+    QStringListModel* dlmLanguages;
     QStringListModel* dsmStyles;
     QComboBox* cbLanguages;
     QComboBox* cbStyles;
