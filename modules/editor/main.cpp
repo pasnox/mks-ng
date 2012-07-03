@@ -24,10 +24,15 @@ int main( int argc, char** argv )
     Abstractors::add( Abstractors::CodeEditor, &QodeEditCodeEditor::staticMetaObject );
     //Abstractors::add( Abstractors::CodeEditor, &QScintillaCodeEditor::staticMetaObject );
     
-    //Abstractors::setCurrent( Abstractors::CodeEditor, "SourceHighlightQtCodeEditor" );
-    Abstractors::setCurrent( Abstractors::CodeEditor, "QodeEditCodeEditor" );
-    //Abstractors::setCurrent( Abstractors::CodeEditor, "QScintillaCodeEditor" );
+    // load settings
+    pSettings settings;
+    ApplicationSettings& appSettings = Abstractors::applicationSettings();
+    appSettings.load( &settings );
     
+    // init abstractors
+    Abstractors::setCurrent( Abstractors::CodeEditor, appSettings.abstractors.codeEditor.value().toString() );
+    
+    // create main window
     UIMain w;
     w.setWindowIcon( w.currentWindowIcon() );
     w.setWindowTitle( w.currentWindowTitle() );
@@ -35,5 +40,9 @@ int main( int argc, char** argv )
     
     //w.openPlainText( QStringList( "/home/pasnox/Temporaire/indent_finder-1.4/test_files/mixed4/arabic.c" ) );
     
-    return app.exec();
+    // execute application
+    const int result = app.exec();
+    // save settings
+    appSettings.save( &settings );
+    return result;
 }
