@@ -12,6 +12,7 @@
 
 int main( int argc, char** argv )
 {
+    // create application
     QApplication app( argc, argv );
     QApplication::setApplicationName( APPLICATION_NAME );
     QApplication::setApplicationVersion( APPLICATION_VERSION );
@@ -19,8 +20,10 @@ int main( int argc, char** argv )
     QApplication::setOrganizationName( APPLICATION_ORGANIZATION );
     QApplication::setWindowIcon( QIcon( ":/icons/mks-ng.png" ) );
     
+    // init settings properties
     pSettings::setDefaultProperties( pSettings::Properties( APPLICATION_NAME, APPLICATION_VERSION, pSettings::Auto ) );
     
+    // enable abstractors
     Abstractors::add( Abstractors::CodeEditor, &SourceHighlightQtCodeEditor::staticMetaObject );
     Abstractors::add( Abstractors::CodeEditor, &QodeEditCodeEditor::staticMetaObject );
     //Abstractors::add( Abstractors::CodeEditor, &QScintillaCodeEditor::staticMetaObject );
@@ -39,7 +42,7 @@ int main( int argc, char** argv )
     w.setWindowTitle( w.currentWindowTitle() );
     w.show();
     
-    //w.openPlainText( QStringList( "/home/pasnox/Temporaire/indent_finder-1.4/test_files/mixed4/arabic.c" ) );
+    w.openPlainText( QStringList( "/home/pasnox/Temporaire/indent_finder-1.4/test_files/mixed4/arabic.c" ) );
     
     // execute application
     const int result = app.exec();
