@@ -213,12 +213,10 @@ void UIMain::retranslateUi()
 void UIMain::saveState()
 {
     pMainWindow::saveState();
-    Abstractors::applicationSettings().save( settings() );
 }
 
 void UIMain::restoreState()
 {
-    Abstractors::applicationSettings().load( settings() );
     pMainWindow::restoreState();
 }
 
