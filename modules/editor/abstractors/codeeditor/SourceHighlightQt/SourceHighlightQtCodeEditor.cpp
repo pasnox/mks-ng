@@ -257,7 +257,7 @@ QStringList SourceHighlightQtCodeEditor::supportedStyles() const
 
 Document* SourceHighlightQtCodeEditor::createDocument( QWidget* parent ) const
 {
-    return new SourceHighlightQtDocument( this, parent );
+    return new SourceHighlightQtDocument( parent );
 }
 
 void SourceHighlightQtCodeEditor::dataWatcher_filesChanged( SourceHighlightQtDataWatcher::Type type )

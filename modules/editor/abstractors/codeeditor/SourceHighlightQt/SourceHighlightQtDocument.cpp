@@ -14,8 +14,8 @@
 #include <QFileInfo>
 #include <QDebug>
 
-SourceHighlightQtDocument::SourceHighlightQtDocument( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent )
-    : Document( codeEditorAbstractor, parent ),
+SourceHighlightQtDocument::SourceHighlightQtDocument( QWidget* parent )
+    : Document( parent ),
         mEditor( new PlainTextEditor( this ) ),
         mHighlighter( 0 )
 {
@@ -278,7 +278,7 @@ QVariant SourceHighlightQtDocument::propertyHelper( int property, const QVariant
                     break;
                 }
                 
-                if ( !language.isEmpty() && mCodeEditorAbstractor->supportedLanguages().contains( value->toString() ) ) {
+                if ( !language.isEmpty() && Abstractors::codeEditor()->supportedLanguages().contains( value->toString() ) ) {
                     const QString style = mHighlighter ? mHighlighter->getFormattingStyle() : "default.style";
                     
                     if ( mHighlighter ) {

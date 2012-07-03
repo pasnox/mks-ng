@@ -23,7 +23,6 @@ class QEvent;
 class QMetaObject;
 class QTextCodec;
 
-class CodeEditorAbstractor;
 class CodeEditorMimeType;
 
 class Document : public BaseWidget
@@ -118,7 +117,7 @@ public:
         Paste = 4
     };
     
-    Document( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent = 0 );
+    Document( QWidget* parent = 0 );
     virtual ~Document();
     
     const CodeEditorMimeType& mimeTypeDB() const;
@@ -143,7 +142,6 @@ public slots:
     virtual void queuedMessageClicked( QDialogButtonBox::StandardButton button, const pQueuedMessage& message );
     
 protected:
-    const CodeEditorAbstractor* mCodeEditorAbstractor;
     static int mDocumentCount;
     
     virtual void changeEvent( QEvent* event );

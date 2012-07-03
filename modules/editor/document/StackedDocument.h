@@ -5,7 +5,6 @@
 
 class QEvent;
 
-class CodeEditorAbstractor;
 class StackedDocumentModel;
 class Document;
 
@@ -17,7 +16,6 @@ public:
     StackedDocument( QWidget* parent = 0 );
     virtual ~StackedDocument();
     
-    CodeEditorAbstractor* codeEditorAbstractor() const;
     StackedDocumentModel* model() const;
     
     Document* createDocument() const;
@@ -34,7 +32,6 @@ public slots:
     void applyPreferences();
     
 protected:
-    CodeEditorAbstractor* mCodeEditorAbstractor;
     StackedDocumentModel* mModel;
     
     virtual void changeEvent( QEvent* event );

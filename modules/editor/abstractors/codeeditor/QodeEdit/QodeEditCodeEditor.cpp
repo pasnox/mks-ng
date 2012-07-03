@@ -44,7 +44,7 @@ QStringList QodeEditCodeEditor::supportedStyles() const
 
 Document* QodeEditCodeEditor::createDocument( QWidget* parent ) const
 {
-    return new QodeEditDocument( this, parent );
+    return new QodeEditDocument( parent );
 }
 
 void QodeEditCodeEditor::dataWatcher_filesChanged( QodeEditDataWatcher::Type type )

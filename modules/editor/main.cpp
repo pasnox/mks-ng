@@ -8,6 +8,7 @@
 #include "Abstractors.h"
 #include "SourceHighlightQtCodeEditor.h"
 #include "QodeEditCodeEditor.h"
+#include "ApplicationSettings.h"
 
 int main( int argc, char** argv )
 {

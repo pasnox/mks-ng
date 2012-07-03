@@ -9,6 +9,7 @@
 #include "ApplicationSettingsDelegate.h"
 #include "Abstractors.h"
 #include "MkSUtils.h"
+#include "ApplicationSettings.h"
 
 #include <FreshGui/pQueuedMessageToolBar>
 #include <FreshGui/pActionsMenuBar>

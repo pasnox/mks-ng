@@ -3,17 +3,15 @@
 #include "Document.h"
 #include "Abstractors.h"
 #include "CodeEditorAbstractor.h"
+#include "ApplicationSettings.h"
 
 #include <QEvent>
 #include <QDebug>
 
 StackedDocument::StackedDocument( QWidget* parent )
     : QStackedWidget( parent ),
-        mCodeEditorAbstractor( Abstractors::castedCreate<CodeEditorAbstractor*>( Abstractors::CodeEditor, this ) ),
         mModel( new StackedDocumentModel( this ) )
 {
-    Q_ASSERT( mCodeEditorAbstractor );
-    
 #if defined( HAS_QT_5 )
     connect( this, &QStackedWidget::currentChanged, this, &StackedDocument::_q_currentChanged );
     connect( this, &QStackedWidget::widgetRemoved, this, &StackedDocument::_q_widgetRemoved );
@@ -27,11 +25,6 @@ StackedDocument::~StackedDocument()
 {
 }
 
-CodeEditorAbstractor* StackedDocument::codeEditorAbstractor() const
-{
-    return mCodeEditorAbstractor;
-}
-
 StackedDocumentModel* StackedDocument::model() const
 {
     return mModel;
@@ -39,7 +32,7 @@ StackedDocumentModel* StackedDocument::model() const
 
 Document* StackedDocument::createDocument() const
 {
-    return mCodeEditorAbstractor ? mCodeEditorAbstractor->createDocument() : 0;
+    return Abstractors::codeEditor()->createDocument();
 }
 
 int	StackedDocument::addDocument( Document* document )

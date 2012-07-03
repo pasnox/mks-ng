@@ -12,7 +12,7 @@ class QodeEditDocument : public Document
     Q_OBJECT
     
 public:
-    QodeEditDocument( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent = 0 );
+    QodeEditDocument( QWidget* parent = 0 );
     virtual ~QodeEditDocument();
     
     virtual QVariant property( int property ) const;

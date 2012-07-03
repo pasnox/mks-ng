@@ -1,6 +1,7 @@
 #include "Document.h"
 #include "Abstractors.h"
 #include "CodeEditorAbstractor.h"
+#include "ApplicationSettings.h"
 
 #include <QEvent>
 #include <QMetaObject>
@@ -16,12 +17,9 @@
 
 int Document::mDocumentCount = 0;
 
-Document::Document( const CodeEditorAbstractor* codeEditorAbstractor, QWidget* parent )
-    : BaseWidget( parent ),
-        mCodeEditorAbstractor( codeEditorAbstractor )
+Document::Document( QWidget* parent )
+    : BaseWidget( parent )
 {
-    Q_ASSERT( mCodeEditorAbstractor );
-    
 #if USE_MDI_AREA == 1
     setWindowFlags( Qt::FramelessWindowHint );
 #else
@@ -34,7 +32,7 @@ Document::~Document()
 
 const CodeEditorMimeType& Document::mimeTypeDB() const
 {
-    return mCodeEditorAbstractor->mimeTypeDB();
+    return Abstractors::codeEditor()->mimeTypeDB();
 }
 
 QString Document::mimeType() const
