@@ -19,6 +19,9 @@ QodeEditDocument::QodeEditDocument( QWidget* parent )
         mEditor( new QodeEdit( this ) )/*,
         mHighlighter( 0 )*/
 {
+    mEditor->setMarginStacker( new MarginStacker );
+    mEditor->marginStacker()->setVisible( MarginStacker::Spacing );
+    
     Document::initialize();
     
     QBoxLayout* bLayout = new QBoxLayout( QBoxLayout::LeftToRight );
@@ -115,6 +118,22 @@ QPalette::ColorRole QodeEditDocument::propertyColorRole( const int& property ) c
         default:
             return QPalette::NoRole;
     }
+}
+
+MarginStacker::Type QodeEditDocument::propertyMargin( const int& property ) const
+{
+    switch ( property ) {
+        case Document::LineNumberMargin:
+            return MarginStacker::LineNumber;
+        case Document::FoldMargin:
+            return MarginStacker::CodeFolding;
+        case Document::SymbolMargin:
+            return MarginStacker::Bookmarks;
+        case Document::ChangeMargin:
+            return MarginStacker::LineChange;
+    }
+    
+    return MarginStacker::Invalid;
 }
 
 // to avoid to forget some properties in both property() / setProperty() we use one member for both.
@@ -410,11 +429,10 @@ QVariant QodeEditDocument::propertyHelper( int property, const QVariant* value )
         case Document::SymbolMargin:
         case Document::ChangeMargin: {
             if ( value ) {
-                //propertyMargin( property )->setVisible( value->toBool() );
+                mEditor->marginStacker()->setVisible( propertyMargin( property ), value->toBool() );
             }
             else {
-                //return propertyMargin( property )->isVisible();
-                return false;
+                return mEditor->marginStacker()->isVisible( propertyMargin( property ) );
             }
             
             break;

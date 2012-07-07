@@ -2,6 +2,7 @@
 #define QODEEDITDOCUMENT_H
 
 #include "Document.h"
+#include "margins/MarginStacker.h"
 
 class QEvent;
 
@@ -28,6 +29,7 @@ protected:
     QHash<int, QVariant> mProperties;
     
     QPalette::ColorRole propertyColorRole( const int& property ) const;
+    MarginStacker::Type propertyMargin( const int& property ) const;
     QVariant propertyHelper( int property, const QVariant* value );
 
 protected slots:
