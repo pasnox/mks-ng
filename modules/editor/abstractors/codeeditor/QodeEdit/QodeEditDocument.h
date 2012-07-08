@@ -28,7 +28,6 @@ protected:
     //srchiliteqt::Qt4SyntaxHighlighter* mHighlighter;
     QHash<int, QVariant> mProperties;
     
-    QPalette::ColorRole propertyColorRole( const int& property ) const;
     MarginStacker::Type propertyMargin( const int& property ) const;
     QVariant propertyHelper( int property, const QVariant* value );
 

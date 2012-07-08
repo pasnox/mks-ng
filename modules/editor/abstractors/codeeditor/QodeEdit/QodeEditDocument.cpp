@@ -100,26 +100,6 @@ void QodeEditDocument::clearProperties()
     emit propertiesChanged();
 }
 
-QPalette::ColorRole QodeEditDocument::propertyColorRole( const int& property ) const
-{
-    switch ( property ) {
-        case Document::Paper:
-            return mEditor->viewport()->backgroundRole();
-        case Document::Pen:
-            return mEditor->viewport()->foregroundRole();
-        case Document::SelectionBackground:
-            return QPalette::Highlight;
-        case Document::SelectionForeground:
-            return QPalette::HighlightedText;
-        case Document::CaretLineBackground:
-            return QPalette::Link;
-        case Document::CaretLineForeground:
-            return QPalette::LinkVisited;
-        default:
-            return QPalette::NoRole;
-    }
-}
-
 MarginStacker::Type QodeEditDocument::propertyMargin( const int& property ) const
 {
     switch ( property ) {
@@ -345,19 +325,67 @@ QVariant QodeEditDocument::propertyHelper( int property, const QVariant* value )
             break;
         }
         
-        case Document::Paper:
-        case Document::Pen:
-        case Document::SelectionBackground:
-        case Document::SelectionForeground:
-        case Document::CaretLineBackground:
-        case Document::CaretLineForeground: {
+        case Document::Paper: {
             if ( value ) {
-                QPalette pal = mEditor->palette();
-                pal.setColor( propertyColorRole( property ), value->value<QColor>() );
-                mEditor->setPalette( pal );
+                mEditor->setPaper( value->value<QColor>() );
             }
             else {
-                return mEditor->palette().color( propertyColorRole( property ) );
+                return mEditor->paper().color();
+            }
+            
+            break;
+        }
+        
+        case Document::Pen: {
+            if ( value ) {
+                mEditor->setPen( value->value<QColor>() );
+            }
+            else {
+                return mEditor->pen().color();
+            }
+            
+            break;
+        }
+        
+        case Document::SelectionBackground: {
+            if ( value ) {
+                mEditor->setSelectionBackground( value->value<QColor>() );
+            }
+            else {
+                return mEditor->selectionBackground().color();
+            }
+            
+            break;
+        }
+        
+        case Document::SelectionForeground: {
+            if ( value ) {
+                mEditor->setSelectionForeground( value->value<QColor>() );
+            }
+            else {
+                return mEditor->selectionForeground().color();
+            }
+            
+            break;
+        }
+        
+        case Document::CaretLineBackground: {
+            if ( value ) {
+                mEditor->setCaretLineBackground( value->value<QColor>() );
+            }
+            else {
+                return mEditor->caretLineBackground().color();
+            }
+            
+            break;
+        }
+        
+        case Document::CaretLineForeground: {
+            if ( value ) {
+                mEditor->setCaretLineForeground( value->value<QColor>() );
+            }
+            else {
+                return mEditor->caretLineForeground().color();
             }
             
             break;
