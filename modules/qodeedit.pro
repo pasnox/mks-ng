@@ -36,7 +36,8 @@ HEADERS *=  \
     ../3rdparty/qodeedit.git/src/margins/AbstractMargin.h \
     ../3rdparty/qodeedit.git/src/margins/LineNumberMargin.h \
     ../3rdparty/qodeedit.git/src/margins/SpacingMargin.h \
-    ../3rdparty/qodeedit.git/src/QodeEditTextDocument.h
+    ../3rdparty/qodeedit.git/src/QodeEditTextDocument.h \
+    ../3rdparty/qodeedit.git/src/margins/LineStateMargin.h
 
 SOURCES *=  \
     ../3rdparty/qodeedit.git/src/QodeEdit.cpp \
@@ -44,4 +45,5 @@ SOURCES *=  \
     ../3rdparty/qodeedit.git/src/margins/LineNumberMargin.cpp \
     ../3rdparty/qodeedit.git/src/margins/MarginStacker.cpp \
     ../3rdparty/qodeedit.git/src/margins/SpacingMargin.cpp \
-    ../3rdparty/qodeedit.git/src/QodeEditTextDocument.cpp
+    ../3rdparty/qodeedit.git/src/QodeEditTextDocument.cpp \
+    ../3rdparty/qodeedit.git/src/margins/LineStateMargin.cpp
