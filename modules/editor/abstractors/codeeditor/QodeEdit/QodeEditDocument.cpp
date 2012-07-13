@@ -207,14 +207,10 @@ QVariant QodeEditDocument::propertyHelper( int property, const QVariant* value )
         
         case Document::Text: {
             if ( value ) {
-                cursor.beginEditBlock();
-                cursor.select( QTextCursor::Document );
-                cursor.insertText( value->toString() );
-                cursor.movePosition( QTextCursor::Start, QTextCursor::MoveAnchor );
-                cursor.endEditBlock();
+                mEditor->setText( value->toString() );
             }
             else {
-                return mEditor->toPlainText();
+                return mEditor->text();
             }
             
             break;
@@ -222,7 +218,7 @@ QVariant QodeEditDocument::propertyHelper( int property, const QVariant* value )
         
         case Document::InitialText: {
             if ( value ) {
-                mEditor->setPlainText( value->toString() );
+                mEditor->setInitialText( value->toString() );
             }
             
             break;
