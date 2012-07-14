@@ -42,7 +42,10 @@ int main( int argc, char** argv )
     w.setWindowTitle( w.currentWindowTitle() );
     w.show();
     
-    w.openPlainText( QStringList( "/home/pasnox/Temporaire/indent_finder-1.4/test_files/mixed4/arabic.c" ) );
+    w.openPlainText( ( QStringList()
+        << "/home/pasnox/Temporaire/indent_finder-1.4/test_files/mixed4/arabic.c"
+        << "/home/pasnox/Temporaire/Notepad" 
+    ) );
     
     // execute application
     const int result = app.exec();
