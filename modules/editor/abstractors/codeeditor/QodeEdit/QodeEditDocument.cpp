@@ -108,9 +108,9 @@ MarginStacker::Type QodeEditDocument::propertyMargin( const int& property ) cons
         case Document::FoldMargin:
             return MarginStacker::CodeFolding;
         case Document::SymbolMargin:
-            return MarginStacker::Bookmarks;
+            return MarginStacker::LineBookmark;
         case Document::ChangeMargin:
-            return MarginStacker::LineState;
+            return MarginStacker::LineRevision;
     }
     
     return MarginStacker::Invalid;

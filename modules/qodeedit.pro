@@ -34,18 +34,20 @@ HEADERS *=  \
     ../3rdparty/qodeedit.git/src/QodeEdit.h \
     ../3rdparty/qodeedit.git/src/margins/MarginStacker.h \
     ../3rdparty/qodeedit.git/src/margins/AbstractMargin.h \
+    ../3rdparty/qodeedit.git/src/margins/LineBookmarkMargin.h \
     ../3rdparty/qodeedit.git/src/margins/LineNumberMargin.h \
+    ../3rdparty/qodeedit.git/src/margins/LineRevisionMargin.h \
     ../3rdparty/qodeedit.git/src/margins/SpacingMargin.h \
     ../3rdparty/qodeedit.git/src/QodeEditTextDocument.h \
-    ../3rdparty/qodeedit.git/src/margins/LineStateMargin.h \
     ../3rdparty/qodeedit.git/src/QodeEditUserData.h
 
 SOURCES *=  \
     ../3rdparty/qodeedit.git/src/QodeEdit.cpp \
-    ../3rdparty/qodeedit.git/src/margins/AbstractMargin.cpp \
-    ../3rdparty/qodeedit.git/src/margins/LineNumberMargin.cpp \
     ../3rdparty/qodeedit.git/src/margins/MarginStacker.cpp \
+    ../3rdparty/qodeedit.git/src/margins/AbstractMargin.cpp \
+    ../3rdparty/qodeedit.git/src/margins/LineBookmarkMargin.cpp \
+    ../3rdparty/qodeedit.git/src/margins/LineNumberMargin.cpp \
+    ../3rdparty/qodeedit.git/src/margins/LineRevisionMargin.cpp \
     ../3rdparty/qodeedit.git/src/margins/SpacingMargin.cpp \
     ../3rdparty/qodeedit.git/src/QodeEditTextDocument.cpp \
-    ../3rdparty/qodeedit.git/src/margins/LineStateMargin.cpp \
     ../3rdparty/qodeedit.git/src/QodeEditUserData.cpp
