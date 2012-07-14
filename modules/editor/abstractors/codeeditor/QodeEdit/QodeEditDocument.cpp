@@ -250,7 +250,11 @@ QVariant QodeEditDocument::propertyHelper( int property, const QVariant* value )
         case Document::State: {
             if ( value ) {
                 const Document::StateHints state = Document::StateHints( value->toInt() );
-                document->setModified( state & Document::Modified );
+                const bool modified = ( state & Document::Modified ) != 0;
+                
+                if ( document->isModified() != modified ) {
+                    document->setModified( modified );
+                }
             }
             else {
                 Document::StateHints state = Document::Unmodified;
