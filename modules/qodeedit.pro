@@ -30,24 +30,26 @@ RESOURCES *= ../3rdparty/qodeedit.git/resources/qodeedit.qrc
 
 FORMS *= 
 
-HEADERS *=  \
-    ../3rdparty/qodeedit.git/src/QodeEdit.h \
+HEADERS *= \
+    ../3rdparty/qodeedit.git/src/editor/CodeEditor.h \
+    ../3rdparty/qodeedit.git/src/document/TextDocument.h \
+    ../3rdparty/qodeedit.git/src/document/PlainTextDocumentLayout.h \
+    ../3rdparty/qodeedit.git/src/document/TextBlockUserData.h \
     ../3rdparty/qodeedit.git/src/margins/MarginStacker.h \
     ../3rdparty/qodeedit.git/src/margins/AbstractMargin.h \
     ../3rdparty/qodeedit.git/src/margins/LineBookmarkMargin.h \
     ../3rdparty/qodeedit.git/src/margins/LineNumberMargin.h \
     ../3rdparty/qodeedit.git/src/margins/LineRevisionMargin.h \
-    ../3rdparty/qodeedit.git/src/margins/SpacingMargin.h \
-    ../3rdparty/qodeedit.git/src/QodeEditTextDocument.h \
-    ../3rdparty/qodeedit.git/src/QodeEditUserData.h
+    ../3rdparty/qodeedit.git/src/margins/LineSpacingMargin.h
 
-SOURCES *=  \
-    ../3rdparty/qodeedit.git/src/QodeEdit.cpp \
+SOURCES *= \
+    ../3rdparty/qodeedit.git/src/editor/CodeEditor.cpp \
+    ../3rdparty/qodeedit.git/src/document/TextDocument.cpp \
+    ../3rdparty/qodeedit.git/src/document/PlainTextDocumentLayout.cpp \
+    ../3rdparty/qodeedit.git/src/document/TextBlockUserData.cpp \
     ../3rdparty/qodeedit.git/src/margins/MarginStacker.cpp \
     ../3rdparty/qodeedit.git/src/margins/AbstractMargin.cpp \
     ../3rdparty/qodeedit.git/src/margins/LineBookmarkMargin.cpp \
     ../3rdparty/qodeedit.git/src/margins/LineNumberMargin.cpp \
     ../3rdparty/qodeedit.git/src/margins/LineRevisionMargin.cpp \
-    ../3rdparty/qodeedit.git/src/margins/SpacingMargin.cpp \
-    ../3rdparty/qodeedit.git/src/QodeEditTextDocument.cpp \
-    ../3rdparty/qodeedit.git/src/QodeEditUserData.cpp
+    ../3rdparty/qodeedit.git/src/margins/LineSpacingMargin.cpp
