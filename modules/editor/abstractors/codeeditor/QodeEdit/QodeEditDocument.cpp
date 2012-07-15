@@ -119,7 +119,8 @@ MarginStacker::Type QodeEditDocument::propertyMargin( const int& property ) cons
 // This may change in the futur api stabilization
 QVariant QodeEditDocument::propertyHelper( int property, const QVariant* value )
 {
-    QTextCursor cursor = mEditor->textCursor();
+    const QTextCursor currentCursor = mEditor->textCursor();
+    QTextCursor cursor = currentCursor;
     QTextDocument* document = mEditor->document();
     bool write = false;
     
@@ -502,7 +503,7 @@ QVariant QodeEditDocument::propertyHelper( int property, const QVariant* value )
         }
     }
     
-    if ( cursor != mEditor->textCursor() && property != Document::InitialText ) {
+    if ( cursor != currentCursor && property != Document::InitialText ) {
         mEditor->setTextCursor( cursor );
     }
     
