@@ -2,11 +2,12 @@
 #define QODEEDITDOCUMENT_H
 
 #include "Document.h"
-#include "margins/MarginStacker.h"
+
+#include <margins/MarginStacker.h>
 
 class QEvent;
 
-class QodeEdit;
+class CodeEditor;
 
 class QodeEditDocument : public Document
 {
@@ -24,7 +25,7 @@ public slots:
     virtual void clearProperties();
     
 protected:
-    QodeEdit* mEditor;
+    CodeEditor* mEditor;
     //srchiliteqt::Qt4SyntaxHighlighter* mHighlighter;
     QHash<int, QVariant> mProperties;
     

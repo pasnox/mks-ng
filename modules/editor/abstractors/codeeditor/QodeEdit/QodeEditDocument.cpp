@@ -1,9 +1,8 @@
 #include "QodeEditDocument.h"
 #include "QodeEditDataWatcher.h"
 #include "CodeEditorAbstractor.h"
-#include "QodeEdit.h"
 
-#include <srchiliteqt/Qt4SyntaxHighlighter.h>
+#include <editor/CodeEditor.h>
 
 #include <QEvent>
 #include <QBoxLayout>
@@ -16,11 +15,11 @@
 
 QodeEditDocument::QodeEditDocument( QWidget* parent )
     : Document( parent ),
-        mEditor( new QodeEdit( this ) )/*,
+        mEditor( new CodeEditor( this ) )/*,
         mHighlighter( 0 )*/
 {
     mEditor->setMarginStacker( new MarginStacker );
-    mEditor->marginStacker()->setVisible( MarginStacker::Spacing );
+    mEditor->marginStacker()->setVisible( MarginStacker::LineSpacing );
     
     Document::initialize();
     
@@ -103,12 +102,12 @@ void QodeEditDocument::clearProperties()
 MarginStacker::Type QodeEditDocument::propertyMargin( const int& property ) const
 {
     switch ( property ) {
+        case Document::SymbolMargin:
+            return MarginStacker::LineBookmark;
         case Document::LineNumberMargin:
             return MarginStacker::LineNumber;
         case Document::FoldMargin:
-            return MarginStacker::CodeFolding;
-        case Document::SymbolMargin:
-            return MarginStacker::LineBookmark;
+            return MarginStacker::LineFold;
         case Document::ChangeMargin:
             return MarginStacker::LineRevision;
     }
@@ -161,13 +160,10 @@ QVariant QodeEditDocument::propertyHelper( int property, const QVariant* value )
         
         case Document::CursorPosition: {
             if ( value ) {
-                const QPoint pos = value->toPoint();
-                const QTextBlock block = document->findBlockByLineNumber( pos.y() );
-                const int position = block.position() +( pos.x() < block.length() ? pos.x() : 0 );
-                cursor.setPosition( position, QTextCursor::MoveAnchor );
+                mEditor->setCursorPosition( value->toPoint() );
             }
             else {
-                return cursor.isNull() ? QPoint() : QPoint( cursor.positionInBlock(), cursor.blockNumber() );
+                return mEditor->cursorPosition();
             }
             
             break;
@@ -428,23 +424,23 @@ QVariant QodeEditDocument::propertyHelper( int property, const QVariant* value )
             if ( value ) {
                 switch ( value->toInt() ) {
                     case Document::NoRuler:
-                        mEditor->setRulerMode( QodeEdit::NoRuler );
+                        mEditor->setRulerMode( CodeEditor::NoRuler );
                         break;
                     case Document::Line:
-                        mEditor->setRulerMode( QodeEdit::LineRuler );
+                        mEditor->setRulerMode( CodeEditor::LineRuler );
                         break;
                     case Document::Background:
-                        mEditor->setRulerMode( QodeEdit::BackgroundRuler );
+                        mEditor->setRulerMode( CodeEditor::BackgroundRuler );
                         break;
                 }
             }
             else {
                 switch ( mEditor->rulerMode() ) {
-                    case QodeEdit::NoRuler:
+                    case CodeEditor::NoRuler:
                         return Document::NoRuler;
-                    case QodeEdit::LineRuler:
+                    case CodeEditor::LineRuler:
                         return Document::Line;
-                    case QodeEdit::BackgroundRuler:
+                    case CodeEditor::BackgroundRuler:
                         return Document::Background;
                 }
             }
