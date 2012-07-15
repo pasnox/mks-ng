@@ -46,7 +46,10 @@ QVariant StackedDocumentCloseQueryModel::data( const QModelIndex& index, int rol
         case Qt::DecorationRole:
             return document->property( Document::Decoration );
         case Qt::DisplayRole:
-            return document->property( Document::Title ).toString();
+            return QString( "%1 - %2" )
+                .arg( document->property( Document::Title ).toString() )
+                .arg( document->property( Document::FilePath ).toString() )
+            ;
         case Qt::ToolTipRole:
             return document->property( Document::FilePath );
         case Qt::CheckStateRole:
