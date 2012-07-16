@@ -16,7 +16,7 @@
 
 include( ../modules.pri )
 
-TARGET_NAME = editor
+TARGET_NAME = $${BUILD_TARGET}
 initializeProject( app, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, "", "0.1.0" )
 
 INCLUDEPATH *= $$getFolders( . )

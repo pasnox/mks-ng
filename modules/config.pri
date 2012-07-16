@@ -8,6 +8,8 @@ exists( $${BUILD_RAMDISK} ):BUILD_PATH = $${BUILD_RAMDISK}/build
 else:BUILD_PATH = $$PWD/../build
 BUILD_PATH = $${BUILD_PATH}/$${BUILD_TARGET}
 BUILD_TARGET_PATH = $$PWD/../bin/$${Q_TARGET}
+BUILD_LIBRARY_TARGET_PATH = $${BUILD_TARGET_PATH}
+macx:BUILD_LIBRARY_TARGET_PATH = $$PWD/../bin/$${Q_TARGET}/$${BUILD_TARGET}.app/Contents/PlugIns
 BUILD_MODE = debug
 BUILD_TYPE = shared
 
@@ -58,7 +60,7 @@ defineTest( initializeProject ) {
     
     VERSION = $${q_version}
     
-    QMAKE_RPATHDIR *= $${BUILD_TARGET_PATH}
+    QMAKE_RPATHDIR *= $${BUILD_LIBRARY_TARGET_PATH}
     
     export( CONFIG )
     export( QMAKE_RPATHDIR )

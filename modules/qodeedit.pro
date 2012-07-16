@@ -17,7 +17,7 @@
 include( config.pri )
 
 TARGET_NAME = qodeedit
-initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, shared, "0.1.0" )
+initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_LIBRARY_TARGET_PATH}, shared, "0.1.0" )
 
 QT *= xml
 greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets

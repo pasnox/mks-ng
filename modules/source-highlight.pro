@@ -18,7 +18,7 @@ include( config.pri )
 include( ../3rdparty/source-highlight.git/defines.pri )
 
 TARGET_NAME = source-highlight
-initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, shared )
+initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_LIBRARY_TARGET_PATH}, shared )
 
 # defines.pri does not declare variables, only defines. Let declare variables from defines.
 #for( define, DEFINES ) {

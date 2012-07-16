@@ -18,7 +18,7 @@ include( config.pri )
 include( ../3rdparty/fresh.git/defines.pri )
 
 TARGET_NAME = fresh
-initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, shared )
+initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_LIBRARY_TARGET_PATH}, shared )
 
 QT *= network xml
 greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets

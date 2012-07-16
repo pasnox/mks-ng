@@ -30,7 +30,7 @@ INCLUDEPATH *= \
 
 DEPENDPATH *= $${INCLUDEPATH}
 
-LIBS *= -L$${BUILD_TARGET_PATH}
+LIBS *= -L$${BUILD_LIBRARY_TARGET_PATH}
 LIBS *= \
     -l$$targetForMode( qodeedit, $${BUILD_MODE} ) \
     -l$$targetForMode( fresh, $${BUILD_MODE} ) \

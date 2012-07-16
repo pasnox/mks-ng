@@ -18,7 +18,7 @@ include( config.pri )
 include( ../3rdparty/source-highlight-qt.git/defines.pri )
 
 TARGET_NAME = source-highlight-qt
-initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_TARGET_PATH}, shared )
+initializeProject( lib, $${TARGET_NAME}, $${BUILD_MODE}, $${BUILD_PATH}/$${TARGET_NAME}, $${BUILD_LIBRARY_TARGET_PATH}, shared )
 
 #CONFIG *= create_prl
 greaterThan(QT_MAJOR_VERSION, 4):QT *= widgets
