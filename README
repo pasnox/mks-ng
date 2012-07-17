@@ -6,4 +6,12 @@ The many we are, the best it will be.
 
 Join us on irc://irc.freenode.net/monkeystudio
 
+Build steps:
+
+- Clone mks-ng and go inside the folder.
+- Execute init-repositories.py script
+- qmake(-qt4) -r
+- make -j 4
+- Execute bin/OS/mks-ng(d|_debug)(.exe|.app)
+
 Best Regards, The Monkey Studio Team
