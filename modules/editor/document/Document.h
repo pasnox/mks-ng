@@ -1,16 +1,7 @@
 #ifndef DOCUMENT_H
 #define DOCUMENT_H
 
-#define USE_MDI_AREA 1
-
-#if USE_MDI_AREA == 1
-#define BaseWidget QMdiSubWindow
-#include <QMdiSubWindow>
-#else
-#define BaseWidget QWidget
 #include <QWidget>
-#endif
-
 #include <QHash>
 #include <QStringList>
 #include <QDialogButtonBox>
@@ -25,7 +16,7 @@ class QTextCodec;
 
 class CodeEditorMimeType;
 
-class Document : public BaseWidget
+class Document : public QWidget
 {
     Q_OBJECT
     Q_FLAGS( StateHint StateHints )
