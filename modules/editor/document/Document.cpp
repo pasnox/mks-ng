@@ -18,12 +18,8 @@
 int Document::mDocumentCount = 0;
 
 Document::Document( QWidget* parent )
-    : BaseWidget( parent )
+    : QWidget( parent )
 {
-#if USE_MDI_AREA == 1
-    setWindowFlags( Qt::FramelessWindowHint );
-#else
-#endif
 }
 
 Document::~Document()

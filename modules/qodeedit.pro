@@ -30,7 +30,7 @@ RESOURCES *= ../3rdparty/qodeedit.git/resources/qodeedit.qrc
 
 FORMS *= 
 
-HEADERS *= \
+HEADERS *=  \
     ../3rdparty/qodeedit.git/src/editor/CodeEditor.h \
     ../3rdparty/qodeedit.git/src/document/TextDocument.h \
     ../3rdparty/qodeedit.git/src/document/PlainTextDocumentLayout.h \
@@ -40,9 +40,18 @@ HEADERS *= \
     ../3rdparty/qodeedit.git/src/margins/LineBookmarkMargin.h \
     ../3rdparty/qodeedit.git/src/margins/LineNumberMargin.h \
     ../3rdparty/qodeedit.git/src/margins/LineRevisionMargin.h \
-    ../3rdparty/qodeedit.git/src/margins/LineSpacingMargin.h
+    ../3rdparty/qodeedit.git/src/margins/LineSpacingMargin.h \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxHighlighting.h \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxKeywords.h \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxDocumentReader.h \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxItemData.h \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxRule.h \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxContext.h \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxGeneral.h \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxComment.h \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxDocument.h
 
-SOURCES *= \
+SOURCES *=  \
     ../3rdparty/qodeedit.git/src/editor/CodeEditor.cpp \
     ../3rdparty/qodeedit.git/src/document/TextDocument.cpp \
     ../3rdparty/qodeedit.git/src/document/PlainTextDocumentLayout.cpp \
@@ -52,4 +61,13 @@ SOURCES *= \
     ../3rdparty/qodeedit.git/src/margins/LineBookmarkMargin.cpp \
     ../3rdparty/qodeedit.git/src/margins/LineNumberMargin.cpp \
     ../3rdparty/qodeedit.git/src/margins/LineRevisionMargin.cpp \
-    ../3rdparty/qodeedit.git/src/margins/LineSpacingMargin.cpp
+    ../3rdparty/qodeedit.git/src/margins/LineSpacingMargin.cpp \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxRule.cpp \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxDocumentReader.cpp \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxContext.cpp \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxComment.cpp \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxItemData.cpp \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxGeneral.cpp \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxKeywords.cpp \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxDocument.cpp \
+    ../3rdparty/qodeedit.git/src/syntax/SyntaxHighlighting.cpp
