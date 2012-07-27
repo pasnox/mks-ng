@@ -14,8 +14,8 @@
 ##
 ###########################################################################################
 
-XUP.QT_VERSION = 5.0.0-alpha
-XUP.OTHERS_PLATFORM_TARGET_DEFAULT = bin/Linux/editor_debug
+XUP.QT_VERSION = Qt System (4.8.1)
+XUP.OTHERS_PLATFORM_TARGET_DEFAULT = bin/Linux/mks-ng_debug
 
 include( modules/config.pri )
 
