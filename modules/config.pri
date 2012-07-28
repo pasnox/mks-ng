@@ -1,6 +1,7 @@
 # shared configuration file
 
-include( $$PWD/../3rdparty/fresh.git/functions.pri )
+# include qmake-extensions
+include( $$PWD/../3rdparty/fresh.git/qmake-extensions.pri )
 
 BUILD_TARGET = mks-ng
 BUILD_RAMDISK = /media/ramdisk
@@ -73,4 +74,3 @@ defineTest( initializeProject ) {
 }
 
 include( $$PWD/macx.pri )
-include( $$PWD/auto_file_h.pri )

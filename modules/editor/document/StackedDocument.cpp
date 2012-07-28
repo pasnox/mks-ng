@@ -35,7 +35,7 @@ Document* StackedDocument::createDocument() const
     return Abstractors::codeEditor()->createDocument();
 }
 
-int	StackedDocument::addDocument( Document* document )
+int StackedDocument::addDocument( Document* document )
 {
     return insertDocument( -1, document );
 }

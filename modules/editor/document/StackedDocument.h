@@ -19,7 +19,7 @@ public:
     StackedDocumentModel* model() const;
     
     Document* createDocument() const;
-    int	addDocument( Document* document );
+    int addDocument( Document* document );
     Document* currentDocument() const;
     int indexOf( Document* document ) const;
     int insertDocument( int index, Document* document );
