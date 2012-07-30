@@ -31,14 +31,11 @@ class RepositoryInitializer:
             },
         'svn':
             {
-                'ctags': 'https://ctags.svn.sourceforge.net/svnroot/ctags/trunk'
-                #'oxygen-icons': 'svn://anonsvn.kde.org/home/kde/trunk/kdesupport/oxygen-icons'
+                #'ctags': 'https://ctags.svn.sourceforge.net/svnroot/ctags/trunk'
             },
         'tar':
             {
                 #'qscintilla2': 'http://www.riverbankcomputing.co.uk/static/Downloads/QScintilla2/QScintilla-gpl-2.6.1.tar.gz'
-                #'oxygen-icons': 'http://www.archlinux.org/packages/extra/any/oxygen-icons/download/'
-                #'oxygen-icons': 'http://mirror.us.leaseweb.net/archlinux/extra/os/i686/oxygen-icons-4.8.4-1-any.pkg.tar.xz'
             }
     }
 
