@@ -103,13 +103,13 @@ MarginStacker::Type QodeEditDocument::propertyMargin( const int& property ) cons
 {
     switch ( property ) {
         case Document::SymbolMargin:
-            return MarginStacker::LineBookmark;
+            return MarginStacker::LineBookmarking;
         case Document::LineNumberMargin:
-            return MarginStacker::LineNumber;
+            return MarginStacker::LineNumbering;
         case Document::FoldMargin:
-            return MarginStacker::LineFold;
+            return MarginStacker::LineFolding;
         case Document::ChangeMargin:
-            return MarginStacker::LineRevision;
+            return MarginStacker::LineRevisioning;
     }
     
     return MarginStacker::Invalid;
