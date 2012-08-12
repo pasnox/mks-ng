@@ -21,13 +21,13 @@ class RepositoryInitializer:
         'git':
             {
                 'oxygen-icons-png': 'git://github.com/pasnox/oxygen-icons-png.git',
-                'document-properties-discover': 'git://github.com/pasnox/document-properties-discover.git',
-                'qfreedesktopmime': 'git://github.com/pasnox/qfreedesktopmime.git',
-                'qodeedit': 'git://github.com/pasnox/qodeedit.git',
-                'source-highlight': 'git://git.savannah.gnu.org/src-highlite.git',
-                'source-highlight-qt': 'git://srchiliteqt.git.sourceforge.net/gitroot/srchiliteqt/srchiliteqt',
                 'fresh': 'git://github.com/pasnox/fresh.git',
-                'kate': 'git://anongit.kde.org/kate'
+                'mimetypes-qt4': 'git://github.com/pasnox/mimetypes-qt4.git',
+                'document-properties-discover': 'git://github.com/pasnox/document-properties-discover.git',
+                'qodeedit': 'git://github.com/pasnox/qodeedit.git',
+                'kate': 'git://anongit.kde.org/kate',
+                'source-highlight-qt': 'git://srchiliteqt.git.sourceforge.net/gitroot/srchiliteqt/srchiliteqt',
+                'source-highlight': 'git://git.savannah.gnu.org/src-highlite.git'
             },
         'svn':
             {
